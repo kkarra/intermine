@@ -9,6 +9,7 @@ client-build/
 executeLog*
 *.pyc
 *.class
+*.svn
 
 # /bio/sources/flymine/bdgp-insitu/test/
 /bio/sources/flymine/bdgp-insitu/test/bdgp_tgt.xml
