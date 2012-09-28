@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+
+<classes>
+
+ <class name="ARS" extends="SequenceFeature" is-interface="true">
+  <collection name="arsconsensussequences" referenced-type="ARSConsensusSequence" reverse-reference="ars"/>
+ </class>
+
+ <class name="ARSConsensusSequence" extends="SequenceFeature" is-interface="true">
+  <reference name="ars" referenced-type="ARS" reverse-reference="arsconsensussequences"/>
+  <reference name="yprimeelement" referenced-type="YPrimeElement" reverse-reference="arsconsensussequences"/>
+  <reference name="xelement" referenced-type="XElement" reverse-reference="arsconsensussequences"/>
+ </class>
+
+ <class name="Author" is-interface="true">
+  <attribute name="name" type="java.lang.String"/>
+  <collection name="publications" referenced-type="Publication" reverse-reference="authors"/>
+ </class>
+
+ <class name="BindingSite" extends="SequenceFeature" is-interface="true">
+  <reference name="xelement" referenced-type="XElement" reverse-reference="bindingsites"/>
+ </class>
+
+ <class name="BioEntity" is-interface="true">
+  <attribute name="sgdAlias" type="java.lang.String"/>
+  <attribute name="symbol" type="java.lang.String"/>
+ </class>
+
+ <class name="CDS" extends="SequenceFeature" is-interface="true">
+  <reference name="orf" referenced-type="ORF" reverse-reference="CDSs"/>
+  <reference name="pseudogene" referenced-type="Pseudogene" reverse-reference="CDSs"/>
+  <reference name="transposableelementgene" referenced-type="TransposableElementGene" reverse-reference="CDSs"/>
+  <reference name="plasmid" referenced-type="Plasmid" reverse-reference="CDSs"/>
+  <reference name="plasmidLocation" referenced-type="Location"/>
+  <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
+ </class>
+ <class name="CrossReference" is-interface="true">
+        <attribute name="dbxrefsource" type="java.lang.String"/>
+</class>
+ <class name="ExternalTranscribedSpacerRegion" extends="SequenceFeature" is-interface="true">
+  <reference name="ncrna_gene" referenced-type="NcRNAGene" reverse-reference="externaltranscribedspacerregions"/>
+ </class>
+
+
+ <class name="FivePrimeUTRIntron" extends="SequenceFeature" is-interface="true">
+  <reference name="orf" referenced-type="ORF" reverse-reference="fiveprimeutrintrons"/>
+ </class>
+
+ <class name="Gene" is-interface="true">
+  <reference name="plasmid" referenced-type="Plasmid" reverse-reference="genes"/>
+  <reference name="plasmidLocation" referenced-type="Location"/>
+  <reference name="sequence" referenced-type="Sequence"/>
+  <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
+  <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
+  <collection name="phenotypes" referenced-type="Phenotype" reverse-reference="genes"/>
+  <collection name="interactions" referenced-type="Interaction" reverse-reference="gene"/>
+  <collection name="publicationAnnotations" referenced-type="PublicationAnnotation" reverse-reference="genes"/>
+  <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
+ </class>
+
+ <class name="Insertion" extends="SequenceFeature" is-interface="true">
+  <reference name="xelementcombinatorialrepeat" referenced-type="XElementCombinatorialRepeat" reverse-reference="insertions"/>
+ </class>
+
+<class name="Interaction" is-interface="true">
+	<attribute name="confidenceText" type="java.lang.String"/>
+	<attribute name="interactionType" type="java.lang.String"/>
+	<attribute name="experimentType" type="java.lang.String"/>
+	<attribute name="shortName" type="java.lang.String"/>
+	<attribute name="role" type="java.lang.String"/>
+	<attribute name="confidence" type="java.lang.Double"/>
+	<attribute name="name" type="java.lang.String"/>	
+	 <attribute name="annotationType" type="java.lang.String"/>
+	 <attribute name="modification" type="java.lang.String"/>
+	 <attribute name="phenotype" type="java.lang.String"/>
+	<reference name="gene" referenced-type="Gene" reverse-reference="interactions"/>
+	<reference name="type" referenced-type="InteractionTerm"/>
+	<reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
+	<collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
+	<collection name="dataSets" referenced-type="DataSet"/>
+	<collection name="interactingGenes" referenced-type="Gene"/>
+</class>
+<class name="InteractionExperiment" is-interface="true">
+	<attribute name="name" type="java.lang.String"/>
+	<!-- <attribute name="experimentType" type="java.lang.String"/> -->
+	<attribute name="hostOrganism" type="java.lang.String"/>
+	<attribute name="description" type="java.lang.String"/>
+	<reference name="publication" referenced-type="Publication"/>
+	<collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
+	<collection name="interactionDetectionMethod" referenced-type="InteractionTerm"/>
+	<collection name="comments" referenced-type="Comment"/>
+	<collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
+</class>
+<class name="InteractionRegion" extends="BioEntity" is-interface="true">
+	<attribute name="endStatus" type="java.lang.String"/>
+	<attribute name="startStatus" type="java.lang.String"/>
+	<reference name="interaction" referenced-type="Interaction" reverse-reference="interactingRegions"/>
+	<reference name="gene" referenced-type="Gene"/>
+	<reference name="ontologyTerm" referenced-type="OntologyTerm"/>
+	<reference name="location" referenced-type="Location"/>
+</class>
+<class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
+
+ <class name="InternalTranscribedSpacerRegion" extends="SequenceFeature" is-interface="true">
+  <reference name="ncrna_gene" referenced-type="NcRNAGene" reverse-reference="internaltranscribedspacerregions"/>
+ </class>
+
+ <class name="Intron" extends="SequenceFeature" is-interface="true">
+  <collection name="genes" referenced-type="Gene" reverse-reference="introns"/>
+ </class>
+
+ <class name="LiteratureTopic" is-interface="true">
+  <attribute name="name" type="java.lang.String"/>
+ </class>
+
+
+ <class name="LongTerminalRepeat" extends="SequenceFeature" is-interface="true"> </class>
+
+ <class name="NcRNAGene" extends="Gene" is-interface="true">
+  <collection name="noncodingexons" referenced-type="NoncodingExon" reverse-reference="ncrna_gene"/>
+  <collection name="externaltranscribedspacerregions" referenced-type="ExternalTranscribedSpacerRegion" reverse-reference="ncrna_gene"/>
+  <collection name="internaltranscribedspacerregions" referenced-type="InternalTranscribedSpacerRegion" reverse-reference="ncrna_gene"/>
+  <collection name="nontranscribedregions" referenced-type="NonTranscribedRegion" reverse-reference="ncrna_gene"/>
+ </class>
+ <class name="NonTranscribedRegion" extends="SequenceFeature" is-interface="true">
+  <reference name="ncrna_gene" referenced-type="NcRNAGene" reverse-reference="nontranscribedregions"/>
+ </class>
+
+ <class name="NoncodingExon" extends="SequenceFeature" is-interface="true">
+  <reference name="ncrna_gene" referenced-type="NcRNAGene" reverse-reference="noncodingexons"/>
+ </class>
+
+ <class name="NotInSystematicSequenceOfS288C" extends="Gene" is-interface="true"> </class>
+
+ <class name="NotPhysicallyMapped" extends="SequenceFeature" is-interface="true">
+  <collection name="phenotypes" referenced-type="Phenotype" reverse-reference="notphysicallymapped"/>
+ </class>
+
+ <class name="ORF" extends="ProteinCodingGene" is-interface="true">
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="orf"/>
+  <collection name="plus1translationalframeshifts" referenced-type="Plus1TranslationalFrameshift" reverse-reference="orf"/>
+  <collection name="fiveprimeutrintrons" referenced-type="FivePrimeUTRIntron" reverse-reference="orf"/>
+ </class>
+
+ <class name="Phenotype" is-interface="true">
+  <attribute name="experimentType" type="java.lang.String"/>
+  <attribute name="mutantType" type="java.lang.String"/>
+  <attribute name="qualifier" type="java.lang.String"/>
+  <attribute name="observable" type="java.lang.String"/>
+  <attribute name="allele" type="java.lang.String"/>
+  <attribute name="strainBackground" type="java.lang.String"/>
+  <attribute name="chemical" type="java.lang.String"/>
+  <attribute name="condition" type="java.lang.String"/>
+  <attribute name="details" type="java.lang.String"/>
+  <attribute name="reporter" type="java.lang.String"/>
+  <collection name="genes" referenced-type="Gene" reverse-reference="phenotypes"/>
+  <collection name="publications" referenced-type="Publication" reverse-reference="phenotypes"/>
+  <collection name="notphysicallymapped" referenced-type="NotPhysicallyMapped" reverse-reference="phenotypes"/>
+ </class>
+
+ <class name="Plasmid" extends="SequenceFeature" is-interface="true">
+  <collection name="genes" referenced-type="Gene" reverse-reference="plasmid"/>
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="plasmid"/>
+ </class>
+
+
+ <class name="Plus1TranslationalFrameshift" extends="SequenceFeature" is-interface="true">
+  <reference name="orf" referenced-type="ORF" reverse-reference="plus1translationalframeshifts"/>
+  <reference name="pseudogene" referenced-type="Pseudogene" reverse-reference="plus1translationalframeshifts"/>
+  <reference name="transposableelementgene" referenced-type="TransposableElementGene" reverse-reference="plus1translationalframeshifts"/>
+ </class>
+
+ <class name="Protein" is-interface="true">
+  <attribute name="symbol" type="java.lang.String"/>
+  <attribute name="pI" type="java.lang.Float"/>
+ </class>
+
+ <class name="ProteinCodingGene" extends="Gene" is-interface="true"> </class>
+
+ <class name="Pseudogene" extends="ProteinCodingGene" is-interface="true">
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="pseudogene"/>
+  <collection name="plus1translationalframeshifts" referenced-type="Plus1TranslationalFrameshift" reverse-reference="pseudogene"/>
+ </class>
+
+ <class name="Publication" is-interface="true">
+  <attribute name="pages" type="java.lang.String"/>
+  <attribute name="year" type="java.lang.Integer"/>
+  <attribute name="volume" type="java.lang.String"/>
+  <attribute name="issue" type="java.lang.String"/>
+  <attribute name="pubMedId" type="java.lang.String"/>
+   <attribute name="sgdDbXrefId" type="java.lang.String"/>
+  <attribute name="journal" type="java.lang.String"/>
+  <attribute name="title" type="java.lang.String"/>
+  <attribute name="firstAuthor" type="java.lang.String"/>
+  <attribute name="citation" type="java.lang.String"/>
+  <attribute name="summary" type="java.lang.String"/>
+  <collection name="literatureTopics" referenced-type="LiteratureTopic"/>
+  <collection name="phenotypes" referenced-type="Phenotype" reverse-reference="publications"/>
+  <collection name="authors" referenced-type="Author" reverse-reference="publications"/>
+ </class>
+
+ <class name="PublicationAnnotation" is-interface="true">
+  <collection name="literatureTopics" referenced-type="LiteratureTopic"/>
+  <collection name="genes" referenced-type="Gene" reverse-reference="publicationAnnotations"/>
+  <reference name="publication" referenced-type="Publication"/>
+ </class>
+
+
+ <class name="RRNAGene" extends="NcRNAGene" is-interface="true"> </class>
+
+
+ <class name="RepeatRegion" is-interface="true">
+  <reference name="yprimeelement" referenced-type="YPrimeElement" reverse-reference="repeatregions"/>
+ </class>
+
+ <class name="SequenceFeature" is-interface="true">
+  <attribute name="featureType" type="java.lang.String"/>
+  <attribute name="status" type="java.lang.String"/>
+  <attribute name="description" type="java.lang.String"/>
+  <attribute name="headline" type="java.lang.String"/>
+  <attribute name="qualifier" type="java.lang.String"/>
+  <attribute name="featAttribute" type="java.lang.String"/>
+ </class>
+
+ <class name="TelomericRepeat" extends="Telomere" is-interface="true"> </class>
+
+
+ <class name="TransposableElementGene" extends="ProteinCodingGene" is-interface="true">
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="transposableelementgene"/>
+  <collection name="plus1translationalframeshifts" referenced-type="Plus1TranslationalFrameshift" reverse-reference="transposableelementgene"/>
+ </class>
+
+
+ <class name="XElement" extends="Telomere" is-interface="true">
+  <collection name="bindingsites" referenced-type="BindingSite" reverse-reference="xelement"/>
+  <collection name="arsconsensussequences" referenced-type="ARSConsensusSequence" reverse-reference="xelement"/>
+ </class>
+
+ <class name="XElementCombinatorialRepeat" extends="Telomere" is-interface="true">
+  <collection name="insertions" referenced-type="Insertion" reverse-reference="xelementcombinatorialrepeat"/>
+ </class>
+
+ <class name="YPrimeElement" extends="Telomere" is-interface="true">
+  <collection name="repeatregions" referenced-type="RepeatRegion" reverse-reference="yprimeelement"/>
+  <collection name="arsconsensussequences" referenced-type="ARSConsensusSequence" reverse-reference="yprimeelement"/>
+ </class>
+ 
+ <class name="Pathway" is-interface="true">
+	<attribute name="identifier" type="java.lang.String"/>
+	<attribute name="name" type="java.lang.String"/>
+	<collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
+        <collection name="dataSets" referenced-type="DataSet"/>
+</class>
+
+</classes>

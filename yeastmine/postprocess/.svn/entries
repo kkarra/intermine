@@ -1,0 +1,64 @@
+10
+
+dir
+21795
+svn://subversion.flymine.org/branches/intermine_0_93/yeastmine/postprocess
+svn://subversion.flymine.org
+
+
+
+2009-04-30T16:10:16.588788Z
+18998
+julie
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+37e1b716-f2f3-0310-95ce-c813c9c44928
+
+project.properties
+file
+
+
+
+
+2009-11-19T19:05:40.000000Z
+1a95ee7bb0406a0cd180d232d050d120
+2009-04-30T16:10:16.588788Z
+18998
+julie
+
+main
+dir
+
+lib
+dir
+
+src
+dir
+
+resources
+dir
+
+build.xml
+file
+
+
+
+
+2009-11-19T19:05:40.000000Z
+da61844ded0222496b61918c01ac7d5c
+2009-04-30T16:10:16.588788Z
+18998
+julie
+

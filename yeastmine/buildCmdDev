@@ -1,0 +1,2 @@
+../bio/scripts/project_build -V dev -b -v localhost /tmp/yeastmine-dev-dump 
+

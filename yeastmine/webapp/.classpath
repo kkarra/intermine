@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="lib" path="/Users/kkarra/intermine-client-2.0/lib/intermine-client.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

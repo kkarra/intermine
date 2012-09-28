@@ -1,0 +1,291 @@
+reading properties from: /home/mineadm/.intermine/yeastmine.properties.prod1
+
+Sun Jul 29 12:22:06 PDT 2012
+
+
+running: psql -U postgres -h yeastmine.stanford.edu -d postgres -l
+
+not creating yeastmine-prod1 as it already exists
+
+Sun Jul 29 12:22:06 PDT 2012
+
+
+building db: ant -v -Drelease=prod1 build-db
+
+Sun Jul 29 12:22:06 PDT 2012
+
+starting command: ant -v -Drelease=prod1 clean
+
+Sun Jul 29 12:22:07 PDT 2012
+
+finished
+
+
+Sun Jul 29 12:22:07 PDT 2012
+
+starting command: ant -v -Drelease=prod1 build-db
+
+Sun Jul 29 12:31:37 PDT 2012
+
+finished
+
+
+Sun Jul 29 12:31:37 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=sgd
+
+Sun Jul 29 12:45:15 PDT 2012
+
+finished
+
+
+action sgd took 818 seconds
+
+Sun Jul 29 12:45:15 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=spell-expression
+
+Sun Jul 29 14:19:18 PDT 2012
+
+finished
+
+
+action spell-expression took 5643 seconds
+
+Sun Jul 29 14:19:18 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=treefam
+
+Sun Jul 29 14:20:57 PDT 2012
+
+finished
+
+
+action treefam took 99 seconds
+
+Sun Jul 29 14:20:57 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=ensembl-compara
+
+Sun Jul 29 14:22:58 PDT 2012
+
+finished
+
+
+action ensembl-compara took 121 seconds
+
+Sun Jul 29 14:22:58 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=go
+
+Sun Jul 29 14:29:20 PDT 2012
+
+finished
+
+
+action go took 382 seconds
+
+Sun Jul 29 14:29:20 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=go-slim
+
+Sun Jul 29 14:29:40 PDT 2012
+
+finished
+
+
+action go-slim took 20 seconds
+
+Sun Jul 29 14:29:40 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=go-annotation
+
+Sun Jul 29 14:34:55 PDT 2012
+
+finished
+
+
+action go-annotation took 315 seconds
+
+Sun Jul 29 14:34:55 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=update-publications
+
+Sun Jul 29 14:40:35 PDT 2012
+
+finished
+
+
+action update-publications took 340 seconds
+
+Sun Jul 29 14:40:35 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=entrez-organism
+
+Sun Jul 29 14:40:54 PDT 2012
+
+finished
+
+
+action entrez-organism took 19 seconds
+
+Sun Jul 29 14:40:54 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Dsource=so
+
+Sun Jul 29 14:41:31 PDT 2012
+
+finished
+
+
+action so took 37 seconds
+
+Sun Jul 29 14:41:31 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-references
+
+Sun Jul 29 14:41:40 PDT 2012
+
+finished
+
+
+action create-references took 9 seconds
+
+Sun Jul 29 14:41:40 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=do-sources
+
+Sun Jul 29 14:41:54 PDT 2012
+
+finished
+
+
+action do-sources took 14 seconds
+
+Sun Jul 29 14:41:54 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-bioseg-location-index
+
+Sun Jul 29 14:42:02 PDT 2012
+
+finished
+
+
+action create-bioseg-location-index took 8 seconds
+
+Sun Jul 29 14:42:02 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-intergenic-region-features
+
+Sun Jul 29 14:42:24 PDT 2012
+
+finished
+
+
+action create-intergenic-region-features took 22 seconds
+
+Sun Jul 29 14:42:24 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-gene-flanking-features
+
+Sun Jul 29 14:43:57 PDT 2012
+
+finished
+
+
+action create-gene-flanking-features took 93 seconds
+
+Sun Jul 29 14:43:57 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-overlap-view
+
+Sun Jul 29 14:44:06 PDT 2012
+
+finished
+
+
+action create-overlap-view took 9 seconds
+
+Sun Jul 29 14:44:06 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-search-index
+
+Sun Jul 29 14:48:54 PDT 2012
+
+finished
+
+
+action create-search-index took 288 seconds
+
+Sun Jul 29 14:48:54 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-attribute-indexes
+
+Sun Jul 29 14:51:51 PDT 2012
+
+finished
+
+
+action create-attribute-indexes took 177 seconds
+
+Sun Jul 29 14:51:51 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=summarise-objectstore
+
+Sun Jul 29 14:53:14 PDT 2012
+
+finished
+
+
+action summarise-objectstore took 83 seconds
+
+Sun Jul 29 14:53:14 PDT 2012
+
+starting command: ant -v -Drelease=prod1 -Daction=create-autocomplete-index
+
+Sun Jul 29 14:53:33 PDT 2012
+
+finished
+
+
+action create-autocomplete-index took 19 seconds
+
+Sun Jul 29 14:53:33 PDT 2012
+
+
+dumping: pg_dump -F c -i -U postgres -h yeastmine.stanford.edu -f /db9/dump/pgsql/yeastmine-prod1-dumpDate.final yeastmine-prod1
+
+pg_dump: [custom archiver] could not open output file "/db9/dump/pgsql/yeastmine-prod1-dumpDate.final": Permission denied
+Sun Jul 29 14:53:33 PDT 2012
+
+finished dump
+
+
+action final-dump took 0 seconds
+
+
+action name                                   time in seconds
+-------------------------------------------------------------
+sgd                                                      818
+spell-expression                                        5643
+treefam                                                   99
+ensembl-compara                                          121
+go                                                       382
+go-slim                                                   20
+go-annotation                                            315
+update-publications                                      340
+entrez-organism                                           19
+so                                                        37
+create-references                                          9
+do-sources                                                14
+create-bioseg-location-index                               8
+create-intergenic-region-features                         22
+create-gene-flanking-features                             93
+create-overlap-view                                        9
+create-search-index                                      288
+create-attribute-indexes                                 177
+summarise-objectstore                                     83
+create-autocomplete-index                                 19
+final-dump                                                 0
+
+total                                                   8516

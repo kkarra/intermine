@@ -1,0 +1,39 @@
+# fields = summarised by the post process summarise-objectstore, these fields appear in a dropdown (instead of a text box) in forms in the webapp
+max.field.values = 200
+
+org.intermine.model.bio.Chromosome.fields = primaryIdentifier
+org.intermine.model.bio.DataSet.fields = title
+org.intermine.model.bio.DataSource.fields = name
+org.intermine.model.bio.InfoSource.fields = title
+org.intermine.model.bio.Location.fields = strand
+org.intermine.model.bio.Organism.fields = abbreviation genus name shortName species taxonId
+org.intermine.model.bio.Synonym.fields = type
+org.intermine.model.bio.GOAnnotation.fields = qualifier
+org.intermine.model.bio.GOEvidenceCode.fields = code annotType
+org.intermine.model.bio.OntologyTerm.fields = name namespace
+org.intermine.model.bio.GOTerm.fields = name namespace
+org.intermine.model.bio.GOSlimTerm.fields = name namespace
+org.intermine.model.bio.Gene.fields = sgdAlias featureType feat_attribute status qualifier
+org.intermine.model.bio.Interaction.fields = annotationType interactionType phenotype experimentType 
+org.intermine.model.bio.LocatedSequenceFeature.fields = featureType
+org.intermine.model.bio.Telomere.fields =  sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.NcRNA_Gene.fields =  sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.Centromere.fields =  sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.ARS.fields =  sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.RetroTransposon.fields =  sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.LongTerminalRepeat.fields =  sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.NotPhysicallyMapped.fields =  sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.NotInSystematicSequenceOfS288C.fields = sgdAlias feat_attribute status qualifier
+org.intermine.model.bio.Phenotype.fields = observable mutantType experimentType qualifier
+
+org.intermine.model.bio.LiteratureTopic.fields = name 
+#org.intermine.model.bio.LiteratureTopic.fields = name
+
+# autocomplete = in forms on the webapp, these fields will offer suggestions to the user as they type
+# index is created in post process create-autocomplete-index
+org.intermine.model.bio.GOTerm.autocomplete = name
+org.intermine.model.bio.GOSlimTerm.autocomplete = name
+org.intermine.model.bio.OntologyTerm.autocomplete = name
+
+org.intermine.model.bio.Phenotype.autocomplete = observable
+org.intermine.model.bio.InteractionTerm.autocomplete = name

@@ -1,0 +1,97 @@
+10
+
+dir
+21795
+svn://subversion.flymine.org/branches/intermine_0_93/yeastmine/integrate
+svn://subversion.flymine.org
+
+
+
+2009-11-13T10:25:01.053712Z
+20142
+julie
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+37e1b716-f2f3-0310-95ce-c813c9c44928
+
+.classpath
+file
+
+
+
+
+2009-11-19T19:05:39.000000Z
+78c0119177f468bcddbcb7d84bd06de6
+2009-04-30T16:10:16.588788Z
+18998
+julie
+
+project.properties
+file
+
+
+
+
+2009-11-19T19:05:39.000000Z
+79a2c19f272c10ca102f1268102915f7
+2009-04-30T16:10:16.588788Z
+18998
+julie
+
+.project
+file
+
+
+
+
+2009-11-19T19:05:39.000000Z
+61daf27315b9fe9002cd9708c0be46e2
+2009-11-13T10:25:01.053712Z
+20142
+julie
+
+lib
+dir
+
+src
+dir
+
+resources
+dir
+
+interpro.dtd
+file
+
+
+
+
+2009-11-19T19:05:39.000000Z
+02f6481bade5cfbe47a3da2d791efef3
+2009-04-30T16:10:16.588788Z
+18998
+julie
+
+build.xml
+file
+
+
+
+
+2009-11-19T19:05:39.000000Z
+104333757356a038fa0691328d6d11da
+2009-04-30T16:10:16.588788Z
+18998
+julie
+
