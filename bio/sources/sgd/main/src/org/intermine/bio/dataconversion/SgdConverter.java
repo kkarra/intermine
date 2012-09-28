@@ -2253,7 +2253,8 @@ public class SgdConverter extends BioDBConverter {
 						getLiteratureTopic(value));
 			}
 
-			item.addToCollection("genes", gene.getIdentifier());
+			//item.addToCollection("genes", gene.getIdentifier());
+			item.addToCollection("bioEntities", gene.getIdentifier());
 
 			publications.put(referenceNo, item);
 
@@ -2277,7 +2278,8 @@ public class SgdConverter extends BioDBConverter {
 			pubAnnot.setReference("publication", storedRef.getIdentifier());
 			pubAnnot.addToCollection("genes", gene.getIdentifier());
 
-			storedRef.addToCollection("genes", gene.getIdentifier());
+			//storedRef.addToCollection("genes", gene.getIdentifier());
+			storedRef.addToCollection("bioEntities", gene.getIdentifier());
 
 			gene.addToCollection("publications", storedRef.getIdentifier());
 		}
