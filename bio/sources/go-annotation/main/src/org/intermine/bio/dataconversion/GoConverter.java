@@ -49,7 +49,7 @@ public class GoConverter extends BioFileConverter
 
     // configuration maps
     private Map<String, Config> configs = new HashMap<String, Config>();
-    private static final Map<String, String> WITH_TYPES = new LinkedHashMap<String, String>();
+    private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
 
     // maps retained across all files
     protected Map<String, String> goTerms = new LinkedHashMap<String, String>();
@@ -69,11 +69,8 @@ public class GoConverter extends BioFileConverter
     protected String termClassName = "GOTerm";
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
-    private String gaff = "2.0";
-    private static final String DEFAULT_ANNOTATION_TYPE = "gene";
-    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
+
     protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
-    private static Config defaultConfig = null;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
@@ -86,28 +83,14 @@ public class GoConverter extends BioFileConverter
      */
     public GoConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model);
+        addWithType("FB", "Gene", "primaryIdentifier");
+        addWithType("UniProt", "Protein", "accession");
 
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
         ontologyResolverFactory = new OntologyIdResolverFactory("GO");
-        defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
-                DEFAULT_ANNOTATION_TYPE);
+
         readConfig();
-    }
-
-    /**
-     * Sets the file format for the GAF.  2.0 is the default.
-     *
-     * @param gaff GO annotation file format
-     */
-    public void setGaff(String gaff) {
-        this.gaff = gaff;
-    }
-
-
-    static {
-        WITH_TYPES.put("FB", "Gene");
-        WITH_TYPES.put("UniProt", "Protein");
     }
 
     // read config file that has specific settings for each organism, key is taxon id
@@ -163,7 +146,6 @@ public class GoConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
-    @Override
     public void process(Reader reader) throws ObjectStoreException, IOException {
 
         initialiseMapsForFile();
@@ -185,9 +167,12 @@ public class GoConverter extends BioFileConverter
             String taxonId = parseTaxonId(array[12]);
             Config config = configs.get(taxonId);
             if (config == null) {
-                config = defaultConfig;
-                LOG.warn("No entry for organism with taxonId = '"
-                        + taxonId + "' found in go-annotation config file.  Using default");
+                //throw new NullPointerException("No entry for organism with taxonId = '"
+                       // + taxonId + "' found in config file.");
+                config = new Config("primaryIdentifier", null, "gene");
+                configs.put(taxonId, config);
+                LOG.error("No entry for organism with taxonId = '"
+                        + taxonId + "' found in go-annotation config file. Using default");
             }
             int readColumn = config.readColumn();
             String productId = array[readColumn];
@@ -196,18 +181,17 @@ public class GoConverter extends BioFileConverter
             String qualifier = array[3];
             String strEvidence = array[6];
             String withText = array[7];
+            String annotType = array[15]; //kk
             if (StringUtils.isNotEmpty(strEvidence)) {
-                storeEvidenceCode(strEvidence);
+                storeEvidenceCode(strEvidence, annotType);
             } else {
                 throw new IllegalArgumentException("Evidence is a required column but not "
                         + "found for goterm " + goId + " and productId " + productId);
             }
 
-            String type = config.annotationType;
-            if ("1.0".equals(gaff)) {
-                // type of gene product
-                type = array[11];
-            }
+            // type of gene product, we're not interested in at the moment
+            // String type = array[11];
+            String type = configs.get(taxonId).annotationType;
 
             // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
             // hack here to get just the UniProt ones.
@@ -234,9 +218,10 @@ public class GoConverter extends BioFileConverter
                 Set<Evidence> allEvidenceForAnnotation = goTermGeneToEvidence.get(key);
 
                 // new evidence
+                String newStrEvidence = strEvidence+":"+annotType;
                 if (allEvidenceForAnnotation == null) {
                     String goTermIdentifier = newGoTerm(goId, dataSourceCode);
-                    Evidence evidence = new Evidence(strEvidence, pubRefId);
+                    Evidence evidence = new Evidence(newStrEvidence, pubRefId); //was strEvidence
                     allEvidenceForAnnotation = new LinkedHashSet<Evidence>();
                     allEvidenceForAnnotation.add(evidence);
                     goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
@@ -249,16 +234,16 @@ public class GoConverter extends BioFileConverter
                     for (Evidence evidence : allEvidenceForAnnotation) {
                         String evidenceCode = evidence.getEvidenceCode();
                         // already have evidence code, just add pub
-                        if (evidenceCode.equals(strEvidence)) {
+                        if (evidenceCode.equals(newStrEvidence)) {  //was strEvidence
                             evidence.addPublicationRefId(pubRefId);
                             seenEvidenceCode = true;
                         }
                         storedAnnotationId = evidence.storedAnnotationId;
                     }
                     if (!seenEvidenceCode) {
-                        Evidence evidence = new Evidence(strEvidence, pubRefId);
-                        evidence.storedAnnotationId = storedAnnotationId;
-                        allEvidenceForAnnotation.add(evidence);
+                    	Evidence evidence = new Evidence(newStrEvidence, pubRefId); //was strEvidence
+                    	evidence.storedAnnotationId = storedAnnotationId;
+                    	allEvidenceForAnnotation.add(evidence);
                     }
                 }
             }
@@ -347,6 +332,11 @@ public class GoConverter extends BioFileConverter
         annotationIds.add(goAnnotationIdentifier);
     }
 
+    private void addWithType(String prefix, String clsName, String fieldName) {
+        withTypes.put(prefix, new WithType(clsName, fieldName));
+    }
+
+
     /**
      * Given the 'with' text from a gene_association entry parse for recognised identifier
      * types and create Gene or Protein items accordingly.
@@ -370,25 +360,25 @@ public class GoConverter extends BioFileConverter
                     String prefix = entry.substring(0, entry.indexOf(':'));
                     String value = entry.substring(entry.indexOf(':') + 1);
 
-                    if (WITH_TYPES.containsKey(prefix) && StringUtils.isNotEmpty(value)) {
-                        String className = WITH_TYPES.get(prefix);
+                    if (withTypes.containsKey(prefix) && StringUtils.isNotEmpty(value)) {
+                        WithType wt = withTypes.get(prefix);
                         String productIdentifier = null;
 
                         // if a UniProt protein it may be from a different organism
                         // also FlyBase may be from a different Drosophila species
                         if ("UniProt".equals(prefix)) {
-                            productIdentifier = newProduct(value, className,
+                            productIdentifier = newProduct(value, wt.clsName,
                                                         organism, dataSourceCode, false, null);
                         } else if ("FB".equals(prefix)) {
                             // if organism is D. melanogaster then create with gene
                             // TODO could still be wrong as the FBgn could be a different species
                             if ("7227".equals(organism.getAttribute("taxonId").getValue())) {
-                                productIdentifier = newProduct(value, className, organism,
+                                productIdentifier = newProduct(value, wt.clsName, organism,
                                         dataSourceCode, true, "primaryIdentifier");
                             }
                         } else {
-                            productIdentifier = newProduct(value, className, organism,
-                                    dataSourceCode, true, null);
+                            productIdentifier = newProduct(value, wt.clsName,
+                                                        organism, dataSourceCode, true, null);
                         }
                         if (productIdentifier != null) {
                             withProductList.add(productIdentifier);
@@ -415,11 +405,7 @@ public class GoConverter extends BioFileConverter
             clsName = "Gene";
             String taxonId = organism.getAttribute("taxonId").getValue();
             if (idField == null) {
-                Config config = configs.get(taxonId);
-                if (config == null) {
-                    config = defaultConfig;
-                }
-                idField = config.identifier;
+                idField = configs.get(taxonId).identifier;
                 if (idField == null) {
                     throw new RuntimeException("Could not find a identifier property for taxon: "
                                                + taxonId + " check properties file: " + PROP_FILE);
@@ -544,13 +530,23 @@ public class GoConverter extends BioFileConverter
         return goTermIdentifier;
     }
 
-    private void storeEvidenceCode(String code) throws ObjectStoreException {
-        if (evidenceCodes.get(code) == null) {
+    private void storeEvidenceCode(String code, String annotType) throws ObjectStoreException {
+        /*if (evidenceCodes.get(code) == null) {
             Item item = createItem("GOEvidenceCode");
             item.setAttribute("code", code);
             evidenceCodes.put(code, item.getIdentifier());
             store(item);
-        }
+        }*/
+        
+    	String combinationcode = code+":"+annotType; 
+		if (evidenceCodes.get(combinationcode) == null) {
+			Item item = createItem("GOEvidenceCode");
+			item.setAttribute("code", code);
+			item.setAttribute("annotType", annotType);         
+			store(item);
+			evidenceCodes.put(combinationcode, item.getIdentifier()); 
+		}
+
     }
 
     private String getDataSourceName(String sourceCode) {
@@ -684,7 +680,7 @@ public class GoConverter extends BioFileConverter
      * Identify a GoTerm/geneProduct pair with qualifier
      * used to also use evidence code
      */
-    private class GoTermToGene
+    class GoTermToGene
     {
         private String productId;
         private String goId;
@@ -706,7 +702,6 @@ public class GoConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
-        @Override
         public boolean equals(Object o) {
             if (o instanceof GoTermToGene) {
                 GoTermToGene go = (GoTermToGene) o;
@@ -720,7 +715,6 @@ public class GoConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
-        @Override
         public int hashCode() {
             return ((3 * productId.hashCode())
                     + (5 * goId.hashCode())
@@ -730,7 +724,6 @@ public class GoConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
-        @Override
         public String toString() {
             StringBuffer toStringBuff = new StringBuffer();
 
@@ -746,9 +739,30 @@ public class GoConverter extends BioFileConverter
     }
 
     /**
+     * Class to hold information about a BioEntity item to create for a particular
+     * identifier prefix in the gene_association 'with' column'.
+     */
+    class WithType
+    {
+        String clsName;
+        String fieldName;
+
+        /**
+         * Constructor
+         *
+         * @param clsName   the classname
+         * @param fieldName name of field to set
+         */
+        WithType(String clsName, String fieldName) {
+            this.clsName = clsName;
+            this.fieldName = fieldName;
+        }
+    }
+
+    /**
      * Class to hold the config info for each taxonId.
      */
-    private class Config
+    class Config
     {
         protected String annotationType;
         protected String identifier;

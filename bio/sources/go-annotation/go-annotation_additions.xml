@@ -8,8 +8,12 @@
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>
+<class name="NotInSystematicSequenceOfS288C" is-interface="true">
+  <collection name="goAnnotation" referenced-type="GOAnnotation"/>
+</class>
 <class name="GOEvidenceCode" is-interface="true">
   <attribute name="code" type="java.lang.String" />
+  <attribute name="annotType" type="java.lang.String" />
 </class>
 <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 <class name="GOEvidence" is-interface="true">
