@@ -694,6 +694,74 @@ public class SgdConverter extends BioDBConverter {
 	
 	/**
 	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 * @throws Exception
+	 */
+		private void processProteins(Connection connection) throws SQLException,
+		ObjectStoreException, Exception {
+	
+			ResultSet res = PROCESSOR.getProteinResults(connection);
+			System.out.println("Processing Proteins...");
+			while (res.next()) {
+	
+				String featureNo = res.getString("feature_no");
+				String primaryIdentifier = res.getString("dbxref_id");
+				String secondaryIdentifier = res.getString("feature_name");
+				String symbol = res.getString("gene_name");
+				String residues = res.getString("residues");
+				String length = res.getString(6);
+				String molwt = res.getString("molecular_weight");
+				String pi = res.getString("pi");
+	
+				Item item = genes.get(featureNo);
+	
+				// ~~~ sequence ~~~
+				Item protein = createItem("Protein");
+				protein.setAttribute("primaryIdentifier", primaryIdentifier);
+				protein.setAttribute("secondaryIdentifier", secondaryIdentifier);
+				protein.setAttribute("length", length);
+				protein.setReference("organism", organism);
+	
+				if (symbol != null) {
+					String modSymbol = getCasedName(symbol);
+					protein.setAttribute("symbol", modSymbol);
+				}
+	
+				if (molwt != null) {
+					protein.setAttribute("molecularWeight", molwt);
+				}
+				if (pi != null) {
+					protein.setAttribute("pI", pi);
+				}
+	
+				Item seq = createItem("Sequence");
+				seq.setAttribute("residues", residues);
+				seq.setAttribute("length", length);
+	
+				try {
+					store(seq);
+				} catch (ObjectStoreException e) {
+					throw new ObjectStoreException(e);
+				}
+	
+				protein.setReference("sequence", seq.getIdentifier());
+				protein.addToCollection("genes", item.getIdentifier());
+	
+				try {
+					store(protein);
+				} catch (ObjectStoreException e) {
+					throw new ObjectStoreException(e);
+				}
+	
+			}
+			
+	
+		}
+
+	/**
+	 * 
 	 * @param name
 	 * @return
 	 * @throws Exception
@@ -800,74 +868,6 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 /**
- * 
- * @param connection
- * @throws SQLException
- * @throws ObjectStoreException
- * @throws Exception
- */
-	private void processProteins(Connection connection) throws SQLException,
-	ObjectStoreException, Exception {
-
-		ResultSet res = PROCESSOR.getProteinResults(connection);
-		System.out.println("Processing Proteins...");
-		while (res.next()) {
-
-			String featureNo = res.getString("feature_no");
-			String primaryIdentifier = res.getString("dbxref_id");
-			String secondaryIdentifier = res.getString("feature_name");
-			String symbol = res.getString("gene_name");
-			String residues = res.getString("residues");
-			String length = res.getString(6);
-			String molwt = res.getString("molecular_weight");
-			String pi = res.getString("pi");
-
-			Item item = genes.get(featureNo);
-
-			// ~~~ sequence ~~~
-			Item protein = createItem("Protein");
-			protein.setAttribute("primaryIdentifier", primaryIdentifier);
-			protein.setAttribute("secondaryIdentifier", secondaryIdentifier);
-			protein.setAttribute("length", length);
-			protein.setReference("organism", organism);
-
-			if (symbol != null) {
-				String modSymbol = getCasedName(symbol);
-				protein.setAttribute("symbol", modSymbol);
-			}
-
-			if (molwt != null) {
-				protein.setAttribute("molecularWeight", molwt);
-			}
-			if (pi != null) {
-				protein.setAttribute("pI", pi);
-			}
-
-			Item seq = createItem("Sequence");
-			seq.setAttribute("residues", residues);
-			seq.setAttribute("length", length);
-
-			try {
-				store(seq);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-
-			protein.setReference("sequence", seq.getIdentifier());
-			protein.addToCollection("genes", item.getIdentifier());
-
-			try {
-				store(protein);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-
-		}
-		
-
-	}
-	
-	/**
 	 * 
 	 * @param connection
 	 * @throws SQLException
