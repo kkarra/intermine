@@ -40,7 +40,7 @@
 
     <source name="panther" type="panther">
       <property name="src.data.dir" location="/Users/kkarra/share/intermine/data/yeast_orthologs/panther"/>
-      <property name="panther.organisms" value="4932"/>
+      <property name="panther.organisms" value="559292"/>
       <property name="panther.homologues" value="9606 7227 6239 10090 10116 7955"/>
     </source>
 
