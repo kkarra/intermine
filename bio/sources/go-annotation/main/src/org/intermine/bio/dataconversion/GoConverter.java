@@ -180,7 +180,6 @@ public class GoConverter extends BioFileConverter
         // Create resolvers
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
-            rslv = IdResolverService.getGoIdResolver("Go");
         }
 
         initialiseMapsForFile();
@@ -231,13 +230,6 @@ public class GoConverter extends BioFileConverter
             // type of gene product, we're not interested in at the moment
             // String type = array[11];
             String type = configs.get(taxonId).annotationType;
-
-            // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
-            // hack here to get just the UniProt ones.
-            if (("protein".equalsIgnoreCase(type) && !array[0].startsWith("UniProt"))
-                    || (!"protein".equalsIgnoreCase(type) && array[0].startsWith("UniProt"))) {
-                continue;
-            }
 
             // create unique key for go annotation
             GoTermToGene key = new GoTermToGene(productId, goId, qualifier);
@@ -561,22 +553,19 @@ public class GoConverter extends BioFileConverter
 
     private String newGoTerm(String identifier, String dataSource,
             String dataSourceCode) throws ObjectStoreException {
-
-        String goId = resolveTerm(identifier);
-
-        if (goId == null) {
+        if (identifier == null) {
             return null;
         }
 
-        String goTermIdentifier = goTerms.get(goId);
+        String goTermIdentifier = goTerms.get(identifier);
         if (goTermIdentifier == null) {
             Item item = createItem(termClassName);
-            item.setAttribute("identifier", goId);
+            item.setAttribute("identifier", identifier);
             item.addToCollection("dataSets", getDataset(dataSource, dataSourceCode));
             store(item);
 
             goTermIdentifier = item.getIdentifier();
-            goTerms.put(goId, goTermIdentifier);
+            goTerms.put(identifier, goTermIdentifier);
         }
         return goTermIdentifier;
     }
