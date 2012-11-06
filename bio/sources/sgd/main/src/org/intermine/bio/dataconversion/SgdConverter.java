@@ -221,7 +221,7 @@ public class SgdConverter extends BioDBConverter {
 					item.setAttribute("description", description);
 				}
 				if (StringUtils.isNotEmpty(headline)) {
-					item.setAttribute("headline", headline);
+					item.setAttribute("briefDescription", headline);
 				}
 				if (qualifier != null) {
 					item.setAttribute("qualifier", qualifier);

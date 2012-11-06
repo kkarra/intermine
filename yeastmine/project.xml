@@ -11,19 +11,16 @@
         <property name="dataSourceName" value="SGD"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
-
-    <source name="uniprot" type="uniprot">
+    <!-- <source name="uniprot" type="uniprot">
          <property name="uniprot.organisms" value="4932 559292"/>
          <property name="src.data.dir" location="/Users/kkarra/share/gomine/uniprot/current/split"/>
          <property name="createinterpro" value="true"/>
-    </source> 
-
+    </source> --> 
      <source name="spell-expression" type="spell-expression">
         <property name="source.db.name" value="yeast"/>
         <property name="dataSourceName" value="yeast"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.SpellExpressionConverter"/>
    </source>
-
   <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/Users/kkarra/share/intermine/data/yeast_orthologs/treefam"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
@@ -31,41 +28,43 @@
       <property name="treefam.organisms" value="4932"/> 
       <property name="treefam.homologues" value="7227 6239 7165 9606 10090 10116 7955"/>
    </source>
-
+   <source name="panther" type="panther">
+      <property name="src.data.dir" location="/Users/kkarra/share/intermine/data/yeast_orthologs/panther"/>
+	 <property name="panther.organisms" value="4932"/>   
+      <property name="panther.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>
+    <source name="homologene" type="homologene">
+      <property name="src.data.dir" location="/Users/kkarra/share/intermine/data/yeast_orthologs/homologene"/>
+      <property name="homologene.organisms" value="4932"/>   
+      <property name="homologene.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>
+    <source name="orthodb" type="orthodb">
+      <property name="src.data.dir" location="/Users/kkarra/share/intermine/data/yeast_orthologs/orthoDB"/>
+      <property name="orthodb.organisms" value="4932"/>   
+      <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/Users/kkarra/share/intermine/data/yeast_orthologs/ensembl_compara"/>
       <property name="ensemblcompara.organisms" value="4932"/>
       <property name="ensemblcompara.homologues" value="9606 7227 6239 10090 10116 7955"/>
     </source>
-
-    <source name="panther" type="panther">
-      <property name="src.data.dir" location="/Users/kkarra/share/intermine/data/yeast_orthologs/panther"/>
-      <property name="panther.organisms" value="559292"/>
-      <property name="panther.homologues" value="9606 7227 6239 10090 10116 7955"/>
-    </source>
-
     <source name="go" type="go">
       <property name="src.data.file" location="/Users/kkarra/share/intermine/data/gene_ontology_edit.obo"/>
     </source>
-
      <source name="go-slim" type="go-slim">
       <property name="src.data.file" location="/Users/kkarra/share/intermine/data/goslim_yeast.obo"/>
     </source>
-
-    <source name="go-annotation" type="go-annotation">
+     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/Users/kkarra/share/intermine/data/gene_ontology_edit.obo"/>
       <property name="src.data.dir" location="/Users/kkarra/share/intermine/data"/>
       <property name="src.data.dir.includes" value="ym_gene_association.sgd"/>
-    </source>
-   
+    </source> 
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
-    
      <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
-    
      <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>

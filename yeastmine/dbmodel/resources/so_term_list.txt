@@ -3,6 +3,7 @@ binding_site
 biological_region
 CDS
 centromere
+#point_centromere
 centromere_DNA_Element_I
 centromere_DNA_Element_II
 centromere_DNA_Element_III

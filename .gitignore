@@ -1,4 +1,7 @@
 bin/
+.project
+.metadata/
+*.index
 dist/
 client-dist/
 build/
