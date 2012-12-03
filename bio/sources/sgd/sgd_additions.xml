@@ -67,8 +67,8 @@
   <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
   <collection name="phenotypes" referenced-type="Phenotype" reverse-reference="genes"/>
-  <collection name="interactions" referenced-type="Interaction" reverse-reference="gene"/>
-  <!--<collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/> -->
+  <!-- <collection name="interactions" referenced-type="Interaction" reverse-reference="gene"/>  -->
+  <collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>
   <collection name="publicationAnnotations" referenced-type="PublicationAnnotation" reverse-reference="genes"/>
   <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
  </class>
@@ -77,46 +77,7 @@
   <reference name="xelementcombinatorialrepeat" referenced-type="XElementCombinatorialRepeat" reverse-reference="insertions"/>
  </class>
 
-<class name="Interaction" is-interface="true">
-	<attribute name="confidenceText" type="java.lang.String"/>
-	<attribute name="interactionType" type="java.lang.String"/>
-	<attribute name="experimentType" type="java.lang.String"/>
-	<attribute name="shortName" type="java.lang.String"/>
-	<attribute name="role" type="java.lang.String"/>
-	<attribute name="confidence" type="java.lang.Double"/>
-	<attribute name="name" type="java.lang.String"/>	
-	 <attribute name="annotationType" type="java.lang.String"/>
-	 <attribute name="modification" type="java.lang.String"/>
-	 <attribute name="phenotype" type="java.lang.String"/>
-	<reference name="gene" referenced-type="Gene" reverse-reference="interactions"/>
-	<reference name="type" referenced-type="InteractionTerm"/>
-	<reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
-	<collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
-	<collection name="dataSets" referenced-type="DataSet"/>
-	<collection name="interactingGenes" referenced-type="Gene"/>
-</class> 
-
-<class name="InteractionExperiment" is-interface="true">
-	<attribute name="name" type="java.lang.String"/>
-	<attribute name="hostOrganism" type="java.lang.String"/>
-	<attribute name="description" type="java.lang.String"/>
-	<reference name="publication" referenced-type="Publication"/>
-	<collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
-	<collection name="interactionDetectionMethod" referenced-type="InteractionTerm"/>
-	<collection name="comments" referenced-type="Comment"/>
-	<collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
-</class>
-
-<class name="InteractionRegion" extends="BioEntity" is-interface="true">
-	<attribute name="endStatus" type="java.lang.String"/>
-	<attribute name="startStatus" type="java.lang.String"/>
-	<reference name="interaction" referenced-type="Interaction" reverse-reference="interactingRegions"/>
-	<reference name="gene" referenced-type="Gene"/>
-	<reference name="ontologyTerm" referenced-type="OntologyTerm"/>
-	<reference name="location" referenced-type="Location"/>
-</class>
-
-<!-- <class name="Interaction" is-interface="true">
+ <class name="Interaction" is-interface="true">
 <reference name="gene1" referenced-type="Gene" reverse-reference="interactions"/>
 <reference name="gene2" referenced-type="Gene"/>
 <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
@@ -124,11 +85,16 @@
 
 <class name="InteractionDetail" is-interface="true">
 <attribute name="confidenceText" type="java.lang.String"/>
+<attribute name="confidence" type="java.lang.Double"/>
+<attribute name="role1" type="java.lang.String"/>
 <attribute name="role2" type="java.lang.String"/>
 <attribute name="type" type="java.lang.String"/>
-<attribute name="role1" type="java.lang.String"/>
 <attribute name="name" type="java.lang.String"/>
-<attribute name="confidence" type="java.lang.Double"/>
+<attribute name="shortName" type="java.lang.String"/>
+<attribute name="experimentType" type="java.lang.String"/>
+<attribute name="annotationType" type="java.lang.String"/>
+<attribute name="modification" type="java.lang.String"/>
+<attribute name="phenotype" type="java.lang.String"/>
 <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
 <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
 <reference name="relationshipType" referenced-type="InteractionTerm"/>
@@ -155,7 +121,7 @@
 <reference name="gene" referenced-type="Gene"/>
 <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
 <reference name="location" referenced-type="Location"/>
-</class> -->
+</class>
 
 <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
 

@@ -150,20 +150,50 @@ print $reply_to;
 print $subject;
 print $send_to;
 print "Content-type: text/plain\n\n"; # dbl NL for header/content separation
+
+my $email_buffer;
+$email_buffer .= $reply_to;
+$email_buffer .=  $subject;
+$email_buffer .=  $send_to;
+$email_buffer .=  "Content-type: text/plain\n\n"; # dbl NL for header/content separation
+
 if (exists $in_both{high}) {
-    print $long, $NL, $half, "In Both: Diff >= 10%", $NL, 
+    $email_buffer .= $long, $NL, $half, "In Both: Diff >= 10%", $NL, 
         join($NL, @{$in_both{high}}), $NL;
+    print "email: $email_buffer";
 }
 for (keys %only_in) {
-    print $long, $NL, $half, "Only in $_:", $NL,
+    $email_buffer .= $long, $NL, $half, "Only in $_:", $NL,
         join($NL, @{$only_in{$_}}), $NL;
+print "email: $email_buffer";
 }
 if (exists $in_both{low}) {
-    print '-' x 50, "In Both: Diff < 10%$NL", 
+    $email_buffer .= '-' x 50, "In Both: Diff < 10%$NL", 
         join($NL, @{$in_both{low}}), $NL;
+print "email: $email_buffer";
 }
 for (keys %failures_in) {
-    print $long, $half, "Present in $_, but failed to execute:", $NL, 
+    $email_buffer .=  $long, $half, "Present in $_, but failed to execute:", $NL, 
         join($NL, @{$failures_in{$_}}), $NL;
+print "email: $email_buffer";
 }
+#kk add from old script
+my $sendmail_pipe;
+if (open ($sendmail_pipe, '|-', $sendmail)) {
+    print $sendmail_pipe $email_buffer;
+    close $sendmail_pipe;
+    if (my $eValue = $?) {
+        print sprintf("Error executing '%s': exit-code: %d, signal: %d\n", 
+                $sendmail, $eValue >> 8, $eValue & 127);
+    }
+} else {
+    warn "Cannot open sendmail: $! - printing to STDOUT\n";
+    print $email_buffer;
+}
+my $email_file = '/tmp/compare_templates_' . time() . '.email';
+print $email_buffer;
+open (my $email_fh, '>', $email_file) or die "Cannot print result contents to file $!:\n$email_buffer";
+print $email_fh $email_buffer;
+close $email_fh or die "Could not close $email_file, $!";
+
 exit()

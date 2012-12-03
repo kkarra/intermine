@@ -19,7 +19,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils; //import org.biojava.bio.program.homologene.OrthoPairSet.Iterator;
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils; 
+//import org.biojava.bio.program.homologene.OrthoPairSet.Iterator;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -43,6 +45,7 @@ public class SgdConverter extends BioDBConverter {
 	private Map<String, String> plasmids = new HashMap();
 	private Map<String, String> sequences = new HashMap();
 	private Map<String, Item> interactions = new HashMap();
+	private Map<MultiKey, Item> interactionsnew = new HashMap<MultiKey, Item>();
 	private Map<String, String> literatureTopics = new HashMap();
 	private Map<String, Item> genes = new HashMap();
 	private Map<String, Item> genesName = new HashMap();
@@ -50,6 +53,7 @@ public class SgdConverter extends BioDBConverter {
 	private Map<String, String> synonyms = new HashMap();
 	private Map<String, Item> publications = new HashMap();
 	private Map<String, Item> interactiontype = new HashMap();
+	private Map<String, Item> interactiondetail = new HashMap();
 	private Map<String, Item> experimenttype = new HashMap();
 	private Map<String, Item> interactiondetectionmethods = new HashMap();
 	private Map<String, Item> pathways = new HashMap();
@@ -106,7 +110,7 @@ public class SgdConverter extends BioDBConverter {
 		
 		processAllPubs(connection);             //get all publications and their topics loaded								
 		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics												 
-		
+	
 		processPhenotypes(connection);
 		processPubsForPhenotypes(connection);
 		
@@ -119,6 +123,7 @@ public class SgdConverter extends BioDBConverter {
 		processInteractions(connection);
 		storeInteractionTypes();
 		storeInteractionExperiments();
+		//storeInteractionDetails();
 		storeInteractions();
 		
 		storePublications();
@@ -994,6 +999,22 @@ public class SgdConverter extends BioDBConverter {
 	 * @throws ObjectStoreException
 	 */
 
+	private void storeInteractionDetails() throws ObjectStoreException {
+		for (Item det : interactiondetail.values()) {
+			try {
+				store(det);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @throws ObjectStoreException
+	 */
+
 	private void storePublications() throws ObjectStoreException {
 		for (Item pub : publications.values()) {
 			try {
@@ -1296,48 +1317,6 @@ public class SgdConverter extends BioDBConverter {
 	 * } }
 	 */
 
-	private void processInteractionsRetired(Connection connection)
-	throws SQLException, ObjectStoreException {
-
-		ResultSet res = PROCESSOR.getInteractionResults(connection);
-		System.out.println("Processing Interactions...");
-		while (res.next()) {
-
-			String geneFeatureName = res.getString("feature_a");
-
-			Item gene = genesName.get(geneFeatureName);
-
-			String interactionNo = res.getString("interaction_no");
-			String referenceNo = res.getString("reference_no");
-			String interactionType = res.getString("interaction_type");
-			String experimentType = res.getString("experiment_type");
-			String annotationType = res.getString("annotation_type");
-
-			String interactingGeneFeatureName = res.getString("feature_b");
-			String interactingGeneName = res.getString("gene_b");
-			String description = res.getString("headline");
-			String action = res.getString("action");
-			String source = res.getString("source");
-			String phenotype = res.getString("phenotype");
-			String citation = res.getString("citation");
-			String pubmed = res.getString("pubmed");
-			String title = res.getString("title");
-			String volume = res.getString("volume");
-			String page = res.getString("page");
-			String year = res.getString("year");
-			String issue = res.getString("issue");
-			String abbreviation = res.getString("abbreviation");
-
-			String interactionRefId = getInteraction(interactionNo,
-					referenceNo, interactionType, experimentType,
-					annotationType, interactingGeneFeatureName,
-					interactingGeneName, description, action, source,
-					phenotype, citation, gene, pubmed, title, volume, page,
-					year, issue, abbreviation);
-
-		}
-	}
-	
 	
 	/**
 	 * 
@@ -1384,7 +1363,7 @@ public class SgdConverter extends BioDBConverter {
 			String firstAuthor = res.getString("first_author");
 			String dbxrefid = res.getString("dbxref_id");
 			
-			String interactionRefId = getInteractionNew(interactionNo,
+			String interactionRefId = getInteraction1_1(interactionNo,
 					referenceNo, interactionType, experimentType,
 					annotationType, modification, interactingGene, action, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
@@ -1850,10 +1829,175 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 	
-	
-	
+/**
+ * 
+ * @param interactionNo
+ * @param referenceNo
+ * @param interactionType
+ * @param experimentType
+ * @param annotationType
+ * @param modification
+ * @param interactingGene
+ * @param action
+ * @param source
+ * @param phenotype
+ * @param citation
+ * @param gene
+ * @param pubMedId
+ * @param title
+ * @param volume
+ * @param page
+ * @param year
+ * @param issue
+ * @param journal
+ * @param dsetIdentifier
+ * @param firstAuthor
+ * @param dbxrefid
+ * @return
+ * @throws ObjectStoreException
+ */
+	private String getInteraction1_1(String interactionNo, String referenceNo,
+			String interactionType, String experimentType,
+			String annotationType, String modification, Item interactingGene, String action,
+			String source, String phenotype, String citation, Item gene,
+			String pubMedId, String title, String volume, String page,
+			String year, String issue, String journal, String dsetIdentifier, String firstAuthor, String dbxrefid)
+	throws ObjectStoreException {
 
-	private String getInteractionNew(String interactionNo, String referenceNo,
+		Item item = getInteractionItem(gene.getIdentifier(), interactingGene.getIdentifier());	
+		Item detail = createItem("InteractionDetail");		   
+		
+		detail.setAttribute("type", interactionType);		
+		detail.setAttribute("annotationType", annotationType);
+		detail.setAttribute("experimentType", experimentType);
+		if (modification != null) detail.setAttribute("modification", modification);
+		if (phenotype != null) detail.setAttribute("phenotype", phenotype);
+		detail.setAttribute("role1", action);
+		detail.addToCollection("allInteractors", interactingGene.getIdentifier());
+		//detail.addToCollection("interactingGenes", interactingGene.getIdentifier());
+		detail.addToCollection("dataSets", dsetIdentifier);		
+		
+		Item storedInteractionType = interactiontype.get(interactionType);
+		if (storedInteractionType != null) {
+			detail.setReference("relationshipType", storedInteractionType.getIdentifier());
+		} else {
+			storedInteractionType = createItem("InteractionTerm");
+			if (StringUtils.isNotEmpty(interactionType)) {
+				storedInteractionType.setAttribute("name", interactionType);
+			}
+			detail.setReference("relationshipType", storedInteractionType.getIdentifier());
+			interactiontype.put(interactionType, storedInteractionType);
+		}
+		
+		String unqName = firstAuthor+"-"+pubMedId;
+			
+		//add publication as experiment type
+		Item storedExperimentType = experimenttype.get(unqName);		
+		if(storedExperimentType == null) {			
+			storedExperimentType = createItem("InteractionExperiment");
+			storedExperimentType.setAttribute("name", unqName);	
+			experimenttype.put(unqName, storedExperimentType);
+		}
+					
+		//add publication as reference on experiment
+		Item storedRef = publications.get(referenceNo);
+
+		if (storedRef != null) {
+			storedExperimentType.setReference("publication", storedRef.getIdentifier());
+		} else {
+
+			Item pub = createItem("Publication");
+
+			if (StringUtils.isNotEmpty(pubMedId)) {
+				pub.setAttribute("pubMedId", pubMedId);
+			}
+			if (StringUtils.isNotEmpty(dbxrefid)) {
+				pub.setAttribute("sgdDbXrefId", dbxrefid);
+			}
+			if (StringUtils.isNotEmpty(title)) {
+				pub.setAttribute("title", title);
+			}
+			if (StringUtils.isNotEmpty(citation)) {
+				pub.setAttribute("citation", citation);
+			}
+			if (StringUtils.isNotEmpty(journal)) {
+				pub.setAttribute("journal", journal);
+			}
+			if (StringUtils.isNotEmpty(volume)) {
+				pub.setAttribute("volume", volume);
+			}
+			if (StringUtils.isNotEmpty(page)) {
+				pub.setAttribute("pages", page);
+			}
+			if (StringUtils.isNotEmpty(year)) {
+				pub.setAttribute("year", year);
+			}
+			if (StringUtils.isNotEmpty(issue)) {
+				pub.setAttribute("issue", issue);
+			}
+			publications.put(referenceNo, pub);
+			storedExperimentType.setReference("publication", pub.getIdentifier());
+		}
+		
+		detail.setReference("experiment", storedExperimentType.getIdentifier());	
+		detail.setReference("interaction", item);
+		//interactiondetail.put(detail.getIdentifier(), detail);	
+		
+	    try {
+			store(detail);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}
+		
+		interactions.put(item.getIdentifier(), item);	
+		String refId = item.getIdentifier();
+		return refId;
+		
+
+	}
+	
+    private Item getInteractionItem(String refId, String gene2RefId) throws ObjectStoreException {
+        MultiKey key = new MultiKey(refId, gene2RefId);
+        Item interaction = interactionsnew.get(key);
+        if (interaction == null) {
+            interaction = createItem("Interaction");
+            interaction.setReference("gene1", refId);
+            interaction.setReference("gene2", gene2RefId);
+            //interactionsnew.put(key, interaction);
+            //store(interaction);
+        }
+        return interaction;
+    }
+
+	
+/**
+ * 
+ * @param interactionNo
+ * @param referenceNo
+ * @param interactionType
+ * @param experimentType
+ * @param annotationType
+ * @param modification
+ * @param interactingGene
+ * @param action
+ * @param source
+ * @param phenotype
+ * @param citation
+ * @param gene
+ * @param pubMedId
+ * @param title
+ * @param volume
+ * @param page
+ * @param year
+ * @param issue
+ * @param journal
+ * @param dsetIdentifier
+ * @param firstAuthor
+ * @param dbxrefid
+ * @return
+ * @throws ObjectStoreException
+ */
+	private String getInteraction(String interactionNo, String referenceNo,
 			String interactionType, String experimentType,
 			String annotationType, String modification, Item interactingGene, String action,
 			String source, String phenotype, String citation, Item gene,
@@ -1893,18 +2037,7 @@ public class SgdConverter extends BioDBConverter {
 			storedExperimentType = createItem("InteractionExperiment");
 			storedExperimentType.setAttribute("name", unqName);	
 			experimenttype.put(unqName, storedExperimentType);
-		}
-			
-		//add detection method
-		/*Item detmethod = interactiondetectionmethods.get(experimentType);
-		if(detmethod == null){
-			detmethod = createItem("InteractionTerm");
-			detmethod.setAttribute("name", experimentType);
-			interactiondetectionmethods.put(experimentType, detmethod);
-		}*/
-		
-		//storedExperimentType.setReference("interactionDetectionMethod", detmethod.getIdentifier());
-
+		}		
 				
 		//add publication as reference on experiment
 		Item storedRef = publications.get(referenceNo);
@@ -1955,118 +2088,6 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 	
-	
-	
-	/**
-	 * 
-	 * @param interactionNo
-	 * @param referenceNo
-	 * @param interactionType
-	 * @param experimentType
-	 * @param annotationType
-	 * @param interactingGeneFeatureName
-	 * @param interactingGeneName
-	 * @param description
-	 * @param action
-	 * @param source
-	 * @param phenotype
-	 * @param citation
-	 * @param gene
-	 * @param pubMedId
-	 * @param title
-	 * @param volume
-	 * @param page
-	 * @param year
-	 * @param issue
-	 * @param journal
-	 * @return
-	 * @throws ObjectStoreException
-	 */
-
-	private String getInteraction(String interactionNo, String referenceNo,
-			String interactionType, String experimentType,
-			String annotationType, String interactingGeneFeatureName,
-			String interactingGeneName, String description, String action,
-			String source, String phenotype, String citation, Item gene,
-			String pubMedId, String title, String volume, String page,
-			String year, String issue, String journal)
-	throws ObjectStoreException {
-
-		Item item = createItem("Interaction");
-		item.setAttribute("interactionType", interactionType);
-		item.setAttribute("experimentType", experimentType);
-		item.setAttribute("annotationType", annotationType);
-		item.setAttribute("interactingGeneFeatureName",
-				interactingGeneFeatureName);
-		if (interactingGeneName != null)
-			item.setAttribute("interactingGeneName", interactingGeneName);
-		if (description != null)
-			item.setAttribute("description", description);
-		item.setAttribute("interactingGeneAction", action);
-		item.setAttribute("source", source);
-		if (phenotype != null)
-			item.setAttribute("phenotype", phenotype);
-		item.addToCollection("genes", gene.getIdentifier());
-
-		// this is causing problems in merging objects with go pubmedIds..both
-		// become the same source sgd...is that why?
-		Item storedRef = publications.get(referenceNo);
-
-		if (storedRef != null) {
-			item.setReference("publication", storedRef.getIdentifier());
-		} else {
-
-			Item pub = createItem("Publication");
-
-			if (StringUtils.isNotEmpty(pubMedId)) {
-				pub.setAttribute("pubMedId", pubMedId);
-			}
-			if (StringUtils.isNotEmpty(title)) {
-				pub.setAttribute("title", title);
-			}
-			if (StringUtils.isNotEmpty(citation)) {
-				pub.setAttribute("citation", citation);
-			}
-			if (StringUtils.isNotEmpty(journal)) {
-				pub.setAttribute("journal", journal);
-			}
-			if (StringUtils.isNotEmpty(volume)) {
-				pub.setAttribute("volume", volume);
-			}
-			if (StringUtils.isNotEmpty(page)) {
-				pub.setAttribute("pages", page);
-			}
-			if (StringUtils.isNotEmpty(year)) {
-				pub.setAttribute("year", year);
-			}
-			if (StringUtils.isNotEmpty(issue)) {
-				pub.setAttribute("issue", issue);
-			}
-			publications.put(referenceNo, pub);
-
-			item.setReference("publication", pub.getIdentifier());
-
-			// try {
-			// store(pub);
-			// } catch (ObjectStoreException e) {
-			// throw new ObjectStoreException(e);
-			// }
-
-		}
-
-		// item.setAttribute("pubMedId", pubMedId);
-
-		try {
-			store(item);
-		} catch (ObjectStoreException e) {
-			throw new ObjectStoreException(e);
-		}
-
-		String refId = item.getIdentifier();
-
-		return refId;
-
-	}
 
 	private String getLiteratureTopic(String topic) throws ObjectStoreException {
 		String refId = literatureTopics.get(topic);

@@ -2,6 +2,7 @@
 <classes>
 <class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
   <attribute name="annotationExtension" type="java.lang.String"/>
+  <attribute name="annotationType" type="java.lang.String" />
   <collection name="evidence" referenced-type="GOEvidence"/>
 </class>
 <class name="Gene" is-interface="true">
@@ -12,7 +13,6 @@
 </class>
 <class name="GOEvidenceCode" is-interface="true">
   <attribute name="code" type="java.lang.String" />
-  <attribute name="annotType" type="java.lang.String" />
 </class>
 <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 <class name="GOEvidence" is-interface="true">
