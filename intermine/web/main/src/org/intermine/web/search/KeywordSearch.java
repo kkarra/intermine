@@ -915,8 +915,7 @@ public final class KeywordSearch
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
     private static Map<String, String> attributePrefixes = null;
-    
-    //cb2abf5... awful hack to get lists working correctly on keyword search results page
+
     private KeywordSearch() {
         //don't
     }
@@ -1425,7 +1424,6 @@ public final class KeywordSearch
                 Document doc = browseHit.getStoredFields();
                 if (doc != null) {
                     objectIds.add(Integer.valueOf(doc.getFieldable("id").stringValue()));
-                    LOG.error("doc is NOT null for browseHit " + Integer.valueOf(doc.getFieldable("id").stringValue()));
                 } else {
                     LOG.error("doc is null for browseHit " + browseHit);
                 }
@@ -1448,20 +1446,6 @@ public final class KeywordSearch
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
             Map<String, String> facetValues, List<Integer> ids) {
-        return runBrowseSearch(searchString, offset, facetValues, ids, true);
-    }
-    
-    /**
-     * perform a keyword search using bobo-browse for faceting and pagination
-     * @param searchString string to search for
-     * @param offset display offset
-     * @param facetValues map of 'facet field name' to 'value to restrict field to' (optional)
-     * @param ids ids to research the search to (for search in list)
-     * @param pagination if TRUE only return 100
-     * @return bobo browse result or null if failed
-     */
-    public static BrowseResult runBrowseSearch(String searchString, int offset,
-            Map<String, String> facetValues, List<Integer> ids, boolean pagination) {
         BrowseResult result = null;
         if (index == null) {
             return result;
@@ -1510,13 +1494,7 @@ public final class KeywordSearch
 
             // pagination
             browseRequest.setOffset(offset);
-            if (pagination) {
-                // used on keywordsearch results page
-                browseRequest.setCount(PER_PAGE);
-            } else {
-                // hack when creating lists from results
-                browseRequest.setCount(10000);
-            }
+            browseRequest.setCount(PER_PAGE);
 
             // add faceting selections
             for (Entry<String, String> facetValue : facetValues.entrySet()) {
