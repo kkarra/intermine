@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +30,13 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.search.KeywordSearch;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.browseengine.bobo.api.BrowseHit;
+import com.browseengine.bobo.api.BrowseResult;
 
 /**
  * Saves selected items with InterMine ids and a Type in a new bag or combines
@@ -49,15 +59,28 @@ public class SaveFromIdsToBagAction extends InterMineAction
 
         // where the request comes from, e.g. /experiment.do?...
         String source = (String) request.getParameter("source");
-
+        Set<Integer> idSet = new LinkedHashSet<Integer>();
+        
         try {
             String type = (String) request.getParameter("type");
-
-            String[] idArray = request.getParameter("ids").split(","); // ids are comma delimited
-
-            Set<Integer> idSet = new LinkedHashSet<Integer>();
-            for (String id : idArray) {
-                idSet.add(Integer.valueOf(id.trim()));
+            String allChecked = (String) request.getParameter("allChecked");
+            if ("true".equals(allChecked)) {
+                String searchTerm = (String) request.getParameter("searchTerm");
+                JSONObject jsonRequest = new JSONObject(request.getParameter("jsonFacets"));                
+                Map<String, String> facetMap = jsonToJava(jsonRequest);
+                int offset = 0;
+                boolean pagination = false;
+                BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetMap, 
+                        new ArrayList<Integer>(), pagination);
+                if (result != null) {
+                    BrowseHit[] browseHits = result.getHits();
+                    idSet = KeywordSearch.getObjectIds(browseHits);
+                }
+            } else {
+                String[] idArray = request.getParameter("ids").split(","); 
+                for (String id : idArray) {
+                    idSet.add(Integer.valueOf(id.trim()));
+                }   
             }
 
             String bagName = request.getParameter("newBagName");
@@ -99,5 +122,17 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 return mapping.findForward("begin");
             }
         }
+    }
+    
+    private Map<String, String> jsonToJava(JSONObject json) throws JSONException {
+        JSONArray ja = json.getJSONArray("facets");
+        Map<String, String> facets = new HashMap<String, String>();
+        for (int i = 0; i < ja.length(); ++i) {
+            JSONObject facet = ja.getJSONObject(i);
+            String name = facet.getString("facetName");
+            String value = facet.getString("facetValue");
+            facets.put(name, value);
+        }
+        return facets;
     }
 }

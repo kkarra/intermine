@@ -25,6 +25,7 @@
          <property name="src.data.dir" location="/data/intermine/uniprot/current/split"/>
          <property name="createinterpro" value="true"/>
     </source> --> 
+
      <source name="spell-expression" type="spell-expression">
         <property name="source.db.name" value="yeast"/>
         <property name="dataSourceName" value="yeast"/>
@@ -58,14 +59,14 @@
       <property name="ensemblcompara.homologues" value="9606 7227 6239 10090 10116 7955"/>
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="/data/intermine/go/gene_ontology_edit.obo"/>
+      <property name="src.data.file" location="/share/intermine/go/gene_ontology_edit.obo"/>
     </source>
      <source name="go-slim" type="go-slim">
-      <property name="src.data.file" location="/data/intermine/go/goslim_yeast.obo"/>
+      <property name="src.data.file" location="/share/intermine/go/goslim_yeast.obo"/>
     </source>
      <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/data/intermine/go/gene_ontology_edit.obo"/>
-      <property name="src.data.dir" location="/data/intermine/go"/>
+      <property name="ontologyfile" location="/share/intermine/go/gene_ontology_edit.obo"/>
+      <property name="src.data.dir" location="/share/intermine/go"/>
       <property name="src.data.dir.includes" value="ym_gene_association.sgd"/>
     </source> 
     <source name="update-publications" type="update-publications">
@@ -95,4 +96,3 @@
   </post-processing>
 
 </project>
-
