@@ -14,6 +14,7 @@ executeLog*
 *.pyc
 *.class
 *.svn
+/yeastmine/admin/buildscripts
 
 # /intermine/objectstore/main/
 /intermine/objectstore/main/src.png

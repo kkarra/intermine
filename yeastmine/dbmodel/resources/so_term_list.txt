@@ -23,6 +23,7 @@ plasmid
 plus_1_translational_frameshift
 protein_coding_gene
 pseudogene
+regulatory_region
 repeat_region
 retrotransposon
 SAGE_tag

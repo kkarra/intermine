@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<!-- add any <class> elements here -->
+
+ <class name="Gene" is-interface="true">
+     <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/> 
+ </class>
+
+<class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
+   <attribute name="evidenceMethod" type="java.lang.String"/>
+   <attribute name="evidenceId" type="java.lang.String"/>
+   <attribute name="experimentCondition" type="java.lang.String"/>
+   <attribute name="regulationDirection" type="java.lang.String"/>
+    <attribute name="datasource" type="java.lang.String"/>
+   <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
+</class>
+
+ <class name="Region" extends="SequenceFeature" is-interface="true"/>
+
+<class name="BindingSite" extends="Region" is-interface="true">
+   <reference name="regulator" referenced-type="Gene"/>
+</class>
+
+<class name="TFBindingSite" extends="RegulatoryRegion" is-interface="true">
+  <attribute name="type" type="java.lang.String"/>
+  <!-- <reference name="motif" referenced-type="Motif" reverse-reference="predictedBindingSites"/> -->
+</class>
+
+
+</classes>

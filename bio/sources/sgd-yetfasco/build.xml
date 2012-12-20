@@ -1,0 +1,5 @@
+<project name="sgd-yetfasco" default="default" basedir=".">
+  <description>build, test, package sgd-yetfasco</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
