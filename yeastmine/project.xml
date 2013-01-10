@@ -12,11 +12,11 @@
         <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
 
-   <source name="sgd-yetfasco" type="sgd-yetfasco">
+   <!-- <source name="sgd-yetfasco" type="sgd-yetfasco">
      <property name="src.data.dir" location="/data/intermine/regulation"/>
     </source>
 
-     <!-- <source name="sgd-gff" type="sgd-gff">
+     <source name="sgd-gff" type="sgd-gff">
       <property name="gff3.taxonId" value="4932"/>
       <property name="gff3.dataSourceName" value="MacIsaac et al. (2006), PMID: 16522208"/>
       <property name="gff3.seqClsName" value="Chromosome"/>

@@ -120,10 +120,10 @@ public class SgdConverter extends BioDBConverter {
 		processPathways(connection);
 		storePathways();
 				
-		/*processInteractions(connection);
+		processInteractions(connection);
 		storeInteractionTypes();
 		storeInteractionExperiments();
-		storeInteractions();*/
+		storeInteractions();
 		
 		storePublications();
 			
