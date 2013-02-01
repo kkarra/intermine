@@ -239,7 +239,8 @@ public class HomologeneConverter extends BioFileConverter
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_GENEID_TYPE;
+            //identifierType = DEFAULT_GENEID_TYPE;
+        	identifierType =  DEFAULT_IDENTIFIER_TYPE;
         }
 
         String resolvedGenePid = resolveGene(taxonId, symbol);
@@ -251,8 +252,9 @@ public class HomologeneConverter extends BioFileConverter
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item item = createItem("Gene");
-            item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-            item.setAttribute(identifierType, symbol);
+            //item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            //item.setAttribute(identifierType, symbol);
+            item.setAttribute(identifierType, resolvedGenePid);
             item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
             identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);

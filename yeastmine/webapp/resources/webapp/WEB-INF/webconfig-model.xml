@@ -430,24 +430,29 @@
   
   <class className="org.intermine.model.bio.Interaction">
     <fields>
-      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-      <fieldconfig fieldExpr="gene.secondaryIdentifier"/>
-      <fieldconfig fieldExpr="annotationType"/>  
-       <fieldconfig fieldExpr="phenotype"/>    
-        <fieldconfig fieldExpr="role"/>       
+      <fieldconfig fieldExpr="gene1.primaryIdentifier"/>
+      <fieldconfig fieldExpr="gene1.secondaryIdentifier"/> 
+       <fieldconfig fieldExpr="gene2.primaryIdentifier"/>
+      <fieldconfig fieldExpr="gene2.secondaryIdentifier"/>      
     </fields>
   </class>
   
-  <class className="org.intermine.model.bio.InteractionExperiment">
+ <class className="org.intermine.model.bio.InteractionDetail">
+ 	    <fields>
+ 	       <fieldconfig fieldExpr="annotationType"/>  
+ 	       <fieldconfig fieldExpr="experimentType"/> 
+           <fieldconfig fieldExpr="phenotype"/>    
+	    </fields>
+</class>
+	
+ <class className="org.intermine.model.bio.InteractionExperiment">
  	    <fields>
  	      <fieldconfig fieldExpr="name"/>
- 	      <fieldconfig fieldExpr="description"/>
-	    </fields>
-	  </class>
+	    </fields>    
+</class>
 	  
-	  <class className="org.intermine.model.bio.InteractionTerm">
+<class className="org.intermine.model.bio.InteractionTerm">
 	    <fields>
-	      <fieldconfig fieldExpr="identifier"/>
 	      <fieldconfig fieldExpr="name"/>
  	    </fields>
 </class>

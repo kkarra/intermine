@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+
+<class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
+   <attribute name="name" type="java.lang.String"/>
+   <attribute name="factorStructuralClass" type="java.lang.String"/>
+   <attribute name="factorStructuralFamily" type="java.lang.String"/>
+   <attribute name="motifEvidence" type="java.lang.String"/>
+   <attribute name="pvalue" type="java.lang.String"/>
+   <attribute name="qvalue" type="java.lang.String"/>
+   <attribute name="motifSequence" type="java.lang.String"/>
+</class>
+
+<class name="Match" extends="TFBindingSite RegulatoryRegion" is-interface="true">
+	<attribute name="type" type="java.lang.String"/>
+</class>
+
+</classes>
+

@@ -12,29 +12,32 @@
         <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
 
-   <!-- <source name="sgd-yetfasco" type="sgd-yetfasco">
+    <source name="sgd-yetfasco" type="sgd-yetfasco">
      <property name="src.data.dir" location="/data/intermine/regulation"/>
+     <property name="bindingSitesFile" location="/data/intermine/bindingsites/predictedTFBSsummaryNumbers.txt"/> 
+     <property name="paragraphsFile" location="/data/intermine/paragraphs/Regulation_Summary_Paragraphs01-2013.txt"/>
     </source>
 
-     <source name="sgd-gff" type="sgd-gff">
+      <!-- <source name="sgd-yetfasco-gff" type="sgd-yetfasco-gff">
       <property name="gff3.taxonId" value="4932"/>
-      <property name="gff3.dataSourceName" value="MacIsaac et al. (2006), PMID: 16522208"/>
+      <property name="gff3.dataSourceName" value="YetFasco"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="MacIssac TF Binding Sites"/>
+      <property name="gff3.dataSetTitle" value="SGD_PMW predicted TF Binding Sites"/>
       <property name="src.data.dir" location="/data/intermine/gff"/>
       </source> 
 
-     <source name="uniprot" type="uniprot">
+      <source name="uniprot" type="uniprot">
          <property name="uniprot.organisms" value="4932 559292"/>
          <property name="src.data.dir" location="/data/intermine/uniprot/current/split"/>
          <property name="createinterpro" value="true"/>
-    </source> --> 
+    </source> -->  
 
      <source name="spell-expression" type="spell-expression">
         <property name="source.db.name" value="yeast"/>
         <property name="dataSourceName" value="yeast"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.SpellExpressionConverter"/>
-   </source>
+   </source> 
+
   <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/treefam"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
@@ -42,7 +45,7 @@
       <property name="treefam.organisms" value="4932"/> 
       <property name="treefam.homologues" value="7227 6239 7165 9606 10090 10116 7955"/>
    </source>
-   <source name="panther" type="panther">
+   <!-- <source name="panther" type="panther">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/panther"/>
 	 <property name="panther.organisms" value="4932"/>   
       <property name="panther.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
@@ -56,7 +59,7 @@
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/orthoDB"/>
       <property name="orthodb.organisms" value="4932"/>   
       <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source>
+    </source> -->
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/ensembl_compara"/>
       <property name="ensemblcompara.organisms" value="4932"/>

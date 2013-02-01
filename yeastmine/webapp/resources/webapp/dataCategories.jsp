@@ -147,6 +147,18 @@
  	    <td> &nbsp;</td>
  	  </tr>
   
+   <tr><td class="leftcol">
+	        <html:link action="/aspect?name=Regulation">
+ 	        <p> <img src="model/images/yeastract.tiff" /></p>
+ 	        	        <p> Regulation</p>
+ 	         </html:link></td>
+ 	    <td> <i>S. cerevisiae</i> </td>
+	    <td> Yeastract Regulation data of S. cerevisiae</td>
+ 	    <td> <a href="http://www.yeastract.com/" target="_new"> Regulation </a> Regulation Data Sets</td>
+ 	    <td> Dário Abdulrehman, Pedro T. Monteiro et al.  - <a href="http://nar.oxfordjournals.org/content/39/suppl_1/D136" target="_new">PubMed: 1234567</a></td>
+ 	    <td> &nbsp;</td>
+ 	  </tr>
+ 	  
 </table>
 
 

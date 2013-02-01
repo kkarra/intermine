@@ -60,6 +60,8 @@ public class KeywordSearchResult
     public KeywordSearchResult(WebConfig webconfig, InterMineObject object,
             Map<String, List<FieldDescriptor>> classKeys, ClassDescriptor classDescriptor,
             float score, Map<String, TemplateQuery> templates) {
+    	
+    	
         super();
 
         List<FieldConfig> fieldConfigList = FieldConfigHelper.getClassFieldConfigs(webconfig,

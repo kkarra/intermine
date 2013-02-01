@@ -48,7 +48,8 @@ public class OrthodbConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "OrthoDB";
 
     private static final String PROP_FILE = "orthodb_config.properties";
-    private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
+    //private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
+    private static final String DEFAULT_IDENTIFIER_TYPE = "symbol";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -280,6 +281,9 @@ public class OrthodbConverter extends BioFileConverter
     private String getGene(String geneId, String taxonId)
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
+        //if("4932".equals(taxonId)){
+        	// identifierType = "symbol";
+       // }
         if (StringUtils.isEmpty(identifierType)) {
             identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
@@ -323,7 +327,8 @@ public class OrthodbConverter extends BioFileConverter
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid); 
+            //gene.setAttribute(identifierType, resolvedGenePid);
 
             if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
                 if ("crossReferences".equals(identifierType)) {

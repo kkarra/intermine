@@ -2,31 +2,52 @@
 <!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
 
 <classes>
-<!-- add any <class> elements here -->
 
  <class name="Gene" is-interface="true">
-     <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/> 
+     <reference name="regulationSummary" referenced-type="RegulationSummary"/>
+     <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
+     <collection name="predictedBindingSites" referenced-type="PredictedBindingSites"/>
+     <reference name="experimentalBindingSites" referenced-type="ExperimentalBindingSites"/>
  </class>
-
+ 
+ <class name="RegulationSummary" is-interface="true">
+      <attribute name="summaryParagraph" type="java.lang.String"/>
+      <collection name="publications" referenced-type="Publication"/>
+ </class>
+ 
+ <!--  Domains when we have them will need to be stored on the Protein corresponding to Genes -->
 <class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
-   <attribute name="evidenceMethod" type="java.lang.String"/>
-   <attribute name="evidenceId" type="java.lang.String"/>
    <attribute name="experimentCondition" type="java.lang.String"/>
    <attribute name="regulationDirection" type="java.lang.String"/>
-    <attribute name="datasource" type="java.lang.String"/>
+   <attribute name="logo" type="java.lang.String"/>
+   <attribute name="datasource" type="java.lang.String"/>
    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
+   <reference name="regEvidence" referenced-type="RegulationEvidence"/>
 </class>
 
- <class name="Region" extends="SequenceFeature" is-interface="true"/>
-
-<class name="BindingSite" extends="Region" is-interface="true">
-   <reference name="regulator" referenced-type="Gene"/>
+<class name="RegulationEvidence" is-interface="true">
+   <attribute name="evidenceMethod" type="java.lang.String"/>
+   <attribute name="evidenceId" type="java.lang.String"/> 
+   <collection name="publications" referenced-type="Publication"/>
 </class>
 
-<class name="TFBindingSite" extends="RegulatoryRegion" is-interface="true">
-  <attribute name="type" type="java.lang.String"/>
-  <!-- <reference name="motif" referenced-type="Motif" reverse-reference="predictedBindingSites"/> -->
+<class name="PredictedBindingSites" is-interface="true">
+   <attribute name="pValue" type="java.lang.String"/>
+   <attribute name="numIntragenicSites" type="java.lang.String"/>
+   <attribute name="numIntergenicSites" type="java.lang.String"/>
 </class>
 
+<class name="ExperimentalBindingSites" is-interface="true">
+   <attribute name="count" type="java.lang.String"/>
+</class>
+
+<class name="TFBindingSite" extends="BindingSite RegulatoryRegion" is-interface="true">
+	<attribute name="type" type="java.lang.String"/>
+</class>
+
+
+<class name="BindingSite" extends="SequenceFeature" is-interface="true">
+   <reference name="factor" referenced-type="Gene"/>
+</class>
 
 </classes>
