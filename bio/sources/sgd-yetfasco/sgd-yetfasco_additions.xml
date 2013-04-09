@@ -4,8 +4,11 @@
 <classes>
 
  <class name="Gene" is-interface="true">
+      <attribute name="jasparClass" type="java.lang.String"/>
+      <attribute name="jasparFamily" type="java.lang.String"/>
      <reference name="regulationSummary" referenced-type="RegulationSummary"/>
      <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
+     <collection name="logos" referenced-type="Logo"/>
      <collection name="predictedBindingSites" referenced-type="PredictedBindingSites"/>
      <reference name="experimentalBindingSites" referenced-type="ExperimentalBindingSites"/>
  </class>
@@ -19,15 +22,21 @@
 <class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
    <attribute name="experimentCondition" type="java.lang.String"/>
    <attribute name="regulationDirection" type="java.lang.String"/>
-   <attribute name="logo" type="java.lang.String"/>
+   <attribute name="pvalue" type="java.lang.String"/>
+   <attribute name="FDR" type="java.lang.String"/>
    <attribute name="datasource" type="java.lang.String"/>
    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
    <reference name="regEvidence" referenced-type="RegulationEvidence"/>
 </class>
 
-<class name="RegulationEvidence" is-interface="true">
-   <attribute name="evidenceMethod" type="java.lang.String"/>
-   <attribute name="evidenceId" type="java.lang.String"/> 
+<class name="Logo" is-interface="true">
+<attribute name="fileName" type="java.lang.String"/>
+</class>
+
+<class name="RegulationEvidence" extends="OntologyAnnotation" is-interface="true">
+    <!-- <attribute name="evidenceMethod" type="java.lang.String"/>
+    <attribute name="evidenceId" type="java.lang.String"/>  
+    <reference name="ecoId" referenced-type="ECOTerm"/> -->
    <collection name="publications" referenced-type="Publication"/>
 </class>
 

@@ -239,8 +239,7 @@ public class HomologeneConverter extends BioFileConverter
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (StringUtils.isEmpty(identifierType)) {
-            //identifierType = DEFAULT_GENEID_TYPE;
-        	identifierType =  DEFAULT_IDENTIFIER_TYPE;
+            identifierType = DEFAULT_GENEID_TYPE;     	
         }
 
         String resolvedGenePid = resolveGene(taxonId, symbol);
@@ -248,13 +247,16 @@ public class HomologeneConverter extends BioFileConverter
         if (resolvedGenePid == null) {
             return null;
         }
-
+        if(resolvedGenePid.startsWith("SGD:")){		
+        	System.out.println("SGD ID.. " + resolvedGenePid);	
+        	String id =resolvedGenePid.substring(4);	
+        	resolvedGenePid = id;
+        }
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item item = createItem("Gene");
-            //item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-            //item.setAttribute(identifierType, symbol);
-            item.setAttribute(identifierType, resolvedGenePid);
+            item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            //item.setAttribute(identifierType, symbol);           
             item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
             identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);

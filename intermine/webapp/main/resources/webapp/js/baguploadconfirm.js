@@ -35,9 +35,9 @@ function checkIfAlreadyInTheBag() {
       // check if we have it
       if (isIdentifierInTheBag(identifier)) {
         // ...then select it
-        jQuery(this).click();
+        //jQuery(this).click();
         // ...and remove the controls
-        jQuery(this).parent().html("<p>Already in your list.</p>")
+        //jQuery(this).parent().html("<p>Already in your list.</p>")
       }
     });
 }

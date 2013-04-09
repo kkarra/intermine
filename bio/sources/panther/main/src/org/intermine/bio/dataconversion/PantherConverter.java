@@ -169,7 +169,11 @@ public class PantherConverter extends BioFileConverter
         if (resolvedGenePid == null) {
             return null;
         }
-
+        if(resolvedGenePid.startsWith("SGD:")){		
+        	System.out.println("SGD ID.. " + resolvedGenePid);	
+        	String id =resolvedGenePid.substring(4);	
+        	resolvedGenePid = id;
+        }
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item gene = createItem("Gene");

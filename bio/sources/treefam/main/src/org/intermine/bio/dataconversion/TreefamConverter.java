@@ -225,6 +225,11 @@ public class TreefamConverter extends BioFileConverter
         if (resolvedGenePid == null) {
             return null;
         }
+        if(resolvedGenePid.startsWith("SGD:")){		
+        	System.out.println("SGD ID.. " + resolvedGenePid);	
+        	String id =resolvedGenePid.substring(4);	
+        	resolvedGenePid = id;
+        }
         String refId = identifiersToGenes.get(resolvedGenePid);
         if (refId == null) {
             Item gene = createItem("Gene");
@@ -310,6 +315,7 @@ public class TreefamConverter extends BioFileConverter
                 geneField = configs[0];
                 identifierType = configs[1];
             } 
+            System.out.println("before setIdentifier .." + identifier + "  " + symbol + " " + geneField);
             identifier = setIdentifier(identifier, symbol, geneField);
             idsToGenes.put(id, new GeneHolder(identifier, symbol, identifierType, taxonId));
         }

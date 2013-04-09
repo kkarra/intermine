@@ -11,12 +11,19 @@
         <property name="dataSourceName" value="SGD"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
-
+    <!--<source name="sgd-domains" type="sgd-domains">
+     <property name="src.data.dir" location="/data/intermine/domains"/>
+    </source>-->
+    <source name="eco" type="eco">
+      <property name="src.data.file" location="/data/intermine/eco/eco.obo"/>
+    </source>
     <source name="sgd-yetfasco" type="sgd-yetfasco">
      <property name="src.data.dir" location="/data/intermine/regulation"/>
      <property name="bindingSitesFile" location="/data/intermine/bindingsites/predictedTFBSsummaryNumbers.txt"/> 
      <property name="paragraphsFile" location="/data/intermine/paragraphs/Regulation_Summary_Paragraphs01-2013.txt"/>
-    </source>
+     <property name="jasparFile" location="/data/intermine/jaspar_reg/TF_family_class.txt"/>
+     <property name="logosFile" location="/data/intermine/yetfasco_logos/file_names"/>
+    </source> 
 
       <!-- <source name="sgd-yetfasco-gff" type="sgd-yetfasco-gff">
       <property name="gff3.taxonId" value="4932"/>
@@ -45,7 +52,7 @@
       <property name="treefam.organisms" value="4932"/> 
       <property name="treefam.homologues" value="7227 6239 7165 9606 10090 10116 7955"/>
    </source>
-   <!-- <source name="panther" type="panther">
+   <source name="panther" type="panther">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/panther"/>
 	 <property name="panther.organisms" value="4932"/>   
       <property name="panther.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
@@ -55,11 +62,11 @@
       <property name="homologene.organisms" value="4932"/>   
       <property name="homologene.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
-    <source name="orthodb" type="orthodb">
+     <source name="orthodb" type="orthodb">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/orthoDB"/>
       <property name="orthodb.organisms" value="4932"/>   
       <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source> -->
+    </source>
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/ensembl_compara"/>
       <property name="ensemblcompara.organisms" value="4932"/>
@@ -75,6 +82,9 @@
       <property name="ontologyfile" location="/share/intermine/go/gene_ontology_edit.obo"/>
       <property name="src.data.dir" location="/share/intermine/go"/>
       <property name="src.data.dir.includes" value="ym_gene_association.sgd"/>
+    </source>
+    <source name="sgd-domains" type="sgd-domains">
+     <property name="src.data.dir" location="/data/intermine/domains"/>
     </source> 
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>

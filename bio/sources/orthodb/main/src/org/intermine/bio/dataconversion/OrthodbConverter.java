@@ -48,8 +48,7 @@ public class OrthodbConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "OrthoDB";
 
     private static final String PROP_FILE = "orthodb_config.properties";
-    //private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
-    private static final String DEFAULT_IDENTIFIER_TYPE = "symbol";
+    private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -323,13 +322,16 @@ public class OrthodbConverter extends BioFileConverter
             return null;
         }
 
+        if(resolvedGenePid.startsWith("SGD:")){		
+        	System.out.println("SGD ID.. " + resolvedGenePid);	
+        	String id =resolvedGenePid.substring(4);	
+        	resolvedGenePid = id;
+        }
         // Id resolver always resolve ids to pids.
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item gene = createItem("Gene");
             gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid); 
-            //gene.setAttribute(identifierType, resolvedGenePid);
-
             if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
                 if ("crossReferences".equals(identifierType)) {
                     gene.addToCollection(identifierType,
@@ -339,7 +341,6 @@ public class OrthodbConverter extends BioFileConverter
                     gene.setAttribute(identifierType, geneId);
                 }
             }
-
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
             identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);

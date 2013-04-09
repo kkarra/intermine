@@ -5,8 +5,6 @@
 
 <class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
    <attribute name="name" type="java.lang.String"/>
-   <attribute name="factorStructuralClass" type="java.lang.String"/>
-   <attribute name="factorStructuralFamily" type="java.lang.String"/>
    <attribute name="motifEvidence" type="java.lang.String"/>
    <attribute name="pvalue" type="java.lang.String"/>
    <attribute name="qvalue" type="java.lang.String"/>

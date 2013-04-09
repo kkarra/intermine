@@ -127,6 +127,20 @@
       <fieldconfig displayer="/model/sequenceShortDisplayerWithField.jsp" fieldExpr="length"></fieldconfig>
    </fields>
 </class>
+
+  <class className="org.intermine.model.bio.ProteinDomain">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+    <class className="org.intermine.model.bio.InterProDomain">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+  
 <class className="org.intermine.model.bio.GOAnnotation">
    <fields>
    	  <fieldconfig fieldExpr="subject.secondaryIdentifier"/>
@@ -385,25 +399,42 @@
 </class>  
   
   
-<class className="org.intermine.model.bio.Publication">
+<!-- <class className="org.intermine.model.bio.Publication">
 	<headerconfig>
-		<titles> <title mainTitles="firstAuthor|year" /> </titles>
+		<titles> <title mainTitles="title" /> </titles>
 	</headerconfig>
 	<inlinelist>
 		<table path="authors.name" showLinksToObjects="true" />
 	</inlinelist>
-
 	<fields>
 		<fieldconfig fieldExpr="pubMedId"></fieldconfig>
-		<fieldconfig sectionTitle="Citation" fieldExpr="citation"
-			sectionOnRight="true" openByDefault="true"></fieldconfig>
-		<fieldconfig sectionTitle="Title" fieldExpr="title"
-			sectionOnRight="true" openByDefault="true"></fieldconfig>
+		<fieldconfig sectionTitle="Citation" fieldExpr="citation" </fieldconfig>
+		<fieldconfig sectionTitle="Title" fieldExpr="title" </fieldconfig>
 		<fieldconfig fieldExpr="journal"></fieldconfig>
 	</fields>
-</class>
+</class> -->
 
-  
+  <class className="org.intermine.model.bio.Publication">
+    <headerconfig>
+  <titles>
+    <title mainTitles="title" />
+ </titles>
+    </headerconfig>
+    <inlinelist>
+      <table path="authors.name" showLinksToObjects="true" />
+    </inlinelist>
+    <fields>
+     <fieldconfig fieldExpr="pubMedId"/>
+      <fieldconfig fieldExpr="sgdDbXrefId"/>
+      <fieldconfig fieldExpr="citation"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="journal"/>
+      <fieldconfig fieldExpr="firstAuthor"/>
+      <fieldconfig fieldExpr="issue"/>
+      <fieldconfig fieldExpr="volume"/>
+      <fieldconfig fieldExpr="pages"/>  
+    </fields>
+  </class>
 <class className="org.intermine.model.bio.Sequence">
    <fields>
       <fieldconfig showInResults="false" sectionTitle="Residues" fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter" sectionOnRight="true" showInSummary="false" openByDefault="true" showInInlineCollection="false"></fieldconfig>
@@ -428,7 +459,7 @@
   </class>
 
   
-  <class className="org.intermine.model.bio.Interaction">
+ <class className="org.intermine.model.bio.Interaction">
     <fields>
       <fieldconfig fieldExpr="gene1.primaryIdentifier"/>
       <fieldconfig fieldExpr="gene1.secondaryIdentifier"/> 
@@ -455,13 +486,40 @@
 	    <fields>
 	      <fieldconfig fieldExpr="name"/>
  	    </fields>
-</class>
+</class> 
 
-  <class className="org.intermine.model.bio.OrthologueEvidence">
+  <!--  <class className="org.intermine.model.bio.Interaction">
     <fields>
-      <fieldconfig fieldExpr="evidenceCode.name"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+      <fieldconfig fieldExpr="gene.secondaryIdentifier"/>
+      <fieldconfig fieldExpr="annotationType"/>  
+       <fieldconfig fieldExpr="phenotype"/>    
+        <fieldconfig fieldExpr="role"/>       
     </fields>
   </class>
+  
+  <class className="org.intermine.model.bio.InteractionExperiment">
+ 	    <fields>
+ 	      <fieldconfig fieldExpr="name"/>
+ 	      <fieldconfig fieldExpr="description"/>
+	    </fields>
+	  </class>
+	  
+	  <class className="org.intermine.model.bio.InteractionTerm">
+	    <fields>
+	      <fieldconfig fieldExpr="identifier"/>
+	      <fieldconfig fieldExpr="name"/>
+ 	    </fields>
+ 	
+ 	  </class> -->
+
+<class className="org.intermine.model.bio.OrthologueEvidence">
+    <fields>
+      <fieldconfig fieldExpr="evidenceCode.name" />
+    </fields>
+  </class>
+
+  
 
   <class className="org.intermine.model.bio.Synonym">
     <fields>
@@ -676,7 +734,7 @@
  	     typeClass="org.intermine.model.bio.Gene"
  	     columnTitle="Interactions"/> -->
  	     
- 	    <!--   <bagtabledisplayer id="interactions" title="Interactions"
+ 	    <!--<bagtabledisplayer id="interactions" title="Interactions"
 	                         pathStrings="Gene.interactions.details.allInteractors"
 	                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
 	                         displayFields="primaryIdentifier, name"
@@ -690,12 +748,12 @@
 	                                interactions.details.allInteractors.symbol,
                                    interactions.details.experiment.name"/>  -->
  	     
- 	     <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
-	                         description="Counts of orthologues in other organisms for the genes in this list."
+ 	     <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
+	                         description="Shows the number of Genes in list with orthologue not the number of orthologues."                          
 	                         displayFields="name"
 	                         exportField="primaryIdentifier"
 	                         typeClass="Gene"
-	                         columnTitle="Orthologues"
+	                         columnTitle="Genes"
 	                         views="secondaryIdentifier, symbol, organism.shortName,
                                 homologues.homologue.primaryIdentifier,
 	                            homologues.homologue.symbol,
