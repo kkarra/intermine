@@ -128,10 +128,12 @@
               <td class="sorting">
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.description) > 60}">
-                    ${fn:substring(savedTemplate.value.description, 0, 60)}...
+                    <!--${fn:substring(savedTemplate.value.description, 0, 60)}... -->
+                    <c:out value="${savedTemplate.value.description}"/>
                   </c:when>
                   <c:otherwise>
-                    ${savedTemplate.value.description}
+                    <!--${savedTemplate.value.description}-->
+                    <c:out value="${savedTemplate.value.description}"/>
                   </c:otherwise>
                 </c:choose>
                 &nbsp;

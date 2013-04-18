@@ -62,7 +62,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -110,18 +110,20 @@ public class SgdConverter extends BioDBConverter {
 		processProteins(connection);
 
 		if(!TEST_LOCAL) {
+			
 			processAllPubs(connection);             //get all publications and their topics loaded								
 			processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics												 
-
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
-		}
-
-		storeGenes();
-
-		if(!TEST_LOCAL) {
-			
 			storePhenotypes();
+			
+		//}
+
+		//storeGenes();
+
+		//if(!TEST_LOCAL) {
+			
+			//storePhenotypes();
 
 			processPathways(connection);
 			storePathways();
@@ -133,6 +135,8 @@ public class SgdConverter extends BioDBConverter {
 
 			storePublications();
 		}
+		
+		storeGenes();
 
 	}
 
@@ -391,8 +395,7 @@ public class SgdConverter extends BioDBConverter {
 	private void processGeneLocations(Connection connection)
 			throws SQLException, ObjectStoreException, Exception {
 
-		ResultSet res = PROCESSOR
-				.getChromosomalFeatureLocationResults(connection);
+		ResultSet res = PROCESSOR.getChromosomalFeatureLocationResults(connection);
 		System.out.println("Processing GeneLocations...");
 		while (res.next()) {
 			String featureNo = res.getString("feature_no");
