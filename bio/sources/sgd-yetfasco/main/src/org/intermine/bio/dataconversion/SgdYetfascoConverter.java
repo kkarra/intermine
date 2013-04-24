@@ -90,9 +90,9 @@ public class SgdYetfascoConverter extends BioFileConverter
 		processParagraphsFile(new FileReader(paragraphsFile));
 		processJasparFile(new FileReader(jasparFile));
 		processLogosFile(new FileReader(logosFile));
-		processRegulationDataFile(reader);  //single file approach
-		//processConfirmedRegulationDataFile(new FileReader(confirmedFile));
-		//processHTPRegulationDataFile(reader);        
+		processConfirmedRegulationDataFile(new FileReader(confirmedFile)); //paul's file
+		//processRegulationDataFile(reader); //single file approach
+		processHTPRegulationDataFile(reader);  //maria's file      
 		storeGenes();       
 	}
 
@@ -113,8 +113,8 @@ public class SgdYetfascoConverter extends BioFileConverter
 		 * ECO ID  - 4
 		 * condition  - 5
 		 * direction of regulation  - 6
-		 *  p-value  - 7
-		 *  FDR  - 8
+		 * p-value  - 7
+		 * FDR  - 8
 		 * PMID  - 9
 		 *  source  - 10
 		 */   	 
