@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -118,11 +118,10 @@ public class KeywordSearchResultsController extends TilesAction
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
         Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
         Set<Integer> objectIds = new HashSet<Integer>();
-
         if (result != null) {
             totalHits = result.getNumHits();
             LOG.debug("Browse found " + result.getNumHits() + " hits");
-            BrowseHit[] browseHits = result.getHits();            
+            BrowseHit[] browseHits = result.getHits();
             objectIds = KeywordSearch.getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = KeywordSearch.getObjects(im, objectIds);
             Vector<KeywordSearchHit> searchHits = KeywordSearch.getSearchHits(browseHits, objMap);
@@ -144,14 +143,15 @@ public class KeywordSearchResultsController extends TilesAction
         request.setAttribute("searchTerm", searchTerm);
         request.setAttribute("searchBag", searchBag);
         request.setAttribute("searchFacetValues", facetValues);
-        // used for re-running the search in case of creating a list for ALL results
+
         request.setAttribute("jsonFacets", javaMapToJSON(facetValues));
         
         context.putAttribute("searchResults", request.getAttribute("searchResults"));
         context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
         context.putAttribute("searchBag", request.getAttribute("searchBag"));
         context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
-        context.putAttribute("jsonFacets", request.getAttribute("jsonFacets"));
+
+        context.putAttribute("jsonFacets", request.getAttribute("jsonFacets"));        
         
         // pagination
         context.putAttribute("searchOffset", new Integer(offset));

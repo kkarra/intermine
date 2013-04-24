@@ -1,7 +1,7 @@
 package org.intermine.web.search;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -916,6 +916,8 @@ public final class KeywordSearch
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
     private static Map<String, String> attributePrefixes = null;
+
+
     
     private KeywordSearch() {
         //don't
@@ -1460,7 +1462,7 @@ public final class KeywordSearch
      * @param offset display offset
      * @param facetValues map of 'facet field name' to 'value to restrict field to' (optional)
      * @param ids ids to research the search to (for search in list)
-     * @param pagination if TRUE only return 100
+     * @param if TRUE only return 100
      * @return bobo browse result or null if failed
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
@@ -1518,8 +1520,9 @@ public final class KeywordSearch
                 browseRequest.setCount(PER_PAGE);
             } else {
                 // hack when creating lists from results
-                browseRequest.setCount(10000);
+                browseRequest.setCount(50000);
             }
+            
             // add faceting selections
             for (Entry<String, String> facetValue : facetValues.entrySet()) {
                 if (facetValue != null) {

@@ -19,7 +19,8 @@
      <property name="bindingSitesFile" location="/data/intermine/bindingsites/predictedTFBSsummaryNumbers.txt"/> 
      <property name="paragraphsFile" location="/data/intermine/paragraphs/Regulation_Summary_Paragraphs01-2013.txt"/>
      <property name="jasparFile" location="/data/intermine/jaspar_reg/TF_family_class.txt"/>
-     <property name="logosFile" location="/data/intermine/yetfasco_logos/file_names"/>
+     <property name="logosFile" location="/data/intermine/yetfasco_logos/yetfasco_file_names"/>
+     <property name="confirmedFile" location="/data/intermine/regulation_exp/combined22042013.txt"/>
     </source> 
       <!-- <source name="sgd-yetfasco-gff" type="sgd-yetfasco-gff">
       <property name="gff3.taxonId" value="4932"/>

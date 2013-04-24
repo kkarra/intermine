@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +29,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.search.KeywordSearch;
 import org.json.JSONArray;
@@ -62,12 +60,11 @@ public class SaveFromIdsToBagAction extends InterMineAction
         // where the request comes from, e.g. /experiment.do?...
         String source = (String) request.getParameter("source");
         Set<Integer> idSet = new LinkedHashSet<Integer>();
+        
         try {
             String type = (String) request.getParameter("type");
             String allChecked = (String) request.getParameter("allChecked");
-
             if ("true".equals(allChecked)) {
-                // TODO do something more clever than running the search again
                 String searchTerm = (String) request.getParameter("searchTerm");
                 JSONObject jsonRequest = new JSONObject(request.getParameter("jsonFacets"));                
                 Map<String, String> facetMap = jsonToJava(jsonRequest);
@@ -76,30 +73,29 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetMap, 
                         new ArrayList<Integer>(), pagination);
                 if (result != null) {
-                    LOG.error("processing result! " + result.getNumHits());
-                    BrowseHit[] browseHits = result.getHits();    
-                    LOG.error("browseHits " + browseHits.length);
+                    BrowseHit[] browseHits = result.getHits();
                     idSet = KeywordSearch.getObjectIds(browseHits);
-                    LOG.error("number of IDs " + idSet.size());
-
-                } else {
-                    LOG.error("NO RESULT");
                 }
             } else {
-                String[] idArray = request.getParameter("ids").split(","); // ids are comma delimited
+                String[] idArray = request.getParameter("ids").split(","); 
                 for (String id : idArray) {
                     idSet.add(Integer.valueOf(id.trim()));
-                }
+                }   
             }
+
             String bagName = request.getParameter("newBagName");
             if (bagName == null) {
                 bagName = "new_list";
             }
-            bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
+            bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(),
+                    bagName);
+
             InterMineAPI im = SessionMethods.getInterMineAPI(session);
             InterMineBag bag = profile.createBag(bagName, type, "", im.getClassKeys());
             bag.addIdsToBag(idSet, type);
+
             profile.saveBag(bag.getName(), bag);
+
             ForwardParameters forwardParameters = new ForwardParameters(
                     mapping.findForward("bagDetails"));
             return forwardParameters.addParameter("bagName", bagName).forward();
@@ -116,6 +112,7 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 } else {
                     newActionForward.setPath("/" + source + ".do?" + request.getQueryString());
                 }
+
                 return newActionForward;
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -135,7 +132,6 @@ public class SaveFromIdsToBagAction extends InterMineAction
             String name = facet.getString("facetName");
             String value = facet.getString("facetValue");
             facets.put(name, value);
-            LOG.error("faceting -- " + name + " value - " + value);
         }
         return facets;
     }
