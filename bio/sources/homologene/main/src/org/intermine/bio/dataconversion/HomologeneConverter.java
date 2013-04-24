@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,7 +45,7 @@ public class HomologeneConverter extends BioFileConverter
 
     private static final String PROP_FILE = "homologene_config.properties";
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
-    private static final String DEFAULT_GENEID_TYPE = "symbol";
+//    private static final String DEFAULT_GENEID_TYPE = "symbol";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -197,8 +197,10 @@ public class HomologeneConverter extends BioFileConverter
         for (GeneRecord gene : genes) {
             notProcessed.remove(gene);
             for (GeneRecord homologue : notProcessed) {
-                createHomologue(gene.geneRefId, gene.taxonId, homologue.geneRefId, homologue.taxonId);
-                createHomologue(homologue.geneRefId, homologue.taxonId, gene.geneRefId, gene.taxonId);
+                createHomologue(gene.geneRefId, gene.taxonId, homologue.geneRefId,
+                        homologue.taxonId);
+                createHomologue(homologue.geneRefId, homologue.taxonId, gene.geneRefId,
+                        gene.taxonId);
             }
         }
     }

@@ -117,7 +117,7 @@ public class SpellExpressionConverter extends BioDBConverter {
 		
 		
     Iterator it = filenames.iterator();
-    while(it.hasNext()) { //&& count < 10
+    while(it.hasNext() && count < 10) { //&& count < 10
     	
     	count++; 
 

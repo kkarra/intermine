@@ -15,8 +15,8 @@ executeLog*
 *.class
 *.svn
 /yeastmine/admin/buildscripts
-
 /bio/sources/ensembl/bin
+productionLog
 
 # /intermine/objectstore/main/
 /intermine/objectstore/main/src.png

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -73,6 +73,13 @@ public class GoConverter extends BioFileConverter
 
     protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
 
+    // In some cases, we'd like to treat protein annotation as gene's, use 3rd col symbol
+    private static Config proteinToGeneConfig = null;
+    private static final String PROTEIN_TO_GENE_READ_COL = "symbol";
+
+    boolean isHumanTypeAnnotatedAsGene = false;
+    private static final String HUMAN = "9606";
+
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
@@ -86,7 +93,6 @@ public class GoConverter extends BioFileConverter
         super(writer, model);
         //addWithType("FB", "Gene", "primaryIdentifier");
         //addWithType("UniProt", "Protein", "accession");
-
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
         ontologyResolverFactory = new OntologyIdResolverFactory("GO");
@@ -109,9 +115,9 @@ public class GoConverter extends BioFileConverter
         }
         Enumeration<?> propNames = props.propertyNames();
         while (propNames.hasMoreElements()) {
+
             String taxonId = (String) propNames.nextElement();
             taxonId = taxonId.substring(0, taxonId.indexOf("."));
-
             Properties taxonProps = PropertiesUtil.stripStart(taxonId,
                 PropertiesUtil.getPropertiesStartingWith(taxonId, props));
             String identifier = taxonProps.getProperty("identifier");
@@ -147,6 +153,11 @@ public class GoConverter extends BioFileConverter
             Config config = new Config(identifier, readColumn, annotationType);
             configs.put(taxonId, config);
         }
+
+        // human annotation from UniProt as gene
+        if (isHumanTypeAnnotatedAsGene) {
+            configs.put(HUMAN, proteinToGeneConfig);
+        }
     }
 
     /**
@@ -170,6 +181,8 @@ public class GoConverter extends BioFileConverter
                                                    + array.length + ") in line: " + line);
             }
 
+            String db = array[0];
+
             String taxonId = parseTaxonId(array[12]);
             Config config = configs.get(taxonId);
             if (config == null) {
@@ -180,6 +193,16 @@ public class GoConverter extends BioFileConverter
                 LOG.error("No entry for organism with taxonId = '"
                         + taxonId + "' found in go-annotation config file. Using default");
             }
+
+            // Some annotation files mix gene and protein, e.g. wormbase, etc.
+            if ("UniProtKB".equals(db) && "gene".equals(config.annotationType)) {
+                config = proteinToGeneConfig;
+                LOG.info("Using GeneTOProteinConfig. TaxonId:" + taxonId
+                        + " annotation file has gene and protein mixture."
+                        + " The first 3 col: " + array[0] + "|" + array[1]
+                        + "|" + array[2]);
+            }
+
             int readColumn = config.readColumn();
             String productId = array[readColumn];
             String dataSource = array[0]; 
@@ -518,6 +541,7 @@ public class GoConverter extends BioFileConverter
                     }
                     accession = resolver.resolveId(taxonId, accession).iterator().next();
                 }
+                accession = rslv.resolveId(taxonId, accession).iterator().next();
             }
         } else if ("protein".equalsIgnoreCase(type)) {
             // TODO use values in config

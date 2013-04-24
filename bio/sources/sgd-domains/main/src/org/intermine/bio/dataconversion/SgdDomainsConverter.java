@@ -123,12 +123,16 @@ public class SgdDomainsConverter extends BioFileConverter
 			String method = line[3].trim();
 			String domainMatch =  line[4].trim();
 			String domainDesc =  line[5].trim(); 
+			String start = line[6].trim();
+			String end = line[7].trim();
+			String evalue = line[8].trim();
+			String runDate = line[10].trim();
 			String interproEntry =  line[11].trim();
 			String interproEntryDesc = line[12].trim();
 			String goAnnot = line[13].trim();
 
 			newProduct(protein, method,
-					domainMatch, domainDesc,  interproEntry, interproEntryDesc, goAnnot);
+					domainMatch, domainDesc, start, end, evalue, runDate, interproEntry, interproEntryDesc, goAnnot);
 
 		}
 
@@ -137,13 +141,13 @@ public class SgdDomainsConverter extends BioFileConverter
 	}
 	
 	
-	private void newProduct(String proteinId, String method, String domainMatch, String domainDesc, String interproEntry, String interproEntryDesc, String goAnnot)
+	private void newProduct(String proteinId, String method, String domainMatch, String domainDesc, String start, String end, String evalue, String runDate, String interproEntry, String interproEntryDesc, String goAnnot)
 			throws ObjectStoreException, Exception {
 		
 		
 		Item protein = getProteinItem(proteinId);
 		
-		Item pdomain = getDomain(domainMatch, domainDesc);
+		Item pdomain = getDomain(domainMatch, domainDesc, start, end, evalue, runDate);
 		
 		Item interpro = getInterproDomain(interproEntry, interproEntryDesc);	
 		pdomain.setReference("interpro", interpro.getIdentifier());	
@@ -200,12 +204,16 @@ public class SgdDomainsConverter extends BioFileConverter
 
 	}
 	
-	  private Item getDomain(String identifier, String description) {
+	  private Item getDomain(String identifier, String description, String start, String end, String evalue, String runDate) {
 	        Item item = proteinDomains.get(identifier);
 	        if (item == null) {
 	            item = createItem("ProteinDomain");
 	            item.setAttribute("name", identifier);
 	            item.setAttribute("description", description);
+	            item.setAttribute("start", description);
+	            item.setAttribute("end", description);
+	            item.setAttribute("evalue", description);
+	            item.setAttribute("runDate", description);            	            
 	            proteinDomains.put(identifier, item);
 	        }
 	        return item;
