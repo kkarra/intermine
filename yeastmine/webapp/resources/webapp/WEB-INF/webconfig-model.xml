@@ -734,7 +734,7 @@
  	     typeClass="org.intermine.model.bio.Gene"
  	     columnTitle="Interactions"/> -->
  	     
- 	    <!--<bagtabledisplayer id="interactions" title="Interactions"
+ 	    <bagtabledisplayer id="interactions" title="Interactions"
 	                         pathStrings="Gene.interactions.details.allInteractors"
 	                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
 	                         displayFields="primaryIdentifier, name"
@@ -746,7 +746,7 @@
 	                                interactions.details.role1,
 	                                interactions.details.allInteractors.primaryIdentifier,
 	                                interactions.details.allInteractors.symbol,
-                                   interactions.details.experiment.name"/>  -->
+                                   interactions.details.experiment.name"/>
  	     
  	     <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
 	                         description="Shows the number of Genes in list with orthologue not the number of orthologues."                          
