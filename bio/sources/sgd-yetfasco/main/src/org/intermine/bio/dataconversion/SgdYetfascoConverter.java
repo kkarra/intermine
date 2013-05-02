@@ -372,7 +372,6 @@ public class SgdYetfascoConverter extends BioFileConverter
 		} catch (Exception e) {
 			throw new BuildException("cannot parse file: " + getCurrentFile(), e);
 		}
-		System.out.println("line in pargraphs is ... " + tsvIter.next());
 
 		while (tsvIter.hasNext()) {
 			String[] line = (String[]) tsvIter.next();
