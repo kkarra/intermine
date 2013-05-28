@@ -6,6 +6,7 @@
  <class name="Gene" is-interface="true">
       <attribute name="jasparClass" type="java.lang.String"/>
       <attribute name="jasparFamily" type="java.lang.String"/>
+      <attribute name="jasparAccession" type="java.lang.String"/>
      <reference name="regulationSummary" referenced-type="RegulationSummary"/>
      <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
      <collection name="logos" referenced-type="Logo"/>

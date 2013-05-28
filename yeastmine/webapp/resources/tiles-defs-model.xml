@@ -15,7 +15,10 @@
 <definition name="cytoscapeNetworkDisplayer.tile" path="/model/cytoscapeNetworkDisplayer.jsp"
         controllerUrl="/initCytoscapeNetworkDisplayer.do"/>      
 
-<definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp" />
+<!--<definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp" />   -->
+
+<definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp"
+  controllerUrl="/initSequenceFeatureExportOptions.do" />
 
 <definition name="galaxyExportOptions.tile" path="/model/galaxyExportOptions.jsp"
         controllerUrl="/initGalaxyExportOptions.do"/>

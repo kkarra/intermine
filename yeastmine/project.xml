@@ -56,11 +56,11 @@
       <property name="homologene.organisms" value="4932"/>   
       <property name="homologene.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
-     <source name="orthodb" type="orthodb">
+     <!--<source name="orthodb" type="orthodb">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/orthoDB"/>
       <property name="orthodb.organisms" value="4932"/>   
       <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source>
+    </source>-->
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/ensembl_compara"/>
       <property name="ensemblcompara.organisms" value="4932"/>

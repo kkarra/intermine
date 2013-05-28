@@ -147,7 +147,7 @@ public class SgdDomainsConverter extends BioFileConverter
 		
 		Item protein = getProteinItem(proteinId);
 		
-		Item pdomain = getDomain(domainMatch, domainDesc, start, end, evalue, runDate);
+		Item pdomain = getDomain(domainMatch, domainDesc, start, end, evalue, runDate, method);
 		
 		Item interpro = getInterproDomain(interproEntry, interproEntryDesc);	
 		pdomain.setReference("interpro", interpro.getIdentifier());	
@@ -204,16 +204,17 @@ public class SgdDomainsConverter extends BioFileConverter
 
 	}
 	
-	  private Item getDomain(String identifier, String description, String start, String end, String evalue, String runDate) {
+	  private Item getDomain(String identifier, String description, String start, String end, String evalue, String runDate, String method) {
 	        Item item = proteinDomains.get(identifier);
 	        if (item == null) {
 	            item = createItem("ProteinDomain");
 	            item.setAttribute("name", identifier);
 	            item.setAttribute("description", description);
-	            item.setAttribute("start", description);
-	            item.setAttribute("end", description);
-	            item.setAttribute("evalue", description);
-	            item.setAttribute("runDate", description);            	            
+	            item.setAttribute("start", start);
+	            item.setAttribute("end", end );
+	            item.setAttribute("evalue", evalue );
+	            item.setAttribute("runDate", runDate);            	            
+                    item.setAttribute("method", method);
 	            proteinDomains.put(identifier, item);
 	        }
 	        return item;

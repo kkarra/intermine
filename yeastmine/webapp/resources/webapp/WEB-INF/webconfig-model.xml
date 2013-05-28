@@ -638,15 +638,6 @@
 	                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
 	                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/> -->
        
-       <!--  <graphdisplayer id="spell_enrichment" 
-       title="Gene Expression results" 
-       domainLabel="Experiment" rangeLabel="Up (+) or Down (-) experiment count" 
-       dataSetLoader="org.yeastmine.web.widget.SpellDataSetLdr"
- 	   link="org.intermine.bio.web.widget.GoStatURLQuery"
-	   	description="For each gene, the number of experiments/conditions for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://spell.yeastgenome.org/&quot; target=&quot;_new&quot;&gt;Spell&lt;/a&gt; SPELL."
-	                      typeClass="org.intermine.model.bio.Gene"
-	    graphType="StackedBarChart" />  --> 
-       
       	<!-- <enrichmentwidgetdisplayer id="go_enrichment"
       		title="Gene Ontology Enrichment"
       		link="org.intermine.bio.web.widget.GoStatURLQuery"

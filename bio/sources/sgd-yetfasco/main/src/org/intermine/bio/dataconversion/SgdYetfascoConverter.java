@@ -433,19 +433,21 @@ public class SgdYetfascoConverter extends BioFileConverter
 				LOG.error("Couldn't process line. Expected 8 cols, but was " + line.length);
 				continue;
 			}
-			String geneName = line[0].trim();
-			String geneId = line[1].trim();
+			String jasparAccession = line[0].trim();;
+			String geneName = line[1].trim();
+			String geneId = line[2].trim();
 
 			if(geneId.indexOf("TEL") >= 0 || geneId.indexOf("delta") >0  || geneId.indexOf("omega") > 0 || geneId.indexOf("Ty") > 0){
 				continue;
 			}           
-			String jasparFamily = line[2].trim();
-			String jasparClass = line[3].trim();
+			String jasparFamily = line[3].trim();
+			String jasparClass = line[4].trim();
 
 			Item gene = getGeneItem(geneId);
 
 			gene.setAttribute("jasparFamily", jasparFamily);
 			gene.setAttribute("jasparClass", jasparClass);
+			gene.setAttribute("jasparAccession", jasparAccession);
 
 		}
 		breader.close();
