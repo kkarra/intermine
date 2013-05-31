@@ -1,4 +1,7 @@
-me>gff3-query</servlet-name>
+<!-- this comment is here to prevent ant from setting model.web to null -->
+
+<servlet>
+  <servlet-name>gff3-query</servlet-name>
   <servlet-class>org.intermine.bio.webservice.GFF3QueryServlet</servlet-class>
   <init-param>
      <param-name>debug</param-name>
@@ -37,6 +40,20 @@ me>gff3-query</servlet-name>
 <servlet-mapping>
   <servlet-name>fasta-query</servlet-name>
   <url-pattern>/service/query/results/fasta</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>bed-query</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.BEDQueryServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>bed-query</servlet-name>
+  <url-pattern>/service/query/results/bed</url-pattern>
 </servlet-mapping>
 
 <servlet>
@@ -96,3 +113,16 @@ me>gff3-query</servlet-name>
   <url-pattern>/service/regions/bed</url-pattern>
 </servlet-mapping>
 
+<servlet>
+  <servlet-name>genomic-region-sequence-export</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GenomicRegionSequenceExportServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>genomic-region-sequence-export</servlet-name>
+  <url-pattern>/service/regions/sequence</url-pattern>
+</servlet-mapping>
