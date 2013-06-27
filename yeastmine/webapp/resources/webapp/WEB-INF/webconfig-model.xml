@@ -509,10 +509,12 @@
 
 	<class className="org.intermine.model.bio.Homologue">
 		<fields>
-			<fieldconfig fieldExpr="gene.primaryIdentifier" label="Identifier"
+			<!-- <fieldconfig fieldExpr="gene.primaryIdentifier" label="Identifier"
 				showInResults="false" showInInlineCollection="false" />
 			<fieldconfig fieldExpr="homologue.primaryIdentifier"
-				label="Identifier" />
+				label="Identifier" />  -->
+		<fieldconfig fieldExpr="gene.primaryIdentifier" label="Homolog Gene Identifier"></fieldconfig>
+        <fieldconfig fieldExpr="homologue.primaryIdentifier" label="Homolog Gene Identifier"></fieldconfig>
 			<fieldconfig fieldExpr="homologue.organism.shortName" />
 		</fields>
 	</class>
@@ -727,7 +729,7 @@
 		<bagtabledisplayer id="interactions" title="Interactions"
 			pathStrings="Gene.interactions.details.allInteractors"
 			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-			displayFields="primaryIdentifier, name" exportField="primaryIdentifier"
+			displayFields="primaryIdentifier, name" exportField="secondaryIdentifier"
 			typeClass="Gene" columnTitle="Interactions"
 			views="secondaryIdentifier, symbol, organism.shortName,
 	                                interactions.details.name, interactions.details.relationshipType.name,

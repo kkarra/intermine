@@ -93,7 +93,7 @@
                   </html:select>
             </td>
           </tr>
-        <c:if test="${!empty extraBagQueryClass}">
+       <!--  <c:if test="${!empty extraBagQueryClass}">
             <tr>
                 <td align="right" class="label">
                        <label>
@@ -102,16 +102,16 @@
                          </fmt:message>
                        </label>
                    </td>
-                   <td>
+                    <td>
                      <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
                            <html:option value="">Any</html:option>
                            <c:forEach items="${extraClassFieldValues}" var="value">
                              <html:option value="${value}">${value}</html:option>
                            </c:forEach>
                      </html:select>
-                 </td>
+                 </td> 
             </tr>
-        </c:if>
+        </c:if> -->
            <tr>
                <%-- textarea --%>
                <td align="right" class="label">
