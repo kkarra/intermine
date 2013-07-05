@@ -109,15 +109,20 @@ public class SgdDomainsConverter extends BioFileConverter
 		} catch (Exception e) {
 			throw new BuildException("cannot parse file: " + getCurrentFile(), e);
 		}
+		
+		int linecount = 0;
 
 		while (tsvIter.hasNext()) {
 
 			String[] line = (String[]) tsvIter.next();
 
-			if (line.length < 14) {
+			/*if (line.length < 14) {
 				LOG.error("Couldn't process line. Expected 14 cols, but was " + line.length);
+				System.out.println("line skipped: " + line.length);
 				continue; //lines which have ? and are NULL will not get loaded (mostly Seg)
-			}
+				
+			}*/
+			linecount++;
 			
 			String protein =  line[0].trim();     
 			String method = line[3].trim();
@@ -129,10 +134,12 @@ public class SgdDomainsConverter extends BioFileConverter
 			String runDate = line[10].trim();
 			String interproEntry =  line[11].trim();
 			String interproEntryDesc = line[12].trim();
-			String goAnnot = line[13].trim();
-
+			String goAnnot = "";
+			if(line.length == 14) {
+				 goAnnot = line[13].trim();
+			}
 			newProduct(protein, method,
-					domainMatch, domainDesc, start, end, evalue, runDate, interproEntry, interproEntryDesc, goAnnot);
+					domainMatch, domainDesc, start, end, evalue, runDate, interproEntry, interproEntryDesc, goAnnot, linecount);
 
 		}
 
@@ -141,42 +148,43 @@ public class SgdDomainsConverter extends BioFileConverter
 	}
 	
 	
-	private void newProduct(String proteinId, String method, String domainMatch, String domainDesc, String start, String end, String evalue, String runDate, String interproEntry, String interproEntryDesc, String goAnnot)
+	private void newProduct(String proteinId, String method, String domainMatch, String domainDesc, String sstart, String send, String evalue, String runDate, String interproEntry, String interproEntryDesc, String goAnnot, int linecount)
 			throws ObjectStoreException, Exception {
 		
 		
 		Item protein = getProteinItem(proteinId);
 		
-		Item pdomain = getDomain(domainMatch, domainDesc, start, end, evalue, runDate, method);
+		Item pdomain = getDomain(domainMatch, domainDesc, sstart, send, evalue, runDate, method, linecount);
 		
 		Item interpro = getInterproDomain(interproEntry, interproEntryDesc);	
 		pdomain.setReference("interpro", interpro.getIdentifier());	
+		
 		//processGOInfo(pdomain, goAnnot);
+		if(!goAnnot.equalsIgnoreCase("NULL")) {
+			Matcher matcher = pattern.matcher(goAnnot);
+			while (matcher.find())
+			{
+				String goId = "GO:"+matcher.group(1);
+				System.out.println("GOID: " + goId);
 
-    	Matcher matcher = pattern.matcher(goAnnot);
-    	while (matcher.find())
-    	{
-    		String goId = "GO:"+matcher.group(1);
-    		System.out.println("GOID: " + goId);
+				// create go term
+				String goTermRefId = getGoTerm(goId);
 
-    		// create go term
-    		String goTermRefId = getGoTerm(goId);
+				// create Go annotation
+				Item goAnnotation = createItem("GOAnnotation");
+				goAnnotation.setReference("subject", pdomain);
+				goAnnotation.setReference("ontologyTerm", goTermRefId);
 
-    		// create Go annotation
-    		Item goAnnotation = createItem("GOAnnotation");
-    		goAnnotation.setReference("subject", pdomain);
-    		goAnnotation.setReference("ontologyTerm", goTermRefId);
+				pdomain.addToCollection("goAnnotation", goAnnotation);
 
-    		pdomain.addToCollection("goAnnotation", goAnnotation);
+				try {
+					store(goAnnotation);
+				} catch (ObjectStoreException e) {
+					throw new Exception(e);
+				}
 
-    		try {
-    			store(goAnnotation);
-    		} catch (ObjectStoreException e) {
-    			throw new Exception(e);
-    		}
-
-    	}
-
+			}
+		}
 		protein.addToCollection("proteinDomains", pdomain.getIdentifier());
 		
 	}
@@ -204,19 +212,22 @@ public class SgdDomainsConverter extends BioFileConverter
 
 	}
 	
-	  private Item getDomain(String identifier, String description, String start, String end, String evalue, String runDate, String method) {
-	        Item item = proteinDomains.get(identifier);
-	        if (item == null) {
-	            item = createItem("ProteinDomain");
+	  private Item getDomain(String identifier, String description, String s_start, String s_end, String evalue, String runDate, String method, int linecount) {
+	        //Item item = proteinDomains.get(identifier);
+	        //if (item == null) {
+		  
+	            Item item = createItem("ProteinDomain");
 	            item.setAttribute("name", identifier);
 	            item.setAttribute("description", description);
-	            item.setAttribute("start", start);
-	            item.setAttribute("end", end );
+	            item.setAttribute("start", s_start);
+	            item.setAttribute("end", s_end );
 	            item.setAttribute("evalue", evalue );
 	            item.setAttribute("runDate", runDate);            	            
-                    item.setAttribute("method", method);
-	            proteinDomains.put(identifier, item);
-	        }
+                item.setAttribute("method", method);
+                String newid = identifier+":"+linecount;
+                System.out.println("new id:" + newid );
+	            proteinDomains.put(newid, item);
+	       // }
 	        return item;
 	    }
 	    private Item getInterproDomain(String identifier, String description)  throws Exception{

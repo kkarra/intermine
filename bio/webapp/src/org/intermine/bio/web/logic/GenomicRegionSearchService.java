@@ -1030,7 +1030,6 @@ public class GenomicRegionSearchService
 
         clHtml += "</select>";
         clHtml += "<button onClick=\"javascript: createList('all','all-regions');\">Go</button>";
-
         return clHtml;
     }
 

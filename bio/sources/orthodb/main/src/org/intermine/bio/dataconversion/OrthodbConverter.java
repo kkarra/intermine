@@ -72,6 +72,8 @@ public class OrthodbConverter extends BioFileConverter
     private Set<String> processedHomologueRelationships = new HashSet<String>(); 
     
 
+    private Set<String> processedHomologueRelationships = new HashSet<String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -245,6 +247,19 @@ public class OrthodbConverter extends BioFileConverter
             } else {
             	processedHomologueRelationships.add(relationshipStr);
             	processedHomologueRelationships.add(reverseRelationshipStr);
+            }
+
+
+            // HACK - remove duplicated relationships
+            String relationshipStr = gene1.toString() + "-" + gene2.toString();
+            String reverseRelationshipStr = gene2.toString() + "-" + gene1.toString();
+            if (processedHomologueRelationships.contains(relationshipStr) ||
+                    processedHomologueRelationships.contains(reverseRelationshipStr)) {
+                LOG.info("Dup >>> " + relationshipStr);
+                continue;
+            } else {
+                processedHomologueRelationships.add(relationshipStr);
+                processedHomologueRelationships.add(reverseRelationshipStr);
             }
 
 
