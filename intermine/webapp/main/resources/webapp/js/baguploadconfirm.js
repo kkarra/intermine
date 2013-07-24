@@ -25,7 +25,6 @@ function updateMatchIDs() {
  * Run a function checking if we already have items in the bag
  */
 function checkIfAlreadyInTheBag() {
-<<<<<<< HEAD
     // run a function checking if we already have items in the bag
     jQuery('span.fakelink').each(function(index) {
       // get the element id
