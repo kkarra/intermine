@@ -68,7 +68,7 @@ public final class BEDUtil
                 return null;
             }
 
-            if (lsf.getSymbol() == null) {
+            /*if (lsf.getSymbol() == null) {
                 if (lsf.getPrimaryIdentifier() == null) {
                     name = "(Unknown)";
                 } else {
@@ -76,6 +76,16 @@ public final class BEDUtil
                 }
             } else {
                 name = lsf.getSymbol();
+            }*/
+            
+            if(lsf.getPrimaryIdentifier() != null){
+            	name = lsf.getPrimaryIdentifier();
+            }
+            if(lsf.getSecondaryIdentifier() != null){
+            	name += " "+lsf.getSecondaryIdentifier();
+            }
+            if(lsf.getSymbol() != null){
+            	name += " "+ lsf.getSymbol();
             }
 
             name = name.replaceAll(" ", "_"); // replace white space in name to under score
@@ -86,11 +96,11 @@ public final class BEDUtil
                 return null;
             }
 
-            if (makeUcscCompatible) {
-                chrom = UCSC_CHR_PREFIX + chr.getPrimaryIdentifier();
-            } else {
+            //if (makeUcscCompatible) {
+                //chrom =  chr.getPrimaryIdentifier(); //UCSC_CHR_PREFIX +
+            //} else {
                 chrom = chr.getPrimaryIdentifier();
-            }
+            //}
 
             chromStart = chrLocation.getStart().intValue() - 1; // Interbase Coordinate
             chromEnd = chrLocation.getEnd().intValue();

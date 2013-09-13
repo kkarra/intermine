@@ -302,7 +302,7 @@ public final class GenomicRegionSearchUtil
             QueryField qfOrgName = new QueryField(qcOrg, "shortName");
             QueryField qfFeatureId = new QueryField(qcFeature, "id");
             QueryField qfFeaturePID = new QueryField(qcFeature,
-                    "primaryIdentifier");
+                    "secondaryIdentifier");
             QueryField qfFeatureSymbol = new QueryField(qcFeature, "symbol");
             QueryField qfFeatureClass = new QueryField(qcFeature, "class");
             QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");

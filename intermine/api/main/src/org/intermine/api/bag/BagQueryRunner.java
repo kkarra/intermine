@@ -105,13 +105,17 @@ public class BagQueryRunner
         List<String> cleanInput = new ArrayList<String>();
         List<String> wildcardInput = new ArrayList<String>();
         Map<String, Pattern> patterns = new HashMap<String, Pattern>();
+        
         for (String inputString : input) {
+        	
             if (!(inputString == null) && !(inputString.equals(""))) {
                 if (inputString.indexOf('*') == -1 || (!doWildcards)) {
+                	
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
                         cleanInput.add(inputString);
                         lowerCaseInput.put(inputString.toLowerCase(), inputString);
                     }
+                // wildcard + a string
                 } else {
                     wildcardInput.add(inputString);
                     patterns.put(inputString, Pattern.compile(inputString.toLowerCase()
