@@ -208,7 +208,10 @@ span.widget_tool_bar_button:hover, span.widget_tool_bar_button:visited:hover { b
 .widget {
     max-height:400px;width: 450px;padding:15px;
     text-align: center; background-color: #D2CEBF;}
-
+    
+.widget p {
+  font-size:10px; }
+  
 .widget_slide {
   margin-top:10px; max-height:350px;
     overflow-x:none;overflow-y:auto;overflow: auto;}
@@ -448,6 +451,6 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 .popover-content .table td { padding:2px; }
 .bootstrap ul.dropdown-menu a:hover { color:#FFF !important; }
 
-.intermine .im-column-th .dropdown-menu:after {
-  border-bottom-color: #000;
-}
+#.intermine .im-column-th .dropdown-menu:after {
+#  border-bottom-color: #000;
+#}

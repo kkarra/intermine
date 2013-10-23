@@ -25,6 +25,7 @@
    <attribute name="regulationDirection" type="java.lang.String"/>
    <attribute name="pvalue" type="java.lang.String"/>
    <attribute name="FDR" type="java.lang.String"/>
+    <attribute name="strain" type="java.lang.String"/>
    <attribute name="datasource" type="java.lang.String"/>
    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
    <reference name="regEvidence" referenced-type="RegulationEvidence"/>
