@@ -84,7 +84,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         rslv = IdResolverService.getHumanIdResolver();
 
-        String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
+        String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE};
         Set<String> missingFiles = new HashSet<String>();
         for (String requiredFile : requiredFiles) {
             if (!files.containsKey(requiredFile)) {
@@ -99,7 +99,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
         processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
-        processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
+        //processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
     }
 
     private Map<String, File> readFilesInDir(File dir) {
