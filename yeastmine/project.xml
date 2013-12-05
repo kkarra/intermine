@@ -79,22 +79,14 @@
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
 
-    <!--<source name="wormbase-identifiers" type="wormbase-identifiers">
-      <property name="src.data.dir" location="/data/worm-identifiers/current"/>
-    </source>
    <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/data/intermine/ncbi"/>
      <property name="organisms" value="9606"/>
     </source>
+    
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/data/intermine/omim"/>
     </source>
-   <source name="mgi-identifiers" type="mgi-identifiers">
-      <property name="src.data.dir" location="/data/mgi-identifiers/current"/>
-    </source>
-   <source name="rgd-identifiers" type="rgd-identifiers">
-      <property name="src.data.dir" location="/data/rgd-identifiers/current"/>
-    </source> -->
 
   </sources>
 

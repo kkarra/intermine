@@ -102,12 +102,12 @@ public class SgdConverter extends BioDBConverter {
 
 		processChromosomeSequences(connection);
 		processGenes(connection);
-		processAliases(connection);
-		processCrossReferences(connection);
-		processGeneLocations(connection);
-		processChrLocations(connection);
-		processGeneChildrenLocations(connection);
-		processProteins(connection);
+		//processAliases(connection);
+		//processCrossReferences(connection);
+		//processGeneLocations(connection);
+		//processChrLocations(connection);
+		//processGeneChildrenLocations(connection);
+		//processProteins(connection);
 
 		if(!TEST_LOCAL) {
 			

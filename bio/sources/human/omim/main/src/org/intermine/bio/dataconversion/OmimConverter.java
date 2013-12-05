@@ -45,7 +45,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String DATASET_TITLE = "OMIM diseases";
     private static final String DATA_SOURCE_NAME = "Online Mendelian Inheritance in Man";
     private static final String HUMAN_TAXON = "9606";
-    private static final String OMIM_PREFIX = "OMIM:";
+    private static final String OMIM_PREFIX = "MIM:";
 
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
@@ -84,7 +84,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         rslv = IdResolverService.getHumanIdResolver();
 
-        String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE};
+        String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();
         for (String requiredFile : requiredFiles) {
             if (!files.containsKey(requiredFile)) {
@@ -98,8 +98,8 @@ public class OmimConverter extends BioDirectoryConverter
         }
 
         processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
-        processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
-        //processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
+        //processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
+       // processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
     }
 
     private Map<String, File> readFilesInDir(File dir) {
@@ -111,13 +111,16 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private void processOmimTxtFile(Reader reader) throws IOException {
+    	
         final BufferedReader br = new BufferedReader(reader);
-
         String line = null;
-
         StringBuilder sb = new StringBuilder();
         boolean readingTitle = false;
+        
         while ((line = br.readLine()) != null) {
+        	
+        	//System.out.println("Line is... " + line);
+        	
             if (readingTitle) {
                 if (sb.length() > 0) {
                     sb.append(" ");
@@ -146,6 +149,8 @@ public class OmimConverter extends BioDirectoryConverter
                 String[] parts = s.split(" ", 2);
                 String mimNumber = parts[0];
                 String text = parts[1];
+                
+                System.out.println("mimNumber.... " + mimNumber + "   text: " + text);
 
                 // if this isn't a disease we need we can just ignore
                 if (diseases.containsKey(mimNumber)) {
@@ -183,6 +188,7 @@ public class OmimConverter extends BioDirectoryConverter
             protected int resolved = 0;
             protected int total = 0;
         }
+        
         Map<String, CountPair> counts = new HashMap<String, CountPair>();
         List<String> diseaseNumbers = new ArrayList<String>();
 
@@ -199,6 +205,7 @@ public class OmimConverter extends BioDirectoryConverter
         Pattern matchMajorDiseaseNumber = Pattern.compile("(\\d{6})");
 
         while (lineIter.hasNext()) {
+        	
             lineCount++;
 
             String[] bits = lineIter.next();
@@ -243,6 +250,8 @@ public class OmimConverter extends BioDirectoryConverter
                 diseaseMatches++;
                 diseaseMimId = m.group(1);
             }
+            
+            System.out.println("mimID..." + mimId + "  geneSymbol: " + geneSymbol +"  diseaseId: "+ diseaseMimId);
 
             if (diseaseMimId != null && geneItemId != null) {
                 Item disease = getDisease(diseaseMimId);
@@ -261,9 +270,7 @@ public class OmimConverter extends BioDirectoryConverter
 
             // start with basic rules and count how many columns are parsed
             // if gene is an HGNC symbol - create a gene
-
             // if disease id in first column, create a disease object
-
             // if not create a region
 
         }
@@ -281,14 +288,15 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private String resolveGene(String mimId) {
-        int resCount = rslv.countResolutions("" + HUMAN_TAXON, mimId);
+        int resCount = rslv.countResolutions(HUMAN_TAXON, mimId);  //"" + 
+        LOG.info("kk..." + HUMAN_TAXON + "    MMID  "+mimId);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene - MIM:"
                      + mimId + " count: " + resCount + " - "
                      + rslv.resolveId("" + HUMAN_TAXON, mimId));
             return null;
         }
-        return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
+        return rslv.resolveId(HUMAN_TAXON, mimId).iterator().next(); //"" + 
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
