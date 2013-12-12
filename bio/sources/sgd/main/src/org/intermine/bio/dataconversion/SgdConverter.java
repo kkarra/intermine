@@ -102,28 +102,22 @@ public class SgdConverter extends BioDBConverter {
 
 		processChromosomeSequences(connection);
 		processGenes(connection);
-		//processAliases(connection);
-		//processCrossReferences(connection);
-		//processGeneLocations(connection);
-		//processChrLocations(connection);
-		//processGeneChildrenLocations(connection);
-		//processProteins(connection);
+
 
 		if(!TEST_LOCAL) {
+			
+			processAliases(connection);
+			processCrossReferences(connection);
+			processGeneLocations(connection);
+			processChrLocations(connection);
+			processGeneChildrenLocations(connection);
+			processProteins(connection);
 			
 			processAllPubs(connection);             //get all publications and their topics loaded								
 			processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics												 
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
 			storePhenotypes();
-			
-		//}
-
-		//storeGenes();
-
-		//if(!TEST_LOCAL) {
-			
-			//storePhenotypes();
 
 			processPathways(connection);
 			storePathways();

@@ -98,8 +98,8 @@ public class OmimConverter extends BioDirectoryConverter
         }
 
         processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
-        //processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
-       // processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
+        processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
+       processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
     }
 
     private Map<String, File> readFilesInDir(File dir) {
