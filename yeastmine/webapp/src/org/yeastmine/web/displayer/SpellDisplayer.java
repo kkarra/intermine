@@ -26,6 +26,7 @@ import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.output.JSONResultsIterator;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,8 +77,13 @@ public class SpellDisplayer extends ReportDisplayer{
 		List<Double> NegFourToNegSix = new ArrayList<Double>();
 		List<Double> NegSixToNegEight = new ArrayList<Double>();
 
+		JSONResultsIterator jsonIterator = null;
+		try{
+			 jsonIterator = new JSONResultsIterator(executor.execute(q));
+		}catch(ObjectStoreException e){
+			//throw new ObjectStoreException(e);
+		}
 
-		JSONResultsIterator jsonIterator = new JSONResultsIterator(executor.execute(q));
 		while (jsonIterator.hasNext()) {
 			//LOG.info("Iterating over JSON results..is it getting any?");
 			try {
@@ -114,7 +120,8 @@ public class SpellDisplayer extends ReportDisplayer{
 				}
 			} catch (JSONException e) {
 				//
-			}
+			}		
+		
 		}
 
 		results.add(new Integer(ZeroToTwo.size()));	

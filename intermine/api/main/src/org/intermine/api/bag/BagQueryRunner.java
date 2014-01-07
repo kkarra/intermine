@@ -46,7 +46,7 @@ import org.apache.log4j.Logger; // --kk
  */
 public class BagQueryRunner
 {
-    private static final Logger LOG = Logger.getLogger(BagQueryRunner.class); // --kk
+    private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
     private ObjectStore os;
     private Model model;
     private Map<String, List<FieldDescriptor>> classKeys;
@@ -76,7 +76,7 @@ public class BagQueryRunner
     }
 
     
-    public BagQueryResult searchForBag(String type, List<String> input, String extraFieldValue,
+    public BagQueryResult searchForBag(String type, Collection<String> input, String extraFieldValue,
             boolean doWildcards) throws ClassNotFoundException, InterMineException {
         return search(type, input, extraFieldValue, doWildcards, false);
     }
@@ -99,14 +99,10 @@ public class BagQueryRunner
      * @throws ClassNotFoundException if the type isn't in the model
      * @throws InterMineException if there is any other exception
      */
-//<<<<<<< HEAD
-    public BagQueryResult search(String type, List<String> input, String extraFieldValue,
-            boolean doWildcards, boolean caseSensitive) throws ClassNotFoundException, InterMineException {
-//=======
-   // public BagQueryResult search(String type, Collection<String> input, String extraFieldValue,
-     //       boolean doWildcards, boolean caseSensitive)
-       // throws ClassNotFoundException, InterMineException {
-//>>>>>>> 213ffd02c6475b09515bfead2961b32b111a6e34
+
+    public BagQueryResult search(String type, Collection<String> input, String extraFieldValue,
+            boolean doWildcards, boolean caseSensitive)
+        throws ClassNotFoundException, InterMineException {
 
         Map<String, String> lowerCaseInput = new HashMap<String, String>();
         List<String> cleanInput = new ArrayList<String>();
