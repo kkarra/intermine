@@ -86,6 +86,9 @@ public class GoConverter extends BioFileConverter
 
         //defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
                // DEFAULT_ANNOTATION_TYPE);
+        flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
+        ontologyResolverFactory = new OntologyIdResolverFactory("GO");
+        
         readConfig();
     }
     

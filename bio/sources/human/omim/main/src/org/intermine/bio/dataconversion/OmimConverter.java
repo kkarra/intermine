@@ -54,6 +54,7 @@ public class OmimConverter extends BioDirectoryConverter
     private String organism;
 
     private static final String OMIM_TXT_FILE = "omim.txt";
+    private static final String NCBI_ID_TXT_FILE = "mim2gene.txt";
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
@@ -84,7 +85,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         rslv = IdResolverService.getHumanIdResolver();
 
-        String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
+        String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE, NCBI_ID_TXT_FILE};
         Set<String> missingFiles = new HashSet<String>();
         for (String requiredFile : requiredFiles) {
             if (!files.containsKey(requiredFile)) {
@@ -97,6 +98,7 @@ public class OmimConverter extends BioDirectoryConverter
                     + dataDir.getAbsolutePath() + ", was missing " + missingFiles);
         }
 
+        processNcbiIdFile(new FileReader(files.get(NCBI_ID_TXT_FILE)));
         processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
         processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
        processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
@@ -110,6 +112,16 @@ public class OmimConverter extends BioDirectoryConverter
         return files;
     }
 
+    /**
+     * Create Gene --with NCBI ID as PrimaryIdentifier
+     * @param reader
+     * @throws IOException
+     */
+    private void processNcbiIdFile(Reader reader) throws IOException {
+    	
+    	
+    }
+    
     private void processOmimTxtFile(Reader reader) throws IOException {
     	
         final BufferedReader br = new BufferedReader(reader);
