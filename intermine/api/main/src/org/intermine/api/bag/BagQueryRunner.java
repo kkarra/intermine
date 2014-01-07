@@ -11,6 +11,7 @@ package org.intermine.api.bag;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -98,8 +99,14 @@ public class BagQueryRunner
      * @throws ClassNotFoundException if the type isn't in the model
      * @throws InterMineException if there is any other exception
      */
+//<<<<<<< HEAD
     public BagQueryResult search(String type, List<String> input, String extraFieldValue,
             boolean doWildcards, boolean caseSensitive) throws ClassNotFoundException, InterMineException {
+//=======
+   // public BagQueryResult search(String type, Collection<String> input, String extraFieldValue,
+     //       boolean doWildcards, boolean caseSensitive)
+       // throws ClassNotFoundException, InterMineException {
+//>>>>>>> 213ffd02c6475b09515bfead2961b32b111a6e34
 
         Map<String, String> lowerCaseInput = new HashMap<String, String>();
         List<String> cleanInput = new ArrayList<String>();
@@ -144,11 +151,20 @@ public class BagQueryRunner
         for (BagQuery bq : queries) {
         	    	
             // run the next query on identifiers not yet resolved
+//<<<<<<< HEAD
             if (!unresolved.isEmpty()) {
                 //Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 Query q = null;
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);                                  
+//=======
+            // OR all identifiers if matchOnFirst = FALSE
+          //  if (!unresolved.isEmpty() || !matchOnFirst) {
+             //   Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
+              //  try {
+                //    Set<String> toProcess = (matchOnFirst) ? unresolved : unresolvedOriginal;
+                 //   Query q = bq.getQuery(toProcess, extraFieldValue);
+//>>>>>>> 213ffd02c6475b09515bfead2961b32b111a6e34
                     Results res = os.execute(q, 10000, true, true, false);
                     LOG.error("size of results: " + res.size());
                     Iterator resIter = res.iterator();
@@ -158,12 +174,9 @@ public class BagQueryRunner
                         ResultsRow<?> row = (ResultsRow<?>) rowObj;
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
-                            Object fieldObject = row.get(i);
+                            final Object fieldObject = row.get(i);
                             if (fieldObject != null) {
-                                if (!(fieldObject instanceof String)) {
-                                    fieldObject = fieldObject.toString();
-                                }
-                                String field = (String) fieldObject;
+                                String field = String.valueOf(fieldObject);
                                 String lowerField = field.toLowerCase();
                                 if (lowerCaseInput.containsKey(lowerField)) {
                                     // because we are converting to lower case we need to match
@@ -248,7 +261,7 @@ public class BagQueryRunner
         for (String unresolvedStr : unresolved) {
             unresolvedMap.put(unresolvedStr, null);
         }
-        bqr.getUnresolved().putAll(unresolvedMap);
+        bqr.putUnresolved(unresolvedMap);
 
         return bqr;
     }

@@ -108,26 +108,13 @@ public class HomologeneConverter extends BioFileConverter
             5) Protein gi
             6) Protein accession
         */
-
-        String currentGroup = null;
+    	setUpResolver();
         String previousGroup = null;
 
-        // flat structure of homologue info
         Set<GeneRecord> genes = new HashSet<GeneRecord>();
 
         if (taxonIds.isEmpty()) {
             throw new BuildException("homologene.organisms property not set in project XML file");
-        }
-        if (homologues.isEmpty()) {
-            LOG.warn("homologene.homologues property not set in project XML file");
-        }
-
-        Set<String> allTaxonIds = new HashSet<String>();
-        allTaxonIds.addAll(taxonIds);
-        allTaxonIds.addAll(homologues);
-
-        if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -138,13 +125,9 @@ public class HomologeneConverter extends BioFileConverter
             }
 
             String groupId = bits[0];
-            currentGroup = groupId;
 
-            // at a different groupId, process previous homologue group
-            if (previousGroup != null && !currentGroup.equals(previousGroup)) {
-                if (genes.size() >= 2) {
-                    processHomologues(genes);
-                }
+            if (previousGroup != null && !groupId.equals(previousGroup)) {
+                processHomologues(genes);
                 genes = new HashSet<GeneRecord>();
             }
 
@@ -168,6 +151,16 @@ public class HomologeneConverter extends BioFileConverter
         }
     }
 
+    private void setUpResolver() {
+        Set<String> allTaxonIds = new HashSet<String>();
+        allTaxonIds.addAll(taxonIds);
+        allTaxonIds.addAll(homologues);
+
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        }
+    }
+    
     private void readConfig() {
         try {
             props.load(getClass().getClassLoader().getResourceAsStream(
@@ -238,28 +231,32 @@ public class HomologeneConverter extends BioFileConverter
     private String getGene(String ncbiId, String symbol, String taxonId)
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
-        if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_GENEID_TYPE;     	
+
+        if (identifierType == null) {
+        	identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
-
-        String resolvedGenePid = resolveGene(taxonId, symbol);
-
-        if (resolvedGenePid == null) {
+        String resolvedIdentifier = resolveGene(taxonId, ncbiId, symbol);
+        if (resolvedIdentifier == null) {
             return null;
         }
-        if(resolvedGenePid.startsWith("SGD:")){		
-        	System.out.println("SGD ID.. " + resolvedGenePid);	
-        	String id =resolvedGenePid.substring(4);	
-        	resolvedGenePid = id;
+        
+        //kk-add
+        if(resolvedIdentifier.startsWith("SGD:")){		
+        	System.out.println("SGD ID.. " + resolvedIdentifier);	
+        	String id =resolvedIdentifier.substring(4);	
+        	resolvedIdentifier = id;
         }
-        String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
+
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedIdentifier));
         if (refId == null) {
             Item item = createItem("Gene");
-            item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-            //item.setAttribute(identifierType, symbol);           
+            if (!StringUtils.isEmpty(identifierType)) {
+                item.setAttribute(identifierType, resolvedIdentifier);
+            }
+
             item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
-            identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
+            identifiersToGenes.put(new MultiKey(taxonId, resolvedIdentifier), refId);
             store(item);
         }
         return refId;
@@ -290,7 +287,11 @@ public class HomologeneConverter extends BioFileConverter
         return evidenceRefId;
     }
 
-    private String resolveGene(String taxonId, String identifier) {
+    private String resolveGene(String taxonId, String ncbi, String identifier) {
+    	if (taxonId.equals("9606")) {
+    		// use entrez-gene identifier for human
+    		return ncbi;
+    	}
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;

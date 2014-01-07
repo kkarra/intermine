@@ -70,7 +70,6 @@ public class GoConverter extends BioFileConverter
     protected String termClassName = "GOTerm";
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
-
     protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
@@ -84,13 +83,9 @@ public class GoConverter extends BioFileConverter
      */
     public GoConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model);
-        //addWithType("FB", "Gene", "primaryIdentifier");
-        //addWithType("UniProt", "Protein", "accession");
 
-        // only construct factory here so can be replaced by mock factory in tests
-        flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
-        ontologyResolverFactory = new OntologyIdResolverFactory("GO");
-
+        //defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
+               // DEFAULT_ANNOTATION_TYPE);
         readConfig();
     }
     
@@ -109,8 +104,12 @@ public class GoConverter extends BioFileConverter
         }
         Enumeration<?> propNames = props.propertyNames();
         while (propNames.hasMoreElements()) {
+
             String taxonId = (String) propNames.nextElement();
             taxonId = taxonId.substring(0, taxonId.indexOf("."));
+
+           // String key = (String) propNames.nextElement();
+           // String taxonId = key.substring(0, key.indexOf("."));
 
             Properties taxonProps = PropertiesUtil.stripStart(taxonId,
                 PropertiesUtil.getPropertiesStartingWith(taxonId, props));
@@ -180,6 +179,12 @@ public class GoConverter extends BioFileConverter
                 LOG.error("No entry for organism with taxonId = '"
                         + taxonId + "' found in go-annotation config file. Using default");
             }
+                //config = defaultConfig;
+               // LOG.warn("No entry for organism with taxonId = '"
+                 //       + taxonId + "' found in go-annotation config file.  Using default");
+           // }
+
+
             int readColumn = config.readColumn();
             String productId = array[readColumn];
             String dataSource = array[0]; 
@@ -189,9 +194,11 @@ public class GoConverter extends BioFileConverter
             String withText = array[7];
             String annotType = array[15]; //kk
             String annotationExtension = null;
-            //if (array.length >= 16) {
-                //annotationExtension = array[15];
-            //}
+
+            if (array.length >= 16) {
+            	annotationExtension = array[15];
+            }
+
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence, annotType, withText); //, annotType
             } else {
