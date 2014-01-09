@@ -55,6 +55,13 @@
       <property name="ensemblcompara.organisms" value="4932"/>
       <property name="ensemblcompara.homologues" value="9606 7227 6239 10090 10116 7955"/>
     </source>
+   <source name="ncbi-gene" type="ncbi-gene">
+     <property name="src.data.dir" location="/data/intermine/ncbi"/>
+     <property name="organisms" value="9606"/>
+    </source>
+    <source name="omim" type="omim">
+      <property name="src.data.dir" location="/data/intermine/omim"/>
+    </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/share/intermine/go/gene_ontology_edit.obo"/>
     </source>
@@ -77,15 +84,6 @@
     </source>
      <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
-    </source>
-
-   <source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/data/intermine/ncbi"/>
-     <property name="organisms" value="9606"/>
-    </source>
-    
-    <source name="omim" type="omim">
-      <property name="src.data.dir" location="/data/intermine/omim"/>
     </source>
 
   </sources>

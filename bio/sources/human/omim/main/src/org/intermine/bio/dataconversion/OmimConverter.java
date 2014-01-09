@@ -48,6 +48,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String OMIM_PREFIX = "MIM:";
 
     private Map<String, String> genes = new HashMap<String, String>();
+    private Map<String, String> mimgenes = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, Item> diseases = new HashMap<String, Item>();
 
@@ -98,10 +99,10 @@ public class OmimConverter extends BioDirectoryConverter
                     + dataDir.getAbsolutePath() + ", was missing " + missingFiles);
         }
 
-        processNcbiIdFile(new FileReader(files.get(NCBI_ID_TXT_FILE)));
+        processNcbiIdFile(new FileReader(files.get(NCBI_ID_TXT_FILE)));  //first parse mim2gene (ncbiId and symbol secured)
         processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
         processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
-       processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
+        processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
     }
 
     private Map<String, File> readFilesInDir(File dir) {
@@ -114,12 +115,36 @@ public class OmimConverter extends BioDirectoryConverter
 
     /**
      * Create Gene --with NCBI ID as PrimaryIdentifier
+     * 100720  gene    1144    CHRND
+	   100725  gene    1145    CHRNE
+       100730  gene    1146    CHRNG
      * @param reader
      * @throws IOException
      */
-    private void processNcbiIdFile(Reader reader) throws IOException {
+    private void processNcbiIdFile(Reader reader) throws IOException,ObjectStoreException{
     	
-    	
+    	   Iterator<String[]> lineIter = FormattedTextParser.parseDelimitedReader(reader, '\t');
+
+           while (lineIter.hasNext()) {
+           	
+               String[] bits = lineIter.next();
+               if (bits.length == 0) {
+                   continue;
+               }
+
+               String mimId = bits[0].trim();
+               String type = bits[1].trim();
+               String geneId = bits[2].trim();
+               String geneSymbol = bits[3].trim();
+               
+               if(!geneId.equals("-") && !geneSymbol.equals("-") && type.equalsIgnoreCase("gene")){
+            	   
+            	   String geneItemId = getGeneItemId(mimId, geneId, geneSymbol);
+            	   
+               }
+               
+           }
+    	  	
     }
     
     private void processOmimTxtFile(Reader reader) throws IOException {
@@ -130,8 +155,6 @@ public class OmimConverter extends BioDirectoryConverter
         boolean readingTitle = false;
         
         while ((line = br.readLine()) != null) {
-        	
-        	//System.out.println("Line is... " + line);
         	
             if (readingTitle) {
                 if (sb.length() > 0) {
@@ -162,7 +185,6 @@ public class OmimConverter extends BioDirectoryConverter
                 String mimNumber = parts[0];
                 String text = parts[1];
                 
-                System.out.println("mimNumber.... " + mimNumber + "   text: " + text);
 
                 // if this isn't a disease we need we can just ignore
                 if (diseases.containsKey(mimNumber)) {
@@ -247,7 +269,8 @@ public class OmimConverter extends BioDirectoryConverter
             // String symbolFromFile = symbols[0].trim();
 
             String mimId = bits[2];
-            String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
+            //String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
+            String geneSymbol = mimgenes.get(mimId);
             if (geneSymbol != null) {
                 resolvedCount++;
                 //String gene = getGeneId(symbol);
@@ -255,15 +278,16 @@ public class OmimConverter extends BioDirectoryConverter
                     counts.get(geneMapType).resolved++;
                 }
             }
-            String geneItemId = getGeneItemId(geneSymbol);
+            //String geneItemId = getGeneItemId(geneSymbol);
+            String geneItemId = genes.get(geneSymbol);
+            
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
                 diseaseMatches++;
                 diseaseMimId = m.group(1);
             }
-            
-            System.out.println("mimID..." + mimId + "  geneSymbol: " + geneSymbol +"  diseaseId: "+ diseaseMimId);
+
 
             if (diseaseMimId != null && geneItemId != null) {
                 Item disease = getDisease(diseaseMimId);
@@ -300,15 +324,16 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private String resolveGene(String mimId) {
-        int resCount = rslv.countResolutions(HUMAN_TAXON, mimId);  //"" + 
-        LOG.info("kk..." + HUMAN_TAXON + "    MMID  "+mimId);
+  
+        int resCount = rslv.countResolutions("" + HUMAN_TAXON, mimId);
+      
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene - MIM:"
                      + mimId + " count: " + resCount + " - "
                      + rslv.resolveId("" + HUMAN_TAXON, mimId));
             return null;
         }
-        return rslv.resolveId(HUMAN_TAXON, mimId).iterator().next(); //"" + 
+        return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
@@ -367,18 +392,20 @@ public class OmimConverter extends BioDirectoryConverter
         return pubId;
     }
 
-    private String getGeneItemId(String geneSymbol) throws ObjectStoreException {
+    private String getGeneItemId(String omimId, String primaryIdentifier, String geneSymbol) throws ObjectStoreException {
         String geneItemId = null;
         // String entrezGeneNumber = resolveGene(symbol);
         if (geneSymbol != null) {
             geneItemId = genes.get(geneSymbol);
             if (geneItemId == null) {
                 Item gene = createItem("Gene");
+                gene.setAttribute("primaryIdentifier", primaryIdentifier);
                 gene.setAttribute("symbol", geneSymbol);
                 gene.setReference("organism", organism);
                 store(gene);
                 geneItemId = gene.getIdentifier();
                 genes.put(geneSymbol, geneItemId);
+                mimgenes.put(omimId, geneSymbol);
             }
         }
         return geneItemId;
