@@ -380,9 +380,9 @@ public class PantherConverter extends BioFileConverter
 
     private String resolveGene(String taxonId, String identifier) {
         // Human - Ensembl as pid
-        if ("9606".equals(taxonId)) {
-            return identifier;
-        }
+        //if ("9606".equals(taxonId)) {
+            //return identifier;
+        //}
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;
