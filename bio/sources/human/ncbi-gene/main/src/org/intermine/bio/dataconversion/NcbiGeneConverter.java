@@ -88,8 +88,7 @@ public class NcbiGeneConverter extends BioFileConverter
                 } else if ("tRNA".equals(record.geneType)
                         || "protein-coding".equals(record.geneType)
                         || "miscRNA".equals(record.geneType)
-                        || "rRNA".equals(record.geneType)) { // ecolimine case
-
+                        || "rRNA".equals(record.geneType)) { // ecolimine case || "snRNA".equals(record.geneType) || "snoRNA".equals(record.geneType) || "ncRNA".equals(record.geneType)
                      createGeneByTaxonId(taxonId, record, parser);
                 }
             }

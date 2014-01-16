@@ -93,7 +93,8 @@
                   </html:select>
             </td>
           </tr>
-       <!--  <c:if test="${!empty extraBagQueryClass}">
+          
+        <c:if test="${!empty extraBagQueryClass}"> 
             <tr>
                 <td align="right" class="label">
                        <label>
@@ -111,7 +112,7 @@
                      </html:select>
                  </td> 
             </tr>
-        </c:if> -->
+        </c:if> <%--comment this out if you want to remove the Organism drop-down from List upload page--%>
            <tr>
                <%-- textarea --%>
                <td align="right" class="label">

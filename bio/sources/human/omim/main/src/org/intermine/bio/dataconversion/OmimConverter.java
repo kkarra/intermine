@@ -137,7 +137,7 @@ public class OmimConverter extends BioDirectoryConverter
                String geneId = bits[2].trim();
                String geneSymbol = bits[3].trim();
                
-               if(!geneId.equals("-") && !geneSymbol.equals("-") && type.equalsIgnoreCase("gene")){
+               if(!geneId.equals("-") && !geneSymbol.equals("-") && (type.equalsIgnoreCase("gene") ||  type.equalsIgnoreCase("gene/phenotype"))){
             	   
             	   String geneItemId = getGeneItemId(mimId, geneId, geneSymbol);
             	   
@@ -207,7 +207,13 @@ public class OmimConverter extends BioDirectoryConverter
             }
         }
     }
-
+/**
+ * 3MC syndrome 1, 257920 (3)|MASP1, CRARF, 3MC1|600521|3q27.3
+ * 3MC syndrome 2, 265050 (3)|COLEC11, CLK1, 3MC2|612502|2p25.3
+ * @param reader
+ * @throws IOException
+ * @throws ObjectStoreException
+ */
     private void processMorbidMapFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseDelimitedReader(reader, '|');
 

@@ -55,6 +55,17 @@
       <property name="ensemblcompara.organisms" value="4932"/>
       <property name="ensemblcompara.homologues" value="9606 7227 6239 10090 10116 7955"/>
     </source>
+
+    <source name="fungi-homologs" type="fungi-homologs">
+        <property name="src.data.dir" location="/data/intermine/yeast_orthologs/fungidb"/>
+      </source>
+    <source name="cgob-homologs" type="cgob-homologs">
+        <property name="src.data.dir" location="/data/intermine/yeast_orthologs/CGOB"/>
+     </source>
+     <source name="pombe-homologs" type="pombe-homologs">
+        <property name="src.data.dir" location="/data/intermine/yeast_orthologs/pombe"/>
+     </source>
+
    <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/data/intermine/ncbi"/>
      <property name="organisms" value="9606"/>
