@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 import org.intermine.bio.dataconversion.IdResolver;
 import org.intermine.dataconversion.ItemWriter;
@@ -50,6 +51,7 @@ public class EnsemblComparaConverter extends BioFileConverter
     protected IdResolver rslv = null;
     private Map<String, String> configs = new HashMap<String, String>();
     private static String evidenceRefId = null;
+    //private Map<MultiKey, String> resolvedIds = new MultiKeyMap();
 
     /**
      * Constructor
@@ -103,10 +105,10 @@ public class EnsemblComparaConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
 
         // init resolver
-        if (rslv == null) { // a workround for unit test
-            rslv = IdResolverService.getFlyIdResolver();
-            rslv = IdResolverService.getEnsemblIdResolver();
-        }
+       //  if (rslv == null) { // a workround for unit test
+         //   rslv = IdResolverService.getFlyIdResolver();
+          //  rslv = IdResolverService.getEnsemblIdResolver();
+       // }
 
         if (taxonIds == null || taxonIds.isEmpty()) {
             throw new IllegalArgumentException("No organism data provided for Ensembl Compara");
@@ -131,6 +133,8 @@ public class EnsemblComparaConverter extends BioFileConverter
             return;
         }
 
+        createIDResolver(); 
+        
         String lastGene1 = "";
         String lastGene2 = "";
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -168,6 +172,19 @@ public class EnsemblComparaConverter extends BioFileConverter
             lastGene2 = gene2;
         }
     }
+    
+    
+    
+    private void createIDResolver() {
+        Set<String> allTaxonIds = new HashSet<String>();
+        allTaxonIds.addAll(taxonIds);
+        allTaxonIds.addAll(homologues);
+        if (rslv == null) { 
+            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        }
+        LOG.info("Taxons in resolver:" + rslv.getTaxons());
+    }
+
 
     // save homologue pair
     private void processHomologue(String gene1, String gene2)
@@ -185,25 +202,30 @@ public class EnsemblComparaConverter extends BioFileConverter
         if (StringUtils.isBlank(identifier)) {
             return null;
         }
-        String newIdentifier = identifier;
-        if ("7227".equals(taxonId) || "9606".equals(taxonId)) {
-            newIdentifier = resolveGene(taxonId, identifier);
-            if (newIdentifier == null) {
+        //String newIdentifier = identifier;
+        //if ("7227".equals(taxonId) || "9606".equals(taxonId)) {
+           String resolvedGenePid = resolveGene(taxonId, identifier);
+            if (resolvedGenePid == null) {
                 return null;
             }
-        }
-        String refId = genes.get(newIdentifier);
+       // }
+         if(resolvedGenePid.startsWith("SGD:")){		
+            	//System.out.println("SGD ID.. " + resolvedGenePid);	
+            	String id =resolvedGenePid.substring(4);	
+            	resolvedGenePid = id;
+         }
+        String refId = genes.get(resolvedGenePid);
         if (refId == null) {
             String fieldName = getConfig(taxonId);
             if (fieldName == null) {
                 throw new IllegalArgumentException("no config found");
             }
             Item item = createItem("Gene");
-            item.setAttribute(fieldName, newIdentifier);
+            item.setAttribute(fieldName, resolvedGenePid);
             item.setReference("organism", getOrganism(taxonId));
             store(item);
             refId = item.getIdentifier();
-            genes.put(newIdentifier, refId);
+            genes.put(resolvedGenePid, refId);
         }
         return refId;
     }
@@ -214,7 +236,7 @@ public class EnsemblComparaConverter extends BioFileConverter
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             return identifier;
         }
-        int resCount = rslv.countResolutions(taxonId, identifier);
+       /* int resCount = rslv.countResolutions(taxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                     + identifier + " count: " + resCount + " resolved to: "
@@ -223,7 +245,18 @@ public class EnsemblComparaConverter extends BioFileConverter
         }
         id = rslv.resolveId(taxonId, identifier).iterator().next();
 
-        return id;
+        return id;*/
+        String resolvedId = rslv.resolveIds(taxonId, Arrays.asList(identifier));
+
+        if (resolvedId != null) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                    + identifier + " for taxon ID " + taxonId);
+        }
+
+        //resolvedIds.put(new MultiKey(taxonId, identifier), resolvedId);
+        
+        return resolvedId;
+
     }
 
     private String getConfig(String taxonId) {

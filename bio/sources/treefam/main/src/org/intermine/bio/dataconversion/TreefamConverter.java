@@ -227,7 +227,7 @@ public class TreefamConverter extends BioFileConverter
             return null;
         }
         if(resolvedGenePid.startsWith("SGD:")){		
-        	System.out.println("SGD ID.. " + resolvedGenePid);	
+        	//System.out.println("SGD ID.. " + resolvedGenePid);	
         	String id =resolvedGenePid.substring(4);	
         	resolvedGenePid = id;
         }

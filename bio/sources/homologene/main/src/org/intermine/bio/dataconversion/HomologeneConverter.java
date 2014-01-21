@@ -242,7 +242,7 @@ public class HomologeneConverter extends BioFileConverter
         
         //kk-add
         if(resolvedIdentifier.startsWith("SGD:")){		
-        	System.out.println("SGD ID.. " + resolvedIdentifier);	
+        	//System.out.println("SGD ID.. " + resolvedIdentifier);	
         	String id =resolvedIdentifier.substring(4);	
         	resolvedIdentifier = id;
         }
