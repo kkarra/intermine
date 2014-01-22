@@ -316,7 +316,7 @@ public class TreefamConverter extends BioFileConverter
                 geneField = configs[0];
                 identifierType = configs[1];
             } 
-            System.out.println("before setIdentifier .." + identifier + "  " + symbol + " " + geneField);
+            //System.out.println("before setIdentifier .." + identifier + "  " + symbol + " " + geneField);
             identifier = setIdentifier(identifier, symbol, geneField);
             idsToGenes.put(id, new GeneHolder(identifier, symbol, identifierType, taxonId));
         }

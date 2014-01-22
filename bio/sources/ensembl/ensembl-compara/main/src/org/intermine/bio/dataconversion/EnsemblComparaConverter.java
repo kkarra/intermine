@@ -210,7 +210,7 @@ public class EnsemblComparaConverter extends BioFileConverter
             }
        // }
          if(resolvedGenePid.startsWith("SGD:")){		
-            	//System.out.println("SGD ID.. " + resolvedGenePid);	
+            	System.out.println("SGD ID.. " + resolvedGenePid);	
             	String id =resolvedGenePid.substring(4);	
             	resolvedGenePid = id;
          }
