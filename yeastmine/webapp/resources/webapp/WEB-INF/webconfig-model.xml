@@ -18,7 +18,7 @@
 			<table path="synonyms.value" showInHeader="true" lineLength="100" />
 		</inlinelist>
 		<fields>
-			<fieldconfig fieldExpr="primaryIdentifier" label="Primary SGDID"></fieldconfig>
+			<fieldconfig fieldExpr="primaryIdentifier" label="Primary DBID"></fieldconfig>
 			<fieldconfig fieldExpr="secondaryIdentifier" label="Systematic Name"></fieldconfig>
 			<fieldconfig fieldExpr="symbol" label="Standard Name"></fieldconfig>
 			<fieldconfig fieldExpr="sgdAlias" label="Alias"></fieldconfig>

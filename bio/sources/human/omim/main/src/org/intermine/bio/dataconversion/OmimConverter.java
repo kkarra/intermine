@@ -137,14 +137,11 @@ public class OmimConverter extends BioDirectoryConverter
                String geneId = bits[2].trim();
                String geneSymbol = bits[3].trim();
                
-               if(!geneId.equals("-") && !geneSymbol.equals("-") && (type.equalsIgnoreCase("gene") ||  type.equalsIgnoreCase("gene/phenotype"))){
-            	   
-            	   String geneItemId = getGeneItemId(mimId, geneId, geneSymbol);
-            	   
+               if(!geneId.equals("-") && !geneSymbol.equals("-") && (type.equalsIgnoreCase("gene") ||  type.equalsIgnoreCase("gene/phenotype"))){          	   
+            	   String geneItemId = getGeneItemId(mimId, geneId, geneSymbol);           	   
                }
                
-           }
-    	  	
+           } 	  	
     }
     
     private void processOmimTxtFile(Reader reader) throws IOException {
@@ -252,9 +249,11 @@ public class OmimConverter extends BioDirectoryConverter
             if (bits.length == 0) {
                 continue;
             }
-
-            String first = bits[0].trim();
-
+            //46XY sex reversal 1, 400044 (3)|SRY, TDF, TDY, SRXX1, SRXY1|480000|Yp11.31
+            
+            String first = bits[0].trim(); //firt value before pipe
+            System.out.println("string first is ..." + first);
+            
             Matcher m = matchNumberInBrackets.matcher(first);
             String geneMapType = null;
             if (m.find()) {
@@ -267,14 +266,9 @@ public class OmimConverter extends BioDirectoryConverter
                     counts.put(geneMapType, new CountPair());
                 }
                 counts.get(geneMapType).total++;
-            }
+            } //what are we doing with this number in parentheses ..seems like nothing.??
 
-            // String symbolStr = bits[1];
-            // String[] symbols = symbolStr.split(",");
-            // main HGNC symbols is first, others are synonyms
-            // String symbolFromFile = symbols[0].trim();
-
-            String mimId = bits[2];
+            String mimId = bits[2];  //Gene MIMID
             //String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
             String geneSymbol = mimgenes.get(mimId);
             if (geneSymbol != null) {
@@ -294,7 +288,6 @@ public class OmimConverter extends BioDirectoryConverter
                 diseaseMimId = m.group(1);
             }
 
-
             if (diseaseMimId != null && geneItemId != null) {
                 Item disease = getDisease(diseaseMimId);
                 disease.addToCollection("genes", geneItemId);
@@ -309,11 +302,6 @@ public class OmimConverter extends BioDirectoryConverter
                 sb.append(System.getProperty("line.separator"));
                 fw.write(sb.toString());
             }
-
-            // start with basic rules and count how many columns are parsed
-            // if gene is an HGNC symbol - create a gene
-            // if disease id in first column, create a disease object
-            // if not create a region
 
         }
         fw.flush();
