@@ -72,7 +72,7 @@ public class FungiHomologsConverter extends BioFileConverter
     			String refId1 = null;
     			String refId2 = refId2 = parseGene(gene2, organism, "primaryIdentifier");
 
-    			System.out.println("gene1...: "+ gene1);
+    			//System.out.println("gene1...: "+ gene1);
     			
     			String geneIds[] = gene1.split(",");
     			if(geneIds.length > 0){

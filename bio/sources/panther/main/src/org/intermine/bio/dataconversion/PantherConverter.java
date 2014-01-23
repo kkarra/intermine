@@ -90,6 +90,8 @@ public class PantherConverter extends BioFileConverter
         TYPES.put("LDO", "least diverged orthologue");
         TYPES.put("O", "orthologue");
         TYPES.put("P", "paralogue");
+        TYPES.put("X", "homologue");
+        TYPES.put("LDX", "least diverged homologue");
     }
 
     /**
