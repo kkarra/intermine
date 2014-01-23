@@ -47,6 +47,15 @@
 		</fields>
 		<tabledisplayer src="/model/dataSourceShort.jsp"></tabledisplayer>
 	</class>
+	
+	
+  <class className="org.intermine.model.bio.Disease">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+  
 
 	<class className="org.intermine.model.bio.Gene">
 		<headerconfig>

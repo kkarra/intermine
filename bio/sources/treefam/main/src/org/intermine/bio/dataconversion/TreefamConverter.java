@@ -213,11 +213,6 @@ public class TreefamConverter extends BioFileConverter
         String resolvedGenePid = null;
         // test if id has been resolved
         if (resolvedIds.containsKey(new MultiKey(taxonId, geneId, symbol))) {
-          /*if (resolvedIds.get(new MultiKey(taxonId, geneId, symbol)) != null) {
-            	resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
-                LOG.info("This id: " + taxonId + "-" + geneId + "-" + symbol
-                        + " has been resolved as: " + resolvedGenePid);
-            }*/
             resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
         } else {
         	resolvedGenePid = resolveGene(taxonId, geneId, symbol);
