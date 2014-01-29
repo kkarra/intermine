@@ -368,7 +368,7 @@ public class OmimConverter extends BioDirectoryConverter
         Item disease = diseases.get(mimNumber);
         if (disease == null) {
             disease = createItem("Disease");
-            disease.setAttribute("identifier", OMIM_PREFIX + mimNumber);
+            disease.setAttribute("identifier", mimNumber); //OMIM_PREFIX + 
             diseases.put(mimNumber, disease);
         }
         return disease;
