@@ -88,9 +88,13 @@ public class NcbiGeneConverter extends BioFileConverter
                 } else if ("tRNA".equals(record.geneType)
                         || "protein-coding".equals(record.geneType)
                         || "miscRNA".equals(record.geneType)
-                        || "rRNA".equals(record.geneType)) { // ecolimine case || "snRNA".equals(record.geneType) || "snoRNA".equals(record.geneType) || "ncRNA".equals(record.geneType)
+                        || "rRNA".equals(record.geneType)) { 
                      createGeneByTaxonId(taxonId, record, parser);
-                }
+                }  //                        
+                 //
+                //|| "snRNA".equals(record.geneType) 
+                //|| "snoRNA".equals(record.geneType) 
+                //|| "ncRNA".equals(record.geneType)
             }
         }
     }
@@ -136,7 +140,10 @@ public class NcbiGeneConverter extends BioFileConverter
         }
 
         // ncbiGeneNumber - removed from model addition
-//        gene.setAttribute("ncbiGeneNumber", record.entrez);
+        //gene.setAttribute("ncbiGeneNumber", record.entrez);
+        
+        // geneType - kk
+        gene.setAttribute("featureType", record.geneType); 
 
         // name
         if (record.officialName != null) {

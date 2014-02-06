@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -31,6 +32,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
@@ -41,6 +43,13 @@ import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
 /**
  * Prepare templates and news to be rendered on home page
@@ -192,6 +201,18 @@ public class BeginAction extends InterMineAction
             request.setAttribute("isNewUser", Boolean.FALSE);
         }
 
+
+        // List upload organisms.
+        ObjectStore os = im.getObjectStore();
+        ObjectStoreSummary oss = im.getObjectStoreSummary();
+        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
+        String extraClassName = bagQueryConfig.getExtraConstraintClassName();
+
+        List extraClassFieldValues =
+        		getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
+        request.setAttribute("extraClassFieldValues", extraClassFieldValues);
+
+
         return mapping.findForward("begin");
     }
 
@@ -226,4 +247,41 @@ public class BeginAction extends InterMineAction
         response.addCookie(cookie);
         return response;
     }
+    
+    
+    
+    /**
+     * Return a list of the possible field values for the given class/field name combination.
+     * @param os the ObjectStore to query if the field values aren't available from the summary
+     * @param oss the summary of the object store
+     * @param extraClassName the class name
+     * @param constrainField the field name
+     * @return a List of the feild values
+     */
+    public static List<Object> getFieldValues(ObjectStore os, ObjectStoreSummary oss,
+    		String extraClassName, String constrainField) {
+    	List<Object> fieldValues = oss.getFieldValues(extraClassName, constrainField);
+    	if (fieldValues == null) {
+    		Query q = new Query();
+    		q.setDistinct(true);
+    		QueryClass qc;
+    		try {
+    			qc = new QueryClass(Class.forName(extraClassName));
+    		} catch (ClassNotFoundException e) {
+    			throw new RuntimeException("Can't find class for: " + extraClassName);
+    		}
+    		q.addToSelect(new QueryField(qc, constrainField));
+    		q.addFrom(qc);
+    		Results results = os.execute(q);
+    		fieldValues = new ArrayList<Object>();
+    		for (Iterator j = results.iterator(); j.hasNext();) {
+    			Object fieldValue = ((ResultsRow) j.next()).get(0);
+    			fieldValues.add(fieldValue == null ? null : fieldValue.toString());
+    		}
+    	}
+    
+     return fieldValues;
+     }
+    
+    
 }

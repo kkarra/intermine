@@ -94,7 +94,7 @@
             </td>
           </tr>
           
-        <c:if test="${!empty extraBagQueryClass}"> 
+        <c:if test="${!empty extraBagQueryClass}"> <%--comment this out if you want to remove the Organism drop-down from List upload page--%>
             <tr>
                 <td align="right" class="label">
                        <label>

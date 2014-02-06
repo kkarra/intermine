@@ -51,6 +51,7 @@ public class OmimConverter extends BioDirectoryConverter
     private Map<String, String> mimgenes = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, Item> diseases = new HashMap<String, Item>();
+    private Map<String, String> datasources = new HashMap();
 
     private String organism;
 
@@ -59,7 +60,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    private IdResolver rslv;
+    //private IdResolver rslv;
 
     /**
      * Constructor
@@ -84,7 +85,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         organism = getOrganism(HUMAN_TAXON);
 
-        rslv = IdResolverService.getHumanIdResolver();
+        //rslv = IdResolverService.getHumanIdResolver();
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE, NCBI_ID_TXT_FILE};
         Set<String> missingFiles = new HashSet<String>();
@@ -131,7 +132,7 @@ public class OmimConverter extends BioDirectoryConverter
                if (bits.length == 0) {
                    continue;
                }
-
+              
                String mimId = bits[0].trim();
                String type = bits[1].trim();
                String geneId = bits[2].trim();
@@ -252,7 +253,6 @@ public class OmimConverter extends BioDirectoryConverter
             //46XY sex reversal 1, 400044 (3)|SRY, TDF, TDY, SRXX1, SRXY1|480000|Yp11.31
             
             String first = bits[0].trim(); //firt value before pipe
-            System.out.println("string first is ..." + first);
             
             Matcher m = matchNumberInBrackets.matcher(first);
             String geneMapType = null;
@@ -317,7 +317,7 @@ public class OmimConverter extends BioDirectoryConverter
                 + " unique diseases from " + lineCount + " line file.");
     }
 
-    private String resolveGene(String mimId) {
+   /* private String resolveGene(String mimId) {
   
         int resCount = rslv.countResolutions("" + HUMAN_TAXON, mimId);
       
@@ -328,7 +328,7 @@ public class OmimConverter extends BioDirectoryConverter
             return null;
         }
         return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
-    }
+    }*/
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -396,6 +396,7 @@ public class OmimConverter extends BioDirectoryConverter
                 gene.setAttribute("primaryIdentifier", primaryIdentifier);
                 gene.setAttribute("symbol", geneSymbol);
                 gene.setReference("organism", organism);
+                getCrossReference(gene.getIdentifier(), omimId, "MIM");
                 store(gene);
                 geneItemId = gene.getIdentifier();
                 genes.put(geneSymbol, geneItemId);
@@ -404,4 +405,44 @@ public class OmimConverter extends BioDirectoryConverter
         }
         return geneItemId;
     }
+    
+    
+
+	private String getCrossReference(String subjectId, String id, String source)
+			throws ObjectStoreException {
+
+		String refId = "";
+		Item crf = createItem("CrossReference");
+		crf.setReference("subject", subjectId);
+		crf.setAttribute("identifier", id);
+		//crf.setAttribute("dbxrefsource", source);
+
+		String dsId = datasources.get(source);
+		if (dsId == null) {
+			Item ds = createItem("DataSource");
+			ds.setAttribute("name", source);
+			try {
+				store(ds);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+
+			crf.setReference("source", ds.getIdentifier());
+			datasources.put(source, ds.getIdentifier());
+		} else {
+			crf.setReference("source", dsId);
+		}
+
+		try {
+			store(crf);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}
+
+		refId = crf.getIdentifier();
+		return refId;
+
+	}
+
+	
 }
