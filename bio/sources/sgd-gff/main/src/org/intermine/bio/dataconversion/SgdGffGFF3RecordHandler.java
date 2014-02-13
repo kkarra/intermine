@@ -87,10 +87,10 @@ public class SgdGffGFF3RecordHandler extends GFF3RecordHandler
     	if (gene != null) { 	
 
     		if(StringUtils.isNotEmpty(glu_count)){
-    			transcript.setAttribute("gluCount",glu_count);                    
+    			transcript.setAttribute("glucoseCount",glu_count);                    
     		}
     		if(StringUtils.isNotEmpty(gal_count)){
-    			transcript.setAttribute("galCount",gal_count);                    
+    			transcript.setAttribute("galactoseCount",gal_count);                    
     		}                
     		if(StringUtils.isNotEmpty(note)){
     			transcript.setAttribute("note",note);                    

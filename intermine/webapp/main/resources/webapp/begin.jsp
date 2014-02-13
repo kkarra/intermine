@@ -43,10 +43,15 @@
                                             </c:forEach>
                                         </select>
                                         
+                                      <c:set var="defaultOrganism" value="Any"/>
+                                      <c:if test="${!empty WEB_PROPERTIES['constraint.default.extra-value']}">
+                                      <c:set var="defaultOrganism" value="${WEB_PROPERTIES['constraint.default.extra-value']}"/>
+                                      </c:if>
+                                        
                                         <select name="extraFieldValue">
                                         		<option value="">Any</option>
                                         		<c:forEach items="${extraClassFieldValues}" var="value">
-                                        		<option value="${value}">${value}</option>
+                                        		<option value="${value}"<c:if test="${value == defaultOrganism}">selected="selected"</c:if>>${value}</option>
                                         		</c:forEach>
                                         </select>
                                         

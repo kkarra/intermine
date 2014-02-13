@@ -396,7 +396,7 @@ public class OmimConverter extends BioDirectoryConverter
                 gene.setAttribute("primaryIdentifier", primaryIdentifier);
                 gene.setAttribute("symbol", geneSymbol);
                 gene.setReference("organism", organism);
-                getCrossReference(gene.getIdentifier(), omimId, "MIM");
+                //getCrossReference(gene.getIdentifier(), omimId, "MIM");  //does not merge with existing MIM crossref and causes duplicates
                 store(gene);
                 geneItemId = gene.getIdentifier();
                 genes.put(geneSymbol, geneItemId);
