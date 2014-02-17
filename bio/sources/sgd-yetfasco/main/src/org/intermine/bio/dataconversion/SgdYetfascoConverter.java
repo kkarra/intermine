@@ -181,6 +181,7 @@ public class SgdYetfascoConverter extends BioFileConverter
 		 *  FDR  - 9 
 		 * PMID  - 10 
 		 *  source  - 11
+		 *  strain - 12
 		 */   	 
 		System.out.println("Processing confirmedBindingSites Regulation Data file....");    
 

@@ -69,5 +69,12 @@
 		<aspect-source name="Regulation" url="http://yeastract.com/" />
 	</aspect>
 
+	<aspect name="Homology">
+		<subtitle>Homology</subtitle>
+		<intro-text> &lt;p&gt; Homology data for &lt;i&gt;S. cerevisiae
+			&lt;/i&gt;. </intro-text>
+		<aspect-source name="Homology" url="http://yeastmine.yeastgenome.org/" />
+	</aspect>
+
 
 </aspects>
