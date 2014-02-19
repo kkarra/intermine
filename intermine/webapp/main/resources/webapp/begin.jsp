@@ -45,18 +45,18 @@
                                         
                                       <c:set var="defaultOrganism" value="Any"/>
                                       <c:if test="${!empty WEB_PROPERTIES['constraint.default.extra-value']}">
-                                      <c:set var="defaultOrganism" value="${WEB_PROPERTIES['constraint.default.extra-value']}"/>
+                                        <c:set var="defaultOrganism" value="${WEB_PROPERTIES['constraint.default.extra-value']}"/>
                                       </c:if>
                                         
                                         <select name="extraFieldValue">
-                                        		<option value="">Any</option>
+                                               <option value="">Any</option>	
                                         		<c:forEach items="${extraClassFieldValues}" var="value">
                                         		<option value="${value}"<c:if test="${value == defaultOrganism}">selected="selected"</c:if>>${value}</option>
                                         		</c:forEach>
                                         </select>
                                         
                                         <c:if test="${!empty WEB_PROPERTIES['begin.listUpload.values']}">
-                                        <tr>
+                                         <tr>
                                                 <td align="right" class="label">
                                                              <label>
                                                                  <fmt:message key="bagBuild.extraConstraint">
@@ -71,8 +71,8 @@
                                                             </c:forEach>
                                                         </select>
                                                  </td>
-                                        </tr>
-                                </c:if>
+                                         </tr>
+                                        </c:if>
                                      
                                        <div class="textarea">
                                             <c:choose>
