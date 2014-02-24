@@ -612,7 +612,7 @@
 		<bagtabledisplayer id="interactions" title="Interactions"
 			pathStrings="Gene.interactions.details.allInteractors"
 			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-			displayFields="primaryIdentifier, name" exportField="secondaryIdentifier"
+			displayFields="secondaryIdentifier, name" exportField="primaryIdentifier"
 			typeClass="Gene" columnTitle="Interactions"
 			views="secondaryIdentifier, symbol, organism.shortName,
 	                                interactions.details.name, interactions.details.relationshipType.name,
@@ -620,6 +620,22 @@
 	                                interactions.details.allInteractors.primaryIdentifier,
 	                                interactions.details.allInteractors.symbol,
                                    interactions.details.experiment.name" />
+                                   
+          <!-- <bagtabledisplayer id="interactions" title="Interactions"
+			pathStrings="Gene.interactions.details.allInteractors"
+			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
+			displayFields="primaryIdentifier, name" exportField="secondaryIdentifier"
+			typeClass="Gene" columnTitle="Interactions"
+			views="secondaryIdentifier, symbol, organism.shortName,
+	                            interactions.details.annotationType 
+								interactions.details.phenotype 
+								interactions.details.role1 
+								interactions.details.experimentType 
+								interactions.gene2.symbol 
+								interactions.gene2.secondaryIdentifier 
+								interactions.details.experiment.name 
+								interactions.details.relationshipType.name
+                                   " />   -->
 
 		<bagtabledisplayer id="orthologues" title="Orthologues"
 			pathStrings="Gene.homologues[type!=paralogue].homologue.organism"

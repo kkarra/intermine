@@ -128,18 +128,21 @@ public class SgdYetfascoConverter extends BioFileConverter
 
 			String[] line = (String[]) tsvIter.next();
 
-			if (line.length < 10) {
-				LOG.error("Couldn't process line. Expected 10 cols, but was " + line.length);
-				continue;
-			}
-
 			String factorGene =  line[1].trim();     
 			String targetGene = line[3].trim();
 
-			//System.out.println("factor gene"  + factorGene + " target gene " + targetGene);
+			System.out.println("factor gene "  + factorGene + " target gene " + targetGene);
+			
+			if (line.length < 10) {
+				System.out.println("LessThan10:  factor gene "  + factorGene + " target gene " + targetGene);
+				LOG.error("Couldn't process line. Expected 10 cols, but was " + line.length);				
+				continue;
+			}
+
 
 			if(factorGene.indexOf("TEL")  >= 0 || factorGene.indexOf("delta") > 0  || factorGene.indexOf("omega") > 0  || factorGene.indexOf("Ty") > 0
 					|| targetGene.indexOf("TEL") >= 0 || targetGene.indexOf("delta") > 0  || targetGene.indexOf("omega") > 0  || targetGene.indexOf("Ty") > 0	){
+				System.out.println("TEL/delta/omega/Ty:  factor gene "  + factorGene + " target gene " + targetGene);
 				continue;
 			}
 
@@ -196,18 +199,20 @@ public class SgdYetfascoConverter extends BioFileConverter
 
 			String[] line = (String[]) tsvIter.next();
 
+			String factorGene =  line[1].trim();     
+			String targetGene = line[3].trim();
+
+			System.out.println("factor gene "  + factorGene + " target gene " + targetGene);
+			
 			if (line.length < 13) {
+				System.out.println("LessThan10:  factor gene "  + factorGene + " target gene " + targetGene);
 				LOG.error("Couldn't process line. Expected 10 cols, but was " + line.length);
 				continue;
 			}
 
-			String factorGene =  line[1].trim();     
-			String targetGene = line[3].trim();
-
-			System.out.println("factor gene"  + factorGene + " target gene " + targetGene);
-
 			if(factorGene.indexOf("TEL")  >= 0 || factorGene.indexOf("delta") > 0  || factorGene.indexOf("omega") > 0  || factorGene.indexOf("Ty") > 0
 					|| targetGene.indexOf("TEL") >= 0 || targetGene.indexOf("delta") > 0  || targetGene.indexOf("omega") > 0  || targetGene.indexOf("Ty") > 0	){
+				System.out.println("TEL/delta/omega/Ty:  factor gene "  + factorGene + " target gene " + targetGene);
 				continue;
 			}
 
