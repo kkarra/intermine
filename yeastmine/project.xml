@@ -14,7 +14,7 @@
 
       <source name="sgd-gff" type="sgd-gff">
       <property name="gff3.taxonId" value="4932"/>
-      <property name="gff3.dataSourceName" value="Steimetz et al Transcripts"/>
+      <property name="gff3.dataSourceName" value="SGD Transcriptome v1.0"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Preliminary Transcripts"/>
       <property name="src.data.dir" location="/data/intermine/gff"/>

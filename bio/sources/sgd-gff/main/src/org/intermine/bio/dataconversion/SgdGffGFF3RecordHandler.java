@@ -71,6 +71,8 @@ public class SgdGffGFF3RecordHandler extends GFF3RecordHandler
 
     	//chrVIII	Pelechano_2013	mRNA	486202	486672	.	-	.	
     	//ID=Pelechano_chrVIII_486672_486202;Name=YHR191C.95;glu_count=0;gal_count=3;Note=Covering_one_intact_ORF;5pScore=1;3pScore=1;Parent=YHR191C
+    	//ID=S000166779;Name=SC_Transcript_00009801;glu_count=0;gal_count=2;Note=Covering_one_intact_ORF;5pScore=2;3pScore=1;
+    	//5pDataset=Miura_2006,Zhang_2005;3pDataset=Xu_2009_ORFs;Qualifier=Verified;Parent=YAL060
 
     	Item transcript = getFeature(); //class name is MRNA
 
@@ -81,7 +83,9 @@ public class SgdGffGFF3RecordHandler extends GFF3RecordHandler
     	String note = record.getAttributes().get("Note").get(0);
     	String fivescore = record.getAttributes().get("5pScore").get(0);
     	String threescore = record.getAttributes().get("3pScore").get(0);
-
+    	String fivesdataset = record.getAttributes().get("5pDataset").get(0);
+    	String threedataset = record.getAttributes().get("3pDataset").get(0);
+    	
 
     	Item gene = getGene(parentGene);
     	if (gene != null) { 	
@@ -101,11 +105,16 @@ public class SgdGffGFF3RecordHandler extends GFF3RecordHandler
     		if(StringUtils.isNotEmpty(threescore)){
     			transcript.setAttribute("threePrimeScore",threescore);                    
     		}
+    		if(StringUtils.isNotEmpty(fivesdataset)){
+    			transcript.setAttribute("fivePrimeDataSet",fivesdataset);                    
+    		}
+    		if(StringUtils.isNotEmpty(threedataset)){
+    			transcript.setAttribute("threePrimeDataSet",threedataset);                    
+    		}
     		
     		transcript.setReference("gene", gene.getIdentifier());
 
     	}
-
 
     }
 

@@ -54,6 +54,8 @@
  <attribute name="note" type="java.lang.String"/>
  <attribute name="fivePrimeScore" type="java.lang.String"/>
  <attribute name="threePrimeScore" type="java.lang.String"/>
+ <attribute name="fivePrimeDataSet" type="java.lang.String"/>
+ <attribute name="threePrimeDataSet" type="java.lang.String"/>
 </class>
 
 <class name="Protein" extends="BioEntity" is-interface="true">	
