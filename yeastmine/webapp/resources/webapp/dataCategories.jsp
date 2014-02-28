@@ -73,6 +73,14 @@
 </td>
 </tr>
 
+
+<tr><td class="leftcol">
+<p> <h2>Disease</h2></p></td>
+<td>Human disease gene annotations</td>
+<td><a href="http://omim.org" target="_new">OMIM</a> </td>
+</tr>
+
+
 <tr><td class="leftcol">
 <p> <h2>Proteins</h2></p></td>
 <td>Protein annotations</td>
