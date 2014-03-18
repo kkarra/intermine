@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1015,12 +1015,8 @@ public class GenomicRegionSearchService
             }
         }
 
-        //String clHtml = " or <a href=\"javascript: createList('all','all-regions');\">"
-          //  + "Create List by feature type:</a>"
-            //+ "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
-        
         String clHtml = " or Create List by feature type:"
-        		             + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
+            + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
 
         for (String ft : ftSet) {
             clHtml += "<option value=\"" + ft + "\">"
@@ -1029,7 +1025,8 @@ public class GenomicRegionSearchService
         }
 
         clHtml += "</select>";
-        clHtml += "<button onClick=\"javascript: createList('all','all-regions');\">Go</button>";
+        clHtml += "<button onClick=\"javascript:createList('all','all-regions');\">Go</button>";
+
         return clHtml;
     }
 
@@ -1527,13 +1524,8 @@ public class GenomicRegionSearchService
         if (ftSet == null) {
             return "";
         } else {
-           // String ftHtml = "<div>"
-             //   + "<a href=\"javascript: createList('" + s.getFullRegionInfo()
-              //  + "', '" + id + "');\">" + "Create List by</a>"
-              // + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
-         	
-        	String ftHtml = "<div>Create List by"
-                             + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
+            String ftHtml = "<div>Create List by"
+                + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
 
             for (String ft : ftSet) {
                 ftHtml += "<option value=\"" + ft + "\">"
@@ -1541,11 +1533,10 @@ public class GenomicRegionSearchService
                         + "</option>";
             }
 
-            //ftHtml += "</select></div>";
-          ftHtml += "</select>";
-          ftHtml += "<button onClick=\"javascript: createList('" + s.getFullRegionInfo()
-          + "', '" + id + "');\">Go</button>";
-          ftHtml += "</div>";
+            ftHtml += "</select>";
+            ftHtml += "<button onClick=\"javascript: createList('" + s.getFullRegionInfo()
+                      + "', '" + id + "');\">Go</button>";
+            ftHtml += "</div>";
 
             return ftHtml;
         }

@@ -1227,8 +1227,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         LOG.warn("Error writing to execute log " + e);
                     }
                 }
-                dbLog(endOptimiseTime - startOptimiseTime, estimatedTime, postExecute - preExecute,
-                        permittedTime, postConvert - postExecute, q, sql);
+                //dbLog(endOptimiseTime - startOptimiseTime, estimatedTime, postExecute - preExecute,
+                  //      permittedTime, postConvert - postExecute, q, sql);
             }
             long bagTableTime = preGenTime - preBagTableTime;
             statsBagTableTime += bagTableTime;
