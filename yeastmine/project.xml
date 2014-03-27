@@ -79,6 +79,14 @@
      <property name="src.data.dir" location="/data/intermine/ncbi"/>
      <property name="organisms" value="9606"/>
     </source>
+
+   <source name="mgi-identifiers" type="mgi-identifiers">
+      <property name="src.data.dir" location="/data/intermine/mgi-identifiers"/>
+    </source>
+    <source name="rgd-identifiers" type="rgd-identifiers">
+      <property name="src.data.dir" location="/data/intermine/rgd-identifiers"/>
+    </source>
+
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/data/intermine/omim"/>
     </source>
