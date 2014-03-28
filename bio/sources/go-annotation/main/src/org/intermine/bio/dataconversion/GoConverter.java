@@ -187,6 +187,9 @@ public class GoConverter extends BioFileConverter
             }
 
             String taxonId = parseTaxonId(array[12]);
+            if(taxonId.equals("559292")){
+            	taxonId = "4932";
+            }
             Config config = configs.get(taxonId);
             if (config == null) {
                 config = defaultConfig;
