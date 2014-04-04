@@ -77,9 +77,9 @@
 			<fieldconfig fieldExpr="sgdAlias"></fieldconfig>
 			<fieldconfig fieldExpr="length"></fieldconfig>
 		</fields>
-       <!-- <bagdisplayers>
+       <bagdisplayers>
            <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
-        </bagdisplayers>  --> 
+        </bagdisplayers> 
 	</class>
 
 	<class className="org.intermine.model.bio.ORF">
@@ -637,7 +637,7 @@
 								interactions.details.relationshipType.name
                                    " />   -->
 
-		<!-- <bagtabledisplayer id="orthologues" title="Orthologues"
+		 <bagtabledisplayer id="orthologues" title="Orthologues"
 			pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
 			description="Shows the number of Genes in list with orthologue not the number of orthologues."
 			displayFields="name" exportField="primaryIdentifier" typeClass="Gene"
@@ -646,6 +646,6 @@
                                 homologues.homologue.primaryIdentifier,
 	                            homologues.homologue.symbol,
 	                            homologues.homologue.organism.shortName,
-	                            homologues.type" />  -->
+	                            homologues.type" /> 
 	</widgets>
 </webconfig>
