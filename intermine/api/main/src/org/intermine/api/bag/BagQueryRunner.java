@@ -135,8 +135,8 @@ public class BagQueryRunner
         // CollectionUtil.groupByClass will sort out the strings and types
         Class typeCls = Class.forName(model.getPackageName() + "." + type);
        
-        LOG.error("Type is :  " + type);
-        LOG.error("TypeClass is :  "+ typeCls.getName());
+        //LOG.error("Type is :  " + type);
+        //LOG.error("TypeClass is :  "+ typeCls.getName());
         
         List<BagQuery> queries = getBagQueriesForType(bagQueryConfig, typeCls.getName());     	
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
@@ -162,7 +162,7 @@ public class BagQueryRunner
                  //   Query q = bq.getQuery(toProcess, extraFieldValue);
 //>>>>>>> 213ffd02c6475b09515bfead2961b32b111a6e34
                     Results res = os.execute(q, 10000, true, true, false);
-                    LOG.error("size of results: " + res.size());
+                    //LOG.error("size of results: " + res.size());
                     Iterator resIter = res.iterator();
                    // while (resIter.hasNext()) {      
                         //ResultsRow row = (ResultsRow) resIter.next();
@@ -238,16 +238,16 @@ public class BagQueryRunner
                 }
             }
             
-        	LOG.error("size of unresolved; " + unresolved.size());
+        	//LOG.error("size of unresolved; " + unresolved.size());
         	
         }//for queries
         
               
-        for (Map.Entry<String, Set<Integer>> resEntry : resMap.entrySet()) {
+       /* for (Map.Entry<String, Set<Integer>> resEntry : resMap.entrySet()) {
             String input1 = resEntry.getKey();
             Set<Integer> ids1 = resEntry.getValue();
             LOG.error("size of ids1: " + ids1.size() + "  "+ input1);              
-        }
+        }*/
        
           
         addAllResults(resMap, true, false, bqr, typeCls,unresolved); // ---- kk
@@ -639,7 +639,7 @@ public class BagQueryRunner
     private List<BagQuery> getBagQueriesForType(BagQueryConfig config, String type) {
         List<BagQuery> queries = new ArrayList<BagQuery>();
         
-        LOG.error("querying for this type  "+ TypeUtil.unqualifiedName(type));
+        //LOG.error("querying for this type  "+ TypeUtil.unqualifiedName(type));
 
         // some queries should run before the default
         queries.addAll(config.getPreDefaultBagQueries(TypeUtil.unqualifiedName(type)));
