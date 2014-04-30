@@ -73,7 +73,7 @@
      </source>
 
     <source name="cglabrata-homologs" type="cglabrata-homologs">
-        <property name="src.data.dir" location="/data/intermine/yeast_orthologs/CGOB/C.glabrata"/>
+        <property name="src.data.dir" location="/data/intermine/yeast_orthologs/C.glabrata"/>
      </source>
 
      <source name="pombe-homologs" type="pombe-homologs">
