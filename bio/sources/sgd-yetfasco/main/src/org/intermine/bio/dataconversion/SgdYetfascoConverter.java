@@ -90,8 +90,8 @@ public class SgdYetfascoConverter extends BioFileConverter
 		processParagraphsFile(new FileReader(paragraphsFile));
 		processJasparFile(new FileReader(jasparFile));
 		processLogosFile(new FileReader(logosFile));
-		processConfirmedRegulationDataFile(new FileReader(confirmedFile)); //paul's file
-		processHTPRegulationDataFile(reader);  //maria's file      
+		processConfirmedRegulationDataFile(new FileReader(confirmedFile)); 
+		processHTPRegulationDataFile(reader);     
 		storeGenes();       
 	}
 
@@ -157,7 +157,7 @@ public class SgdYetfascoConverter extends BioFileConverter
 				 strain =  line[10].trim();
 			}
 
-			newProduct(factorGene, targetGene, evidenceCode, condition,  regulationDirection, pmid, source, "", "", strain);
+			newProduct(factorGene, targetGene, evidenceCode, condition,  regulationDirection, pmid, source, "", "", "", strain);
 
 		}
 		preader.close();
@@ -184,7 +184,8 @@ public class SgdYetfascoConverter extends BioFileConverter
 		 *  FDR  - 9 
 		 * PMID  - 10 
 		 *  source  - 11
-		 *  strain - 12
+		 *  strain BACKGROUD - 12
+		 *  strain - 13
 		 */   	 
 		System.out.println("Processing confirmedBindingSites Regulation Data file....");    
 
@@ -201,8 +202,6 @@ public class SgdYetfascoConverter extends BioFileConverter
 
 			String factorGene =  line[1].trim();     
 			String targetGene = line[3].trim();
-
-			System.out.println("factor gene "  + factorGene + " target gene " + targetGene);
 			
 			if (line.length < 13) {
 				System.out.println("LessThan10:  factor gene "  + factorGene + " target gene " + targetGene);
@@ -224,10 +223,13 @@ public class SgdYetfascoConverter extends BioFileConverter
 			String fdr = line[9].trim();
 			String pmid =  line[10].trim();
 			String source =  line[11].trim();
-			String strain =  line[12].trim();
-
+			String strainBackground =  line[12].trim();
+			String strain =  line[13].trim();
+			
+			System.out.println("factor gene "  + factorGene + " target gene " + targetGene);
+			
 			newProduct(factorGene, targetGene,
-					evidenceCode, condition,  regulationDirection, pmid, source, pvalue,fdr,strain);
+					evidenceCode, condition,  regulationDirection, pmid, source, pvalue,fdr,strainBackground, strain);
 
 		}
 		//br.close();
@@ -546,7 +548,7 @@ public class SgdYetfascoConverter extends BioFileConverter
 	 * @throws ObjectStoreException
 	 */
 	private void newProduct(String factorGene, String targetGene, 
-			String evidenceCode, String condition, String regulationDirection, String pmid, String source, String pvalue, String fdr, String strain) 
+			String evidenceCode, String condition, String regulationDirection, String pmid, String source, String pvalue, String fdr, String strainBackground, String strain) 
 					throws ObjectStoreException {
 
 		Item rGene = getGeneItem(factorGene);
@@ -605,6 +607,9 @@ public class SgdYetfascoConverter extends BioFileConverter
 			}
 			if (StringUtils.isNotEmpty(strain)) {
 				bindingSite.setAttribute("strain", strain);
+			}
+			if (StringUtils.isNotEmpty(strainBackground)) {
+				bindingSite.setAttribute("strainBackground", strain);
 			}
 
 			Item publication = pubmedIdMap.get(pmid);
