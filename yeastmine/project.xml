@@ -29,7 +29,7 @@
      <property name="paragraphsFile" location="/data/intermine/paragraphs/Reg_Summary_Paragraphs"/>
      <property name="jasparFile" location="/data/intermine/jaspar_reg/TF_family_class.txt"/>
      <property name="logosFile" location="/data/intermine/yetfasco_logos/yetfasco_file_names"/>
-     <property name="confirmedFile" location="/data/intermine/regulation_exp/combined2013-10-22.txt"/>
+     <property name="confirmedFile" location="/data/intermine/regulation_exp/combined.txt"/>
     </source> 
      <source name="spell-expression" type="spell-expression">
         <property name="source.db.name" value="yeast"/>

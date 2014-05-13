@@ -114,6 +114,7 @@ public class SgdYetfascoConverter extends BioFileConverter
 		 * direction of regulation - 7
 		 * PMID - 8
 		 *  source - 9
+		 *  strain background - 10 5/9-kk
 		 */   	
 		System.out.println("Processing HTP Regulation Data file....");    
 
@@ -152,12 +153,12 @@ public class SgdYetfascoConverter extends BioFileConverter
 			String regulationDirection =  line[7].trim();
 			String pmid =  line[8].trim();
 			String source =  line[9].trim();
-			String strain = "";
+			String strainBackground = "";
 			if(line.length == 11){
-				 strain =  line[10].trim();
+				strainBackground =  line[10].trim();
 			}
 
-			newProduct(factorGene, targetGene, evidenceCode, condition,  regulationDirection, pmid, source, "", "", "", strain);
+			newProduct(factorGene, targetGene, evidenceCode, condition,  regulationDirection, pmid, source, "", "", strainBackground, "");
 
 		}
 		preader.close();
@@ -214,7 +215,7 @@ public class SgdYetfascoConverter extends BioFileConverter
 				System.out.println("TEL/delta/omega/Ty:  factor gene "  + factorGene + " target gene " + targetGene);
 				continue;
 			}
-
+			String strain = "";
 			//String strEvidence = line[4].trim();
 			String evidenceCode =  line[5].trim();
 			String condition =  line[6].trim(); 
@@ -224,7 +225,9 @@ public class SgdYetfascoConverter extends BioFileConverter
 			String pmid =  line[10].trim();
 			String source =  line[11].trim();
 			String strainBackground =  line[12].trim();
-			String strain =  line[13].trim();
+			if(line.length == 14){
+				 strain = line[13].trim();
+			}
 			
 			System.out.println("factor gene "  + factorGene + " target gene " + targetGene);
 			
@@ -606,10 +609,10 @@ public class SgdYetfascoConverter extends BioFileConverter
 				bindingSite.setAttribute("FDR", fdr);
 			}
 			if (StringUtils.isNotEmpty(strain)) {
-				bindingSite.setAttribute("strain", strain);
+				bindingSite.setAttribute("construct", strain);
 			}
 			if (StringUtils.isNotEmpty(strainBackground)) {
-				bindingSite.setAttribute("strainBackground", strain);
+				bindingSite.setAttribute("strainBackground", strainBackground);
 			}
 
 			Item publication = pubmedIdMap.get(pmid);
