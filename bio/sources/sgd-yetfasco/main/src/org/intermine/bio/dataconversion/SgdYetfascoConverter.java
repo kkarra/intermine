@@ -603,7 +603,7 @@ public class SgdYetfascoConverter extends BioFileConverter
 				//}else if (t.length == 3){
 				//	String newcond = t[0]+";"+t[2];
 				//	bindingSite.setAttribute("experimentCondition", newcond);
-					bindingSite.setAttribute("assay", t[1]);				
+					//bindingSite.setAttribute("assay", t[1]);				
 				//}
 			}
 			if (StringUtils.isNotEmpty(regulationDirection)) {
