@@ -91,7 +91,7 @@ public class SgdYetfascoConverter extends BioFileConverter
 		processJasparFile(new FileReader(jasparFile));
 		processLogosFile(new FileReader(logosFile));
 		processConfirmedRegulationDataFile(new FileReader(confirmedFile)); 
-		processHTPRegulationDataFile(reader);     
+		//processHTPRegulationDataFile(reader);     
 		storeGenes();       
 	}
 
@@ -594,7 +594,17 @@ public class SgdYetfascoConverter extends BioFileConverter
 			bindingSite.setReference("regEvidence", evidence.getIdentifier());                  	
 
 			if (StringUtils.isNotEmpty(condition)) {
-				bindingSite.setAttribute("experimentCondition", condition);
+				
+				String[] t = condition.split(";");
+				//if(t.length == 4){
+				String newcond = t[0]+";"+t[3];
+				bindingSite.setAttribute("experimentCondition", newcond);
+				bindingSite.setAttribute("assay", t[1]);
+				//}else if (t.length == 3){
+				//	String newcond = t[0]+";"+t[2];
+				//	bindingSite.setAttribute("experimentCondition", newcond);
+					bindingSite.setAttribute("assay", t[1]);				
+				//}
 			}
 			if (StringUtils.isNotEmpty(regulationDirection)) {
 				bindingSite.setAttribute("regulationDirection", regulationDirection);

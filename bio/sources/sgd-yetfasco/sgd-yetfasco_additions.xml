@@ -26,6 +26,7 @@
    <attribute name="pvalue" type="java.lang.String"/>
    <attribute name="FDR" type="java.lang.String"/>
     <attribute name="construct" type="java.lang.String"/>
+    <attribute name="assay" type="java.lang.String"/>
     <attribute name="strainBackground" type="java.lang.String"/>
    <attribute name="datasource" type="java.lang.String"/>
    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
