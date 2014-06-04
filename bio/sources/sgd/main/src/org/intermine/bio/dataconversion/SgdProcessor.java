@@ -187,7 +187,10 @@ public class SgdProcessor
         throws SQLException {
     	
     	 String query =  "SELECT g.feature_no, g.dbxref_id, g.feature_name, g.gene_name, s.residues, s.seq_length - 1, " 
-    		    + "pi.molecular_weight, pi.pi "
+    		    + "pi.molecular_weight, pi.pi, pi.fop_score, pi.gravy_score, pi.aromaticity_score," 
+    			+ " pi.cys, pi.gln, pi.glu, pi.gly, pi.his, pi.ile, pi.leu, pi.lys, pi.met, pi.phe," 
+    		    + " pi.pro, pi.ser, pi.thr, pi.trp, pi.tyr, pi.val, pi.ala, pi.arg, pi.asn, pi.asp,  "
+    			+ " pi. n_term_seq, pi.c_term_seq, pi.cai, pi.codon_bias"
     	        + " FROM "+ SCHEMA_OWNER + "feature g " 
     	        + " inner join " + SCHEMA_OWNER + "seq s on g.feature_no = s.feature_no "
                 + " left outer join " + SCHEMA_OWNER + "protein_info pi on pi.feature_no = g.feature_no"

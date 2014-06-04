@@ -62,7 +62,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -102,7 +102,7 @@ public class SgdConverter extends BioDBConverter {
 
 		processChromosomeSequences(connection);
 		processGenes(connection);
-
+		
 
 		if(!TEST_LOCAL) {
 			
@@ -722,6 +722,33 @@ public class SgdConverter extends BioDBConverter {
 			String length = res.getString(6);
 			String molwt = res.getString("molecular_weight");
 			String pi = res.getString("pi");
+			String fopScore = res.getString("fop_score");
+			String gravyScore = res.getString("gravy_score");
+			String aromaticityScore = res.getString("aromaticity_score");
+			String cys = res.getString("cys");
+			String gln = res.getString("gln");
+			String glu = res.getString("glu");
+			String gly = res.getString("gly");
+			String his = res.getString("his");
+			String ile = res.getString("ile");
+			String leu = res.getString("leu");
+			String lys = res.getString("lys");
+			String met = res.getString("met");
+			String phe = res.getString("phe");
+			String pro = res.getString("pro");
+			String ser = res.getString("ser");
+			String thr = res.getString("thr");
+			String trp = res.getString("trp");
+			String tyr = res.getString("tyr");
+			String val = res.getString("val");
+			String ala = res.getString("ala");
+			String arg = res.getString("arg");
+			String asn = res.getString("asn");
+			String asp = res.getString("asp");
+			String ntermseq = res.getString("n_term_seq");
+			String ctermseq = res.getString("c_term_seq");
+			String cai = res.getString("cai");
+			String codonBias = res.getString("codon_bias");
 
 			Item item = genes.get(featureNo);
 
@@ -743,6 +770,85 @@ public class SgdConverter extends BioDBConverter {
 			if (pi != null) {
 				protein.setAttribute("pI", pi);
 			}
+			if (fopScore != null) {
+				protein.setAttribute("fopScore", fopScore);
+			}
+			if (gravyScore != null) {
+				protein.setAttribute("gravyScore", gravyScore);
+			}
+			if (aromaticityScore != null) {
+				protein.setAttribute("aromaticityScore", aromaticityScore);
+			}
+			if (cys != null) {
+				protein.setAttribute("cys", cys);
+			}
+			if (gln != null) {
+				protein.setAttribute("gln", gln);
+			}
+			if (glu != null) {
+				protein.setAttribute("glu", glu);
+			}
+			if (gly != null) {
+				protein.setAttribute("gly", gly);
+			}
+			if (his != null) {
+				protein.setAttribute("his", his);
+			}
+			if (ile != null) {
+				protein.setAttribute("ile", ile);
+			}
+			if (leu != null) {
+				protein.setAttribute("leu", leu);
+			}
+			if (lys != null) {
+				protein.setAttribute("lys", lys);
+			}
+			if (met != null) {
+				protein.setAttribute("met", met);
+			}
+			if (phe != null) {
+				protein.setAttribute("phe", phe);
+			}
+			if (pro != null) {
+				protein.setAttribute("pro", pro);
+			}
+			if (ser != null) {
+				protein.setAttribute("ser", ser);
+			}
+			if (thr != null) {
+				protein.setAttribute("thr", thr);
+			}
+			if (trp != null) {
+				protein.setAttribute("trp", trp);
+			}
+			if (val != null) {
+				protein.setAttribute("val", val);
+			}
+			if (ala != null) {
+				protein.setAttribute("ala", ala);
+			}
+			if (arg != null) {
+				protein.setAttribute("arg", arg);
+			}
+			if (asn != null) {
+				protein.setAttribute("asn", asn);
+			}
+			if (asp != null) {
+				protein.setAttribute("asp", asp);
+			}
+			if (ntermseq != null) {
+				protein.setAttribute("ntermseq", ntermseq);
+			}
+			if (ctermseq != null) {
+				protein.setAttribute("ctermseq", ctermseq);
+			}
+			if (cai != null) {
+				protein.setAttribute("cai", cai);
+			}
+			if (codonBias != null) {
+				protein.setAttribute("codonBias", codonBias);
+			}
+			
 
 			Item seq = createItem("Sequence");
 			seq.setAttribute("residues", residues);
