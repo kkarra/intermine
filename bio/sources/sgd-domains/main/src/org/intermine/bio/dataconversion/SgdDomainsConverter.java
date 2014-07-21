@@ -132,12 +132,21 @@ public class SgdDomainsConverter extends BioFileConverter
 			String end = line[7].trim();
 			String evalue = line[8].trim();
 			String runDate = line[10].trim();
-			String interproEntry =  line[11].trim();
-			String interproEntryDesc = line[12].trim();
+
 			String goAnnot = "";
+			String interproEntry = "";
+			String interproEntryDesc = "";
+			
+			if(line.length > 11){
+				 interproEntry =  line[11].trim();
+				 interproEntryDesc = line[12].trim();
+			}
+			
 			if(line.length == 14) {
 				 goAnnot = line[13].trim();
 			}
+			System.out.println("domain match..." + domainMatch);
+			
 			newProduct(protein, method,
 					domainMatch, domainDesc, start, end, evalue, runDate, interproEntry, interproEntryDesc, goAnnot, linecount);
 
@@ -148,19 +157,24 @@ public class SgdDomainsConverter extends BioFileConverter
 	}
 	
 	
-	private void newProduct(String proteinId, String method, String domainMatch, String domainDesc, String sstart, String send, String evalue, String runDate, String interproEntry, String interproEntryDesc, String goAnnot, int linecount)
+	private void newProduct(String proteinId, String method, String domainMatch, String domainDesc, String sstart, String send,
+			String evalue, String runDate, String interproEntry, String interproEntryDesc, String goAnnot, int linecount)
 			throws ObjectStoreException, Exception {
 		
 		
 		Item protein = getProteinItem(proteinId);
 		
 		Item pdomain = getDomain(domainMatch, domainDesc, sstart, send, evalue, runDate, method, linecount);
-		
-		Item interpro = getInterproDomain(interproEntry, interproEntryDesc);	
-		pdomain.setReference("interpro", interpro.getIdentifier());	
-		
-		//processGOInfo(pdomain, goAnnot);
-		if(!goAnnot.equalsIgnoreCase("NULL")) {
+
+		if(!interproEntry.isEmpty() && !interproEntryDesc.isEmpty()) {
+			Item interpro = getInterproDomain(interproEntry, interproEntryDesc);	
+			pdomain.setReference("interpro", interpro.getIdentifier());	
+		}
+
+		if(!goAnnot.isEmpty()) {
+			processGOInfo(pdomain, goAnnot);
+		}
+		/*if(!goAnnot.equalsIgnoreCase("NULL")) {
 			Matcher matcher = pattern.matcher(goAnnot);
 			while (matcher.find())
 			{
@@ -184,7 +198,7 @@ public class SgdDomainsConverter extends BioFileConverter
 				}
 
 			}
-		}
+		}*/
 		protein.addToCollection("proteinDomains", pdomain.getIdentifier());
 		
 	}
@@ -215,8 +229,15 @@ public class SgdDomainsConverter extends BioFileConverter
 	  private Item getDomain(String identifier, String description, String s_start, String s_end, String evalue, String runDate, String method, int linecount) {
 	        //Item item = proteinDomains.get(identifier);
 	        //if (item == null) {
+		    //getDomain(domainMatch, domainDesc, sstart, send, evalue, runDate, method, linecount);
 		  
 	            Item item = createItem("ProteinDomain");
+	            if(identifier.isEmpty()){
+	            	identifier = "NULL";
+	            }
+	            if(description.isEmpty()){
+	            	description = "NULL";
+	            }
 	            item.setAttribute("name", identifier);
 	            item.setAttribute("description", description);
 	            item.setAttribute("start", s_start);
@@ -269,33 +290,56 @@ public class SgdDomainsConverter extends BioFileConverter
 	    	//Molecular Function: DNA binding (GO:0003677), 
 	    	//Molecular Function: transcription factor activity (GO:0003700),
 	    	//Biological Process: regulation of transcription (GO:0045449)
+	    	// new file format changed to GO:0001104|GO:0006357|GO:0016592
 
 
-	    	Matcher matcher = pattern.matcher(goAnnot);
-	    	while (matcher.find())
-	    	{
-	    		String goId = matcher.group(1);
-	    		System.out.println("GOID: " + goId);
+	    	//Matcher matcher = pattern.matcher(goAnnot);
+	    	//while (matcher.find())
 
-	    		// create go term
-	    		String goTermRefId = getGoTerm(goId);
 
-	    		// create Go annotation
-	    		Item goAnnotation = createItem("GOAnnotation");
-	    		goAnnotation.setReference("subject", pdomain);
-	    		goAnnotation.setReference("ontologyTerm", goTermRefId);
+	    	if(goAnnot.contains("|")){
 
-	    		pdomain.addToCollection("goAnnotation", goAnnotation);
+	    		String[] goIds = goAnnot.split("\\|");
+	    		for(int i=0; i < goIds.length; i++)
+	    		{
+	    			String goId = goIds[i]; //matcher.group(1);
+	    			System.out.println("GOID: " + goId);
 
-	    		try {
-	    			store(goAnnotation);
-	    		} catch (ObjectStoreException e) {
-	    			throw new Exception(e);
+	    			// create go term
+	    			String goTermRefId = getGoTerm(goId);
+
+	    			// create Go annotation
+	    			Item goAnnotation = createItem("GOAnnotation");
+	    			goAnnotation.setReference("subject", pdomain);
+	    			goAnnotation.setReference("ontologyTerm", goTermRefId);
+
+	    			pdomain.addToCollection("goAnnotation", goAnnotation);
+
+	    			try {
+	    				store(goAnnotation);
+	    			} catch (ObjectStoreException e) {
+	    				throw new Exception(e);
+	    			}
+
 	    		}
+	    	}else{
 
+    			// create go term
+    			String goTermRefId = getGoTerm(goAnnot);
+
+    			// create Go annotation
+    			Item goAnnotation = createItem("GOAnnotation");
+    			goAnnotation.setReference("subject", pdomain);
+    			goAnnotation.setReference("ontologyTerm", goTermRefId);
+
+    			pdomain.addToCollection("goAnnotation", goAnnotation);
+
+    			try {
+    				store(goAnnotation);
+    			} catch (ObjectStoreException e) {
+    				throw new Exception(e);
+    			}
 	    	}
-
-
 
 	    }
 	
