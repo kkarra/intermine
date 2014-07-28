@@ -570,8 +570,8 @@
 			title="Gene Ontology Enrichment" description="GO terms enriched for items in this list."
 			label="GO Term" filterLabel="Ontology"
 			filters="biological_process,cellular_component,molecular_function"
-			startClass="Gene" startClassDisplay="primaryIdentifier"
-			enrich="goAnnotation.ontologyTerm.parents.name" enrichIdentifier="goAnnotation.ontologyTerm.parents.identifier"
+			startClass="Gene" startClassDisplay="secondaryIdentifier"
+			enrich="goAnnotation.ontologyTerm.parents.identifier" enrichIdentifier="goAnnotation.ontologyTerm.parents.name"
 			constraints="goAnnotation.ontologyTerm.parents.namespace=[Ontology],organism.name=[list],
 	                                              primaryIdentifier != null, goAnnotation.qualifier = null,
 	                                              goAnnotation.ontologyTerm.parents.identifier != go:0008150,
