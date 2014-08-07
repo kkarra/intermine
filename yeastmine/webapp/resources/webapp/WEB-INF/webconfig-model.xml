@@ -20,10 +20,8 @@
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier" label="Primary DBID"></fieldconfig>
 			<fieldconfig fieldExpr="secondaryIdentifier" label="Systematic Name"></fieldconfig>
-			 <fieldconfig fieldExpr="organism.name"/>
 			<fieldconfig fieldExpr="symbol" label="Standard Name"></fieldconfig>
 			<fieldconfig fieldExpr="sgdAlias" label="Alias"></fieldconfig>
-			<fieldconfig fieldExpr="length"></fieldconfig>
 		</fields>
 	</class>
 
@@ -74,6 +72,7 @@
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier"></fieldconfig>
 			<fieldconfig fieldExpr="secondaryIdentifier"></fieldconfig>
+			<fieldconfig fieldExpr="organism.shortName"/>
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="name"></fieldconfig>
 			<fieldconfig fieldExpr="sgdAlias"></fieldconfig>
@@ -88,6 +87,7 @@
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier"></fieldconfig>
 			<fieldconfig fieldExpr="secondaryIdentifier"></fieldconfig>
+			<fieldconfig fieldExpr="organism.shortName"/>
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="name"></fieldconfig>
 			<fieldconfig fieldExpr="sgdAlias"></fieldconfig>
