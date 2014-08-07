@@ -20,8 +20,10 @@
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier" label="Primary DBID"></fieldconfig>
 			<fieldconfig fieldExpr="secondaryIdentifier" label="Systematic Name"></fieldconfig>
+			 <fieldconfig fieldExpr="organism.name"/>
 			<fieldconfig fieldExpr="symbol" label="Standard Name"></fieldconfig>
 			<fieldconfig fieldExpr="sgdAlias" label="Alias"></fieldconfig>
+			<fieldconfig fieldExpr="length"></fieldconfig>
 		</fields>
 	</class>
 
@@ -89,6 +91,7 @@
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="name"></fieldconfig>
 			<fieldconfig fieldExpr="sgdAlias"></fieldconfig>
+			<fieldconfig fieldExpr="length"></fieldconfig>
 			<fieldconfig displayer="/model/sequenceShortDisplayerWithField.jsp" fieldExpr="length"></fieldconfig>
 		</fields>
 
@@ -571,7 +574,7 @@
 			label="GO Term" filterLabel="Ontology"
 			filters="biological_process,cellular_component,molecular_function"
 			startClass="Gene" startClassDisplay="secondaryIdentifier"
-			enrich="goAnnotation.ontologyTerm.parents.identifier" enrichIdentifier="goAnnotation.ontologyTerm.parents.name"
+			enrich="goAnnotation.ontologyTerm.parents.name" enrichIdentifier="goAnnotation.ontologyTerm.parents.identifier"
 			constraints="goAnnotation.ontologyTerm.parents.namespace=[Ontology],organism.name=[list],
 	                                              primaryIdentifier != null, goAnnotation.qualifier = null,
 	                                              goAnnotation.ontologyTerm.parents.identifier != go:0008150,

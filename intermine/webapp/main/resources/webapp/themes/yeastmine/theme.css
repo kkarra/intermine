@@ -460,4 +460,10 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
   background: transparent;
 }
 
+.intermine .im-cell-preview .bioentity .length {
+	text-align: left; 
+}
+
+
+
 
