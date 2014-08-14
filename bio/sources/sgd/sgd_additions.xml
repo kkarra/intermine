@@ -206,6 +206,7 @@
 
  <class name="Phenotype" is-interface="true">
   <attribute name="experimentType" type="java.lang.String"/>
+  <attribute name="experimentComment" type="java.lang.String"/>
   <attribute name="mutantType" type="java.lang.String"/>
   <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="observable" type="java.lang.String"/>

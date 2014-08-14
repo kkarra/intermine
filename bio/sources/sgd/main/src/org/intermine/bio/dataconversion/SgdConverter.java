@@ -1489,6 +1489,7 @@ public class SgdConverter extends BioDBConverter {
 		String prevGeneFeatureType = "";
 		String prevPhenotypeAnnotNo = "";
 		String prevExperimentType = "";
+		String prevExperimentComment = "";
 		String prevMutantType = "";
 		String prevQualifier = "";
 		String prevObservable = "";
@@ -1508,6 +1509,7 @@ public class SgdConverter extends BioDBConverter {
 
 			// set once
 			String experimentType = res.getString("experiment_type");
+			String experimentComment = res.getString("experiment_comment");
 			String mutantType = res.getString("mutant_type");
 			String qualifier = res.getString("qualifier");
 			if (qualifier == null)
@@ -1531,7 +1533,7 @@ public class SgdConverter extends BioDBConverter {
 
 				if (!firstrow) {
 					getPhenotype(prevPhenotypeAnnotNo, prevQualifier,
-							prevObservable, prevExperimentType, prevMutantType,
+							prevObservable, prevExperimentType, prevExperimentComment,  prevMutantType,
 							hm, gene, prevGeneFeatureType);
 					hm.clear();
 					prevPhenotypeAnnotNo = phenotypeAnnotNo;
@@ -1546,7 +1548,7 @@ public class SgdConverter extends BioDBConverter {
 
 			if (!phenotypeAnnotNo.equalsIgnoreCase(prevPhenotypeAnnotNo)) {
 				getPhenotype(prevPhenotypeAnnotNo, prevQualifier,
-						prevObservable, prevExperimentType, prevMutantType, hm,
+						prevObservable, prevExperimentType, prevExperimentComment, prevMutantType, hm,
 						gene, prevGeneFeatureType);
 				hm.clear();
 			}
@@ -1639,6 +1641,7 @@ public class SgdConverter extends BioDBConverter {
 			prevGeneFeatureType = feature_type;
 			prevPhenotypeAnnotNo = phenotypeAnnotNo;
 			prevExperimentType = experimentType;
+			prevExperimentComment = experimentComment;			
 			prevMutantType = mutantType;
 			prevQualifier = qualifier;
 			prevObservable = observable;
@@ -1647,7 +1650,7 @@ public class SgdConverter extends BioDBConverter {
 
 		// process the very last phenotype group
 		getPhenotype(prevPhenotypeAnnotNo, prevQualifier, prevObservable,
-				prevExperimentType, prevMutantType, hm, gene,
+				prevExperimentType, prevExperimentComment, prevMutantType, hm, gene,
 				prevGeneFeatureType);
 		hm.clear();
 
@@ -1902,7 +1905,7 @@ public class SgdConverter extends BioDBConverter {
 
 	private void getPhenotype(String prevPhenotypeAnnotNo,
 			String prevQualifier, String prevObservable,
-			String prevExperimentType, String prevMutantType, HashMap hm,
+			String prevExperimentType, String prevExperimentComment, String prevMutantType, HashMap hm,
 			Item gene, String feature_type) throws ObjectStoreException {
 
 		Item pheno = createItem("Phenotype");
@@ -1914,6 +1917,10 @@ public class SgdConverter extends BioDBConverter {
 		if (prevExperimentType != null
 				&& StringUtils.isNotEmpty(prevExperimentType)) {
 			pheno.setAttribute("experimentType", prevExperimentType);
+		}
+		if (prevExperimentComment != null
+				&& StringUtils.isNotEmpty(prevExperimentComment)) {
+			pheno.setAttribute("experimentComment", prevExperimentComment);
 		}
 		if (prevMutantType != null && StringUtils.isNotEmpty(prevMutantType)) {
 			pheno.setAttribute("mutantType", prevMutantType);

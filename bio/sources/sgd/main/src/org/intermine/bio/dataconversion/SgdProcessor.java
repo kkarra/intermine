@@ -331,7 +331,7 @@ public class SgdProcessor
         throws SQLException {
          
         String query = "SELECT  me.feature_no, pheno_annotations.pheno_annotation_no, "
-        + " phenotype_no.experiment_type, phenotype_no.mutant_type, phenotype_no.qualifier, phenotype_no.observable, "
+        + " phenotype_no.experiment_type,  experiment_no.experiment_comment, phenotype_no.mutant_type, phenotype_no.qualifier, phenotype_no.observable, "
         + " expt_property_no.property_type, expt_property_no.property_value, "
         + " expt_property_no.property_description, me.feature_type "
 
