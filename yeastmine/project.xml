@@ -79,6 +79,10 @@
         <property name="src.data.dir" location="/data/intermine/yeast_orthologs/pombe"/>
      </source>
 
+    <source name="homolog-genes" type="homolog-genes">
+     <property name="src.data.dir" location="/data/intermine/yeast_orthologs/homolog_genes"/>
+    </source>
+
    <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/data/intermine/ncbi"/>
      <property name="organisms" value="9606"/>
