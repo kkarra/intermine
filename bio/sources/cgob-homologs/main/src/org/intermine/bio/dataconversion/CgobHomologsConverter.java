@@ -31,7 +31,7 @@ public class CgobHomologsConverter extends BioFileConverter
 {
     //
     private static final String DATASET_TITLE = "CGD/CGOB file download";
-    private static final String DATA_SOURCE_NAME = "CGOB/CGD";
+    private static final String DATA_SOURCE_NAME = "CGD";
     private Map<String, String> genes = new HashMap<String, String>();
     //order of columns in file to loaded should be the following
     private static final String TAXON_ID_1 = "4932"; //Saccharomyces cerevisiae S288C
@@ -125,6 +125,7 @@ public class CgobHomologsConverter extends BioFileConverter
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         homologue.setAttribute("type", "homologue");
+        homologue.setAttribute("source", "CGOB");
         store(homologue);
     }
 

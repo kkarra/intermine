@@ -31,7 +31,7 @@ public class CglabrataHomologsConverter extends BioFileConverter
 {
     //
     private static final String DATASET_TITLE = "C.glabrata homologs from CGOB and YGOB";
-    private static final String DATA_SOURCE_NAME = "C.glabrata";
+    private static final String DATA_SOURCE_NAME = "CGD";
     private Map<String, String> genes = new HashMap<String, String>();
     private static final String TAXON_ID_1 = "4932"; //Saccharomyces cerevisiae S288C
     private static final String TAXON_ID_2 = "284593"; // Candida glabrata  CBS 138
@@ -94,7 +94,7 @@ public class CglabrataHomologsConverter extends BioFileConverter
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         homologue.setAttribute("type", "homologue");
-        homologue.setAttribute("source", source);
+        homologue.setAttribute("source", "CGOB"); 
         store(homologue);
     }
 
