@@ -1,0 +1,4 @@
+<project name="sgd-protein-mods-tasks" default="default" basedir=".">
+  <description>build sgd-protein-mods tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

@@ -1,0 +1,5 @@
+<project name="sgd-protein-mods" default="default" basedir=".">
+  <description>build, test, package sgd-protein-mods</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

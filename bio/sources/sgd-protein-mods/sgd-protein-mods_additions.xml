@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<!-- add any <class> elements here -->
+
+<class name="Protein" extends="BioEntity" is-interface="true">
+	<collection name="proteinModificationSites" referenced-type="ProteinModificationSite" reverse-reference="proteins"/>
+</class>
+
+<class name="ProteinModificationSite" extends="BioEntity" is-interface="true">
+	<attribute name="modificationType" type="java.lang.String"/>
+	<attribute name="modificationSite" type="java.lang.String"/>
+	<reference name="publication" referenced-type="Publication"/>
+	<attribute name="source" type="java.lang.String"/>
+	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinModificationSites"/>
+</class>
+
+</classes>
