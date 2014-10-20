@@ -15,7 +15,13 @@
     <!--<source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/data/intermine/psi/intact/current"/>
       <property name="intact.organisms" value="559292"/>
-    </source>-->
+    </source>
+     
+    <source name="biogrid" type="biogrid">
+      <property name="src.data.dir" location="/data/intermine/biogrid/current"/>
+      <property name="src.data.dir.includes" value="*.xml"/>
+      <property name="biogrid.organisms" value="4932"/>
+    </source> 
 
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/data/intermine/psi/intact/complexes/Saccharomyces_cerevisiae"/>
@@ -24,7 +30,7 @@
 
    <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/data/intermine/psi/ontology/current/psi-mi.obo"/>
-    </source>
+    </source> -->
 
       <source name="sgd-gff" type="sgd-gff">
       <property name="gff3.taxonId" value="4932"/>

@@ -375,6 +375,30 @@ public class SgdProcessor
         return res;
     }
     
+    
+    /**
+     * Return the results of getting paralogs
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getParalogs(Connection connection)
+        throws SQLException {
+    	 
+        String query = "SELECT parent_feature_no, child_feature_no, pubmed "
+        + "FROM "+ SCHEMA_OWNER + "feat_relationship fr, "+ SCHEMA_OWNER + "ref_link fl, "+ SCHEMA_OWNER + "refernce  r "
+        + " WHERE relationship_type = 'pair' "
+        + " AND fl.tab_name = 'FEAT_RELATIONSHIP' "
+        + " AND fr.feat_relationship_no = fl.primary_key "
+        + " AND fl.reference_no = r.reference_no";
+      
+        LOG.info("executing: " + query);        
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+    
+    
     /**
      * Return the results of getting cross-references from dbxref
      * @param connection the connection

@@ -72,6 +72,10 @@
   <collection name="publicationAnnotations" referenced-type="PublicationAnnotation" reverse-reference="genes"/>
   <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
  </class>
+ 
+ <class name="Homologue" is-interface="true">
+  <reference name="publication" referenced-type="Publication"/>
+</class>
 
  <class name="Insertion" extends="SequenceFeature" is-interface="true">
   <reference name="xelementcombinatorialrepeat" referenced-type="XElementCombinatorialRepeat" reverse-reference="insertions"/>

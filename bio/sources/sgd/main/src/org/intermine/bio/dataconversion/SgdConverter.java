@@ -62,7 +62,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -126,7 +126,9 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractionTypes();
 			storeInteractionExperiments();
 			storeInteractions();
-
+			
+			processParalogs(connection);
+			
 			storePublications();
 		}
 		
@@ -268,6 +270,59 @@ public class SgdConverter extends BioDBConverter {
 		}
 		System.out.println("size of genes:  " + genes.size());
 	}
+	
+
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+
+	private void processParalogs(Connection connection) throws SQLException,
+	ObjectStoreException {
+
+		ResultSet res = PROCESSOR.getParalogs(connection); // ordered by
+		// featureNo
+		System.out.println("Processing Paralog pairs...");
+		
+		while (res.next()) {
+
+			String parentFeatureNo = res.getString("parent_feature_no");
+			String childFeatureNo = res.getString("child_feature_no");
+			String pubmed = res.getString("relationship_type");
+			
+			Item pmid = getExistingPub(pubmed);
+
+			Item parentGene = genes.get(parentFeatureNo);
+			Item childGene = genes.get(childFeatureNo);
+			
+			if(parentGene!= null && childGene != null) {
+
+			processHomologues(parentGene.getIdentifier(), childGene.getIdentifier(), pmid.getIdentifier());
+			processHomologues(childGene.getIdentifier(), parentGene.getIdentifier(), pmid.getIdentifier());
+			
+			}
+
+		}
+	}
+
+	private void processHomologues(String gene1, String gene2, String pmid) throws ObjectStoreException {
+
+
+		if (gene1 == null || gene2 == null) {
+			return;
+		}
+		
+		Item homologue = createItem("Homologue");
+		homologue.setReference("gene", gene1);
+		homologue.setReference("homologue", gene2);
+		homologue.setAttribute("type", "paralogue"); 
+	    homologue.setAttribute("source", "SGD");
+	    homologue.setReference("publication", pmid);
+		store(homologue);
+	}
+
 
 	/**
 	 * 
@@ -2404,6 +2459,17 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 	}
+	
+	
+	private Item getExistingPub(String referenceNo)
+					throws ObjectStoreException {
+
+		Item storedRef = publications.get(referenceNo);
+
+		return storedRef;
+
+	}
+	
 
 	private void getPubPhenotype(String phenoAnnotNo, String prevReferenceNo,
 			String title, String pubMedId, String citation, String journal,
