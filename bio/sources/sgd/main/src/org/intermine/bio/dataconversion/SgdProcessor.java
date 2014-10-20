@@ -385,7 +385,7 @@ public class SgdProcessor
     protected ResultSet getParalogs(Connection connection)
         throws SQLException {
     	 
-        String query = "SELECT parent_feature_no, child_feature_no, pubmed "
+        String query = "SELECT parent_feature_no, child_feature_no, reference_no "
         + "FROM "+ SCHEMA_OWNER + "feat_relationship fr, "+ SCHEMA_OWNER + "ref_link fl, "+ SCHEMA_OWNER + "reference  r "
         + " WHERE relationship_type = 'pair' "
         + " AND fl.tab_name = 'FEAT_RELATIONSHIP' "

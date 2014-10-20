@@ -289,9 +289,9 @@ public class SgdConverter extends BioDBConverter {
 
 			String parentFeatureNo = res.getString("parent_feature_no");
 			String childFeatureNo = res.getString("child_feature_no");
-			String pubmed = res.getString("pubmed");
+			String refNo = res.getString("reference_no");
 			
-			Item pmid = getExistingPub(pubmed);
+			Item pmid = getExistingPub(refNo);
 
 			Item parentGene = genes.get(parentFeatureNo);
 			Item childGene = genes.get(childFeatureNo);
