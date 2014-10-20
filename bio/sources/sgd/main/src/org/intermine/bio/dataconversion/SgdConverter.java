@@ -62,7 +62,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = false;
+	private static final boolean TEST_LOCAL = true;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -102,19 +102,20 @@ public class SgdConverter extends BioDBConverter {
 
 		processChromosomeSequences(connection);
 		processGenes(connection);
+		processAliases(connection);
+		processCrossReferences(connection);
+		processGeneLocations(connection);
+		processChrLocations(connection);
+		processGeneChildrenLocations(connection);
+		processProteins(connection);
+
+		processAllPubs(connection);             //get all publications and their topics loaded								
+		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
 		
+		processParalogs(connection);
 
 		if(!TEST_LOCAL) {
-			
-			processAliases(connection);
-			processCrossReferences(connection);
-			processGeneLocations(connection);
-			processChrLocations(connection);
-			processGeneChildrenLocations(connection);
-			processProteins(connection);
-			
-			processAllPubs(connection);             //get all publications and their topics loaded								
-			processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics												 
+
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
 			storePhenotypes();
@@ -126,12 +127,10 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractionTypes();
 			storeInteractionExperiments();
 			storeInteractions();
-			
-			processParalogs(connection);
-			
+
 			storePublications();
 		}
-		
+
 		storeGenes();
 
 	}
@@ -290,7 +289,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String parentFeatureNo = res.getString("parent_feature_no");
 			String childFeatureNo = res.getString("child_feature_no");
-			String pubmed = res.getString("relationship_type");
+			String pubmed = res.getString("pubmed");
 			
 			Item pmid = getExistingPub(pubmed);
 

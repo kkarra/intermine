@@ -151,10 +151,11 @@
     <post-process name="create-references"/>
     <post-process name="do-sources"/>
     <post-process name="create-intergenic-region-features"/>
-    <post-process name="transfer-sequences"/> 
+    <!--<post-process name="transfer-sequences"/>--> 
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view"/>
     <post-process name="create-gene-flanking-features"/>
+    <post-process name="transfer-sequences"/>
     <post-process name="create-search-index"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>

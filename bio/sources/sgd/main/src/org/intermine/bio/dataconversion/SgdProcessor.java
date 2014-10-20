@@ -386,7 +386,7 @@ public class SgdProcessor
         throws SQLException {
     	 
         String query = "SELECT parent_feature_no, child_feature_no, pubmed "
-        + "FROM "+ SCHEMA_OWNER + "feat_relationship fr, "+ SCHEMA_OWNER + "ref_link fl, "+ SCHEMA_OWNER + "refernce  r "
+        + "FROM "+ SCHEMA_OWNER + "feat_relationship fr, "+ SCHEMA_OWNER + "ref_link fl, "+ SCHEMA_OWNER + "reference  r "
         + " WHERE relationship_type = 'pair' "
         + " AND fl.tab_name = 'FEAT_RELATIONSHIP' "
         + " AND fr.feat_relationship_no = fl.primary_key "
