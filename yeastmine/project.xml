@@ -135,6 +135,9 @@
     <source name="sgd-protein-mods" type="sgd-protein-mods">
      <property name="src.data.dir" location="/data/intermine/protein-modifications"/>
     </source>
+    <source name="sgd-protein-ntermini" type="sgd-protein-ntermini">
+     <property name="src.data.dir" location="/data/intermine/protein-ntermini"/>
+    </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>

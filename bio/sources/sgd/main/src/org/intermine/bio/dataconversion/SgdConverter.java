@@ -108,14 +108,12 @@ public class SgdConverter extends BioDBConverter {
 		processChrLocations(connection);
 		processGeneChildrenLocations(connection);
 		processProteins(connection);
-
 		processAllPubs(connection);             //get all publications and their topics loaded								
 		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
-		
+
 		processParalogs(connection);
 
 		if(!TEST_LOCAL) {
-
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
 			storePhenotypes();
@@ -127,10 +125,9 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractionTypes();
 			storeInteractionExperiments();
 			storeInteractions();
-
-			storePublications();
+			//storePublications();
 		}
-
+		storePublications();
 		storeGenes();
 
 	}
@@ -317,7 +314,11 @@ public class SgdConverter extends BioDBConverter {
 		homologue.setReference("gene", gene1);
 		homologue.setReference("homologue", gene2);
 		homologue.setAttribute("type", "paralogue"); 
-	    homologue.setAttribute("source", "SGD");
+		if(pmid.equalsIgnoreCase("16169922")){
+			 homologue.setAttribute("source", "YGOB");
+		}else{
+			 homologue.setAttribute("source", "SGD");
+		}
 	    homologue.setReference("publication", pmid);
 		store(homologue);
 	}
