@@ -286,24 +286,28 @@ public class SgdConverter extends BioDBConverter {
 
 			String parentFeatureNo = res.getString("parent_feature_no");
 			String childFeatureNo = res.getString("child_feature_no");
-			String refNo = res.getString("reference_no");
-			
+			String refNo = res.getString("reference_no");		
+			String source="";
+			if(refNo.equalsIgnoreCase("50997")){ //hack for PMID 16169922
+				source= "YGOB";
+			}else{
+				source = "SGD";
+			}
 			Item pmid = getExistingPub(refNo);
-
 			Item parentGene = genes.get(parentFeatureNo);
 			Item childGene = genes.get(childFeatureNo);
 			
 			if(parentGene!= null && childGene != null) {
 
-			processHomologues(parentGene.getIdentifier(), childGene.getIdentifier(), pmid.getIdentifier());
-			processHomologues(childGene.getIdentifier(), parentGene.getIdentifier(), pmid.getIdentifier());
+			processHomologues(parentGene.getIdentifier(), childGene.getIdentifier(), pmid.getIdentifier(), source);
+			processHomologues(childGene.getIdentifier(), parentGene.getIdentifier(), pmid.getIdentifier(), source);
 			
 			}
 
 		}
 	}
 
-	private void processHomologues(String gene1, String gene2, String pmid) throws ObjectStoreException {
+	private void processHomologues(String gene1, String gene2, String pmid, String source) throws ObjectStoreException {
 
 
 		if (gene1 == null || gene2 == null) {
@@ -314,11 +318,7 @@ public class SgdConverter extends BioDBConverter {
 		homologue.setReference("gene", gene1);
 		homologue.setReference("homologue", gene2);
 		homologue.setAttribute("type", "paralogue"); 
-		if(pmid.equalsIgnoreCase("16169922")){
-			 homologue.setAttribute("source", "YGOB");
-		}else{
-			 homologue.setAttribute("source", "SGD");
-		}
+		homologue.setAttribute("source", source);
 	    homologue.setReference("publication", pmid);
 		store(homologue);
 	}
