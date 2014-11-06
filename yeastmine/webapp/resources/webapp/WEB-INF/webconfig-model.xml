@@ -129,6 +129,16 @@
 			<fieldconfig fieldExpr="description" />
 		</fields>
 	</class>
+	
+		<class className="org.intermine.model.bio.ProteinAbundance">
+		<fields>
+			<fieldconfig fieldExpr="gfpTagged" />
+			<fieldconfig fieldExpr="gfpVisualized" />
+			<fieldconfig fieldExpr="tapVisualized" />
+			<fieldconfig fieldExpr="abundance" />
+		</fields>
+	</class>
+	
 	<class className="org.intermine.model.bio.InterProDomain">
 		<fields>
 			<fieldconfig fieldExpr="name" />

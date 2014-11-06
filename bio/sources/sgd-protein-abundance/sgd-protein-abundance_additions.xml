@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<!-- add any <class> elements here -->
+
+<class name="Protein" extends="BioEntity" is-interface="true">
+	<collection name="proteinAbundance" referenced-type="ProteinAbundance" reverse-reference="proteins"/>
+</class>
+
+<class name="ProteinAbundance" extends="BioEntity" is-interface="true">
+	<attribute name="gfpTagged" type="java.lang.String"/>
+	<attribute name="gfpVisualized" type="java.lang.String"/>
+	<attribute name="tapVisualized" type="java.lang.String"/>
+	<attribute name="abundance" type="java.lang.String"/>
+	<attribute name="error" type="java.lang.String"/>
+	<attribute name="source" type="java.lang.String"/>
+	<reference name="publication" referenced-type="Publication"/>
+	<collection name="localizedIn" referenced-type="Localization"/>
+	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinAbundance"/>
+</class>
+
+<class name="Localization"  is-interface="true">
+	<attribute name="site" type="java.lang.String"/>
+</class>
+
+</classes>

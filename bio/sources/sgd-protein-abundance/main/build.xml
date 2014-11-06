@@ -1,0 +1,4 @@
+<project name="sgd-protein-abundance-tasks" default="default" basedir=".">
+  <description>build sgd-protein-abundance tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
