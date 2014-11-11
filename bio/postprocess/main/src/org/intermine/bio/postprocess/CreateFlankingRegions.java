@@ -54,9 +54,9 @@ public class CreateFlankingRegions
     /**
      * The values strings for up/down stream from a gene.
      */
-    private static String[] directions = new String[] {"upstream", "downstream"};
+    private static String[] directions = new String[] {"upstream", "downstream", "both"};
 
-    private static boolean[] includeGenes = new boolean[] {true, false};
+    private static boolean[] includeGenes = new boolean[] {false}; //true
 
     private static final Logger LOG = Logger.getLogger(CreateFlankingRegions.class);
 
@@ -183,7 +183,8 @@ public class CreateFlankingRegions
                             + direction);
 
                     // this should be some clever algorithm
-                    int start, end;
+                    int start = 0;
+                    int end = 0;
 
                     if ("upstream".equals(direction) && "1".equals(strand)) {
                         start = geneStart - (int) Math.round(distance * 1000);
@@ -194,10 +195,18 @@ public class CreateFlankingRegions
                     } else if ("downstream".equals(direction) && "1".equals(strand)) {
                         start = includeGene ? geneStart : geneEnd + 1;
                         end = geneEnd + (int) Math.round(distance * 1000);
-                    } else {  // "downstream".equals(direction) && strand.equals("-1")
+                    } else if ( "downstream".equals(direction) && strand.equals("-1")) {
                         start = geneStart - (int) Math.round(distance * 1000);
                         end = includeGene ? geneEnd : geneStart - 1;
+                    }else if("both".equals(direction)){  // && "1".equals(strand)
+                    	start = geneStart - (int) Math.round(distance * 1000);
+                    	end = geneEnd + (int) Math.round(distance * 1000);                  	
                     }
+                    
+                    /*else { // if("both".equals(direction) && "-1".equals(strand)){
+                    	start = includeGene ? geneStart : geneEnd + 1;
+                    	end = includeGene ? geneEnd : geneStart - 1;
+                    }*/
 
                     // if the region hangs off the start or end of a chromosome set it to finish
                     // at the end of the chromosome
