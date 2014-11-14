@@ -95,6 +95,9 @@ public class SgdProteinNterminiConverter extends BioFileConverter
 			String category = line[2];
 			String modSite = line[4].trim();
 			String modType =  line[3].trim();
+			if(StringUtils.isEmpty(modType)){
+				modType = "none";
+			}
 			String pmid = line[5].trim();
 			
 			newProduct(protein, modSite, modType, pmid, category);
