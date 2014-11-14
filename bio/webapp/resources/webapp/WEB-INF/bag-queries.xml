@@ -4,9 +4,12 @@
                          constrain-field="shortName"/>
  <bag-type type="BioEntity">
 		<query message="searching key fields for all types" matchesAreIssues="true" runBeforeDefault="false">
-		SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_, 
+		 SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_, 
                                                               org.intermine.model.bio.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ and lower(a2_.value) in ?)
 		</query>
+	   <query message="searching xrefs for all types" matchesAreIssues="true" runBeforeDefault="false">
+         SELECT DISTINCT a1_.id as a3_, a2_.identifier as a4_ FROM BioEntity AS a1_, CrossReference AS a2_ WHERE (a1_.crossReferences CONTAINS a2_ AND lower(a2_.identifier) in ?)
+      </query>
 </bag-type>
     
  <additional-converter class-name="org.intermine.bio.web.logic.OrthologueConverter"
