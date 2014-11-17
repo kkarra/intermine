@@ -116,13 +116,16 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 			String gfpvisualized =  line[4].trim(); 
 			String tapvisualized = line[5].trim();
 			String abundance = line[6].trim();
-			if(!abundance.equalsIgnoreCase("not quantitated") || !abundance.equalsIgnoreCase("not visualized")) {
-				abundance += " molecules/cell";
+			String newabundance;
+			if(abundance.equalsIgnoreCase("not quantitated") || abundance.equalsIgnoreCase("not visualized")) {
+				newabundance = abundance;
+			}else{
+				newabundance = abundance +" molecules/cell";
 			}
 			String error = line[7].trim();
 			String localization = line[8].trim();
 
-			newProduct(protein, gfptagged, gfpvisualized, tapvisualized, abundance, error, localization);
+			newProduct(protein, gfptagged, gfpvisualized, tapvisualized, newabundance, error, localization);
 
 		}
 
