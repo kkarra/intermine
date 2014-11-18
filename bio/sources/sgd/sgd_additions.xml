@@ -181,6 +181,10 @@
  </class>
 
  <class name="LongTerminalRepeat" extends="SequenceFeature" is-interface="true"> </class>
+ 
+<class name="OriginOfReplication" extends="SequenceFeature" is-interface="true"> </class>
+
+<class name="MatrixAttachmentSite" extends="SequenceFeature" is-interface="true"> </class>
 
  <class name="NcRNAGene" extends="Gene" is-interface="true">
   <collection name="noncodingexons" referenced-type="NoncodingExon" reverse-reference="ncrna_gene"/>

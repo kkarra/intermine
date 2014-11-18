@@ -1,6 +1,7 @@
 ARS
 binding_site
 biological_region
+blocked_reading_frame
 CDS
 centromere
 #point_centromere
@@ -15,10 +16,12 @@ intergenic_region
 intron
 sequence_feature
 long_terminal_repeat
+matrix_attachment_site
 ncRNA_gene
 noncoding_exon
 non_transcribed_region
 ORF
+origin_of_replication
 plasmid
 plus_1_translational_frameshift
 protein_coding_gene
