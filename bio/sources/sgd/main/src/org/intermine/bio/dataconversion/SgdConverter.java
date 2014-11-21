@@ -621,6 +621,7 @@ public class SgdConverter extends BioDBConverter {
 
 			Item parent = genes.get(geneFeatureNo);
 
+			System.out.println("child feature type...."+ childFeatureType);
 			// create the child Item
 			Item childItem = getChildItem(childFeatureType);
 
@@ -682,54 +683,64 @@ public class SgdConverter extends BioDBConverter {
 
 		String name = "";
 
-		if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("ORF")) {
-			name = "orf";
-		} else if (type.equalsIgnoreCase("CDS")
-				&& ptype.equalsIgnoreCase("pseudogene")) {
-			name = "pseudogene";
-		} else if (type.equalsIgnoreCase("CDS")
-				&& ptype.equalsIgnoreCase("transposable_element_gene")) {
-			name = "transposableelementgene";
-		} else if (type.equalsIgnoreCase("five_prime_UTR_intron")) {
-			name = "orf";
-		} else if (type.equalsIgnoreCase("plus_1_translational_frameshift")
-				&& ptype.equalsIgnoreCase("ORF")) {
-			name = "orf";
-		} else if (type.equalsIgnoreCase("plus_1_translational_frameshift")
-				&& ptype.equalsIgnoreCase("pseudogene")) {
-			name = "pseudogene";
-		} else if (type.equalsIgnoreCase("plus_1_translational_frameshift")
-				&& ptype.equalsIgnoreCase("transposable_element_gene")) {
-			name = "transposableelementgene";
-		} else if (type.equalsIgnoreCase("ARS_consensus_sequence")
-				&& ptype.equalsIgnoreCase("ARS")) {
+      if (type.equalsIgnoreCase("ARS_consensus_sequence") && ptype.equalsIgnoreCase("ARS")) {
 			name = "ars";
-		} else if (type.equalsIgnoreCase("ARS_consensus_sequence")
-				&& ptype.equalsIgnoreCase("X_element")) {
-			name = "xelement";
-		} else if (type.equalsIgnoreCase("ARS_consensus_sequence")
-				&& ptype.equalsIgnoreCase("Y_prime_element")) {
-			name = "yprimeelement";
-		} else if (type.equalsIgnoreCase("binding_site")) {
-			name = "xelement";
-		} else if (type.equalsIgnoreCase("insertion")) {
-			name = "xelementcombinatorialrepeat";
-		} else if (type.equalsIgnoreCase("repeat_region")) {
-			name = "yprimeelement";
-		} else if (type.equalsIgnoreCase("noncoding_exon")) {
-			name = "ncrna_gene";
-		} else if (type.equalsIgnoreCase("external_transcribed_spacer_region")) {
-			name = "ncrna_gene";
-		} else if (type.equalsIgnoreCase("internal_transcribed_spacer_region")) {
-			name = "ncrna_gene";
-		} else if (type.equalsIgnoreCase("non_transcribed_region")) {
-			name = "ncrna_gene";
-		} else if (type.equalsIgnoreCase("centromere_DNA_Element_I")) {
+		}else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("blocked_reading_frame")) {
+			name = "blockedreadingframe";
+		}else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("ORF")) {
+			name = "orf";
+		} else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("pseudogene")) {
+			name = "pseudogene";
+		} else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("transposable_element_gene")) {
+			name = "transposableelementgene";
+		}else if (type.equalsIgnoreCase("centromere_DNA_Element_I")) {
 			name = "centromere";
 		} else if (type.equalsIgnoreCase("centromere_DNA_Element_II")) {
 			name = "centromere";
 		} else if (type.equalsIgnoreCase("centromere_DNA_Element_III")) {
 			name = "centromere";
+		} else if (type.equalsIgnoreCase("external_transcribed_spacer_region")) {
+			name = "ncrna_gene";
+		} else if (type.equalsIgnoreCase("five_prime_UTR_intron")) {
+			name = "orf";
+		}else if (type.equalsIgnoreCase("intein_encoding_region")) {
+			name = "orf";
+		}else if (type.equalsIgnoreCase("internal_transcribed_spacer_region")) {
+			name = "ncrna_gene";
+		} else if (type.equalsIgnoreCase("intron") && ptype.equalsIgnoreCase("ORF")) {
+			name = "orf";
+		}else if (type.equalsIgnoreCase("intron") && ptype.equalsIgnoreCase("rRNA_gene")) {
+			name = "rrna_gene";
+		}else if (type.equalsIgnoreCase("intron") && ptype.equalsIgnoreCase("snoRNA_gene")) {
+			name = "snorna_gene";
+		}else if (type.equalsIgnoreCase("intron") && ptype.equalsIgnoreCase("tRNA_gene")) {
+			name = "trna_gene";
+		} else if (type.equalsIgnoreCase("non_transcribed_region")) {
+			name = "ncrna_gene";
+		}else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("ncRNA_gene")) {
+			name = "ncrna_gene";
+		} else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("rRNA_gene")) {
+			name = "ncrna_gene";
+		} else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("snoRNA_gene")) {
+			name = "ncrna_gene";
+		} else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("snRNA_gene")) {
+			name = "ncrna_gene";
+		} else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("tRNA_gene")) {
+			name = "ncrna_gene";
+		} else if (type.equalsIgnoreCase("plus_1_translational_frameshift") && ptype.equalsIgnoreCase("ORF")) {
+			name = "orf";
+		} else if (type.equalsIgnoreCase("plus_1_translational_frameshift") && ptype.equalsIgnoreCase("pseudogene")) {
+			name = "pseudogene";
+		} else if (type.equalsIgnoreCase("plus_1_translational_frameshift") && ptype.equalsIgnoreCase("transposable_element_gene")) {
+			name = "transposableelementgene";
+		} else if (type.equalsIgnoreCase("telomeric_repeat") && ptype.equalsIgnoreCase("telomere")) {
+			name = "telomere";
+		}  else if (type.equalsIgnoreCase("X_element") && ptype.equalsIgnoreCase("telomere")) {
+			name = "telomere";
+		} else if (type.equalsIgnoreCase("X_element_combinatorial_repeat") && ptype.equalsIgnoreCase("telomere")) {
+			name = "telomere";
+		}   else if (type.equalsIgnoreCase("Y_prime_element") && ptype.equalsIgnoreCase("telomere")) {
+			name = "telomere";
 		}
 
 		return name;
@@ -1031,12 +1042,24 @@ public class SgdConverter extends BioDBConverter {
 			item = createItem("InternalTranscribedSpacerRegion");
 		} else if (childType.equalsIgnoreCase("non_transcribed_region")) {
 			item = createItem("NonTranscribedRegion");
-		} else if (childType.equalsIgnoreCase("CDEI")) {
+		} else if (childType.equalsIgnoreCase("centromere_DNA_Element_I")) {
 			item = createItem("CentromereDNAElementI");
-		} else if (childType.equalsIgnoreCase("CDEII")) {
+		} else if (childType.equalsIgnoreCase("centromere_DNA_Element_II")) {
 			item = createItem("CentromereDNAElementII");
-		} else if (childType.equalsIgnoreCase("CDEIII")) {
+		} else if (childType.equalsIgnoreCase("centromere_DNA_Element_III")) {
 			item = createItem("CentromereDNAElementIII");
+		} else if (childType.equalsIgnoreCase("intein_encoding_region")) {
+			item = createItem("InteinEncodingRegion");
+		} else if (childType.equalsIgnoreCase("ARS_consensus_sequence")) {
+			item = createItem("ARSConsensusSequence");
+		}else if (childType.equalsIgnoreCase("Y_prime_element")) {
+			item = createItem("YPrimeElement");
+		}else if (childType.equalsIgnoreCase("X_element_combinatorial_repeat")) {
+			item = createItem("XElementCombinatorialRepeat");
+		}else if (childType.equalsIgnoreCase("X_element")) {
+			item = createItem("XElement");
+		}else if (childType.equalsIgnoreCase("telomeric_repeat")) {
+			item = createItem("TelomericRepeat");
 		}
 
 		return item;
