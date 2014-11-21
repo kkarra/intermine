@@ -32,6 +32,7 @@ retrotransposon
 SAGE_tag
 snoRNA_gene
 snRNA_gene
+telomerase_RNA_gene
 tRNA_gene
 telomere
 telomeric_repeat

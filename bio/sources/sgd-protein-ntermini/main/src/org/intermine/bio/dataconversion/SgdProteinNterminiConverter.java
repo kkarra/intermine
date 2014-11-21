@@ -99,8 +99,9 @@ public class SgdProteinNterminiConverter extends BioFileConverter
 				modType = "none";
 			}
 			String pmid = line[5].trim();
+			String seq = line[6].trim();
 			
-			newProduct(protein, modSite, modType, pmid, category);
+			newProduct(protein, modSite, modType, pmid, category, seq);
 
 		}
 
@@ -118,11 +119,11 @@ public class SgdProteinNterminiConverter extends BioFileConverter
 	 * @throws ObjectStoreException
 	 * @throws Exception
 	 */
-	private void newProduct(String proteinId, String modSite, String modType, String pmid, String category)
+	private void newProduct(String proteinId, String modSite, String modType, String pmid, String category, String seq)
 			throws ObjectStoreException, Exception {		
 
 		Item protein = getProteinItem(proteinId);		
-		Item pmods = getProteinMod(modSite, modType, pmid, category);
+		Item pmods = getProteinMod(modSite, modType, pmid, category, seq);
 		protein.addToCollection("proteinModificationSites", pmods.getIdentifier());
 
 	}
@@ -154,13 +155,15 @@ public class SgdProteinNterminiConverter extends BioFileConverter
 	 * @param pmid
 	 * @return
 	 */
-	private Item getProteinMod(String modSite, String modType, String pmid, String category) throws ObjectStoreException {
+	private Item getProteinMod(String modSite, String modType, String pmid, String category, String seq) throws ObjectStoreException {
 
 		Item item = createItem("ProteinModificationSite");
 
 		if(!StringUtils.isEmpty(modType)) { item.setAttribute("modificationType", modType); }
-		if(!StringUtils.isEmpty(modSite)) {item.setAttribute("modificationSite", modSite); }
+		if(!StringUtils.isEmpty(modSite)) {item.setAttribute("experimentalNterminalSite", modSite); }
 		if(!StringUtils.isEmpty(category)) { item.setAttribute("category", category); }
+		if(!StringUtils.isEmpty(category)) { item.setAttribute("experimentalNterminalSequence", seq); }
+		
 		
 		Item publication = pubmedIdMap.get(pmid);
 

@@ -6,6 +6,8 @@
 
 <class name="ProteinModificationSite" extends="BioEntity" is-interface="true">
 	<attribute name="category" type="java.lang.String"/>
+	<attribute name="experimentalNterminalSite" type="java.lang.String"/>
+	<attribute name="experimentalNterminalSequence" type="java.lang.String"/>
 </class>
 
 </classes>

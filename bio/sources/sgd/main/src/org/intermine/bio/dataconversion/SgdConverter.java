@@ -62,7 +62,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = false;
+	private static final boolean TEST_LOCAL = true;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -744,7 +744,7 @@ public class SgdConverter extends BioDBConverter {
 		}   else if (type.equalsIgnoreCase("Y_prime_element") && ptype.equalsIgnoreCase("telomere")) {
 			name = "telomere";
 		}  else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("telomerase_RNA_gene")) {
-			name = "telomere_rna_gene";
+			name = "ncrna_gene";
 		}
 
 		return name;
@@ -1595,6 +1595,8 @@ public class SgdConverter extends BioDBConverter {
 			String geneFeatureNo = res.getString("feature_no");
 			String phenotypeAnnotNo = res.getString("pheno_annotation_no");
 
+			System.out.println("phenotype gene feature no..." + geneFeatureNo);
+			
 			// set once
 			String experimentType = res.getString("experiment_type");
 			String experimentComment = res.getString("experiment_comment");
