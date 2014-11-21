@@ -62,7 +62,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -212,6 +212,8 @@ public class SgdConverter extends BioDBConverter {
 					item = createItem("OriginOfReplication");
 				}else if (feature_type.equalsIgnoreCase("matrix_attachment_site")) {
 					item = createItem("MatrixAttachmentSite");
+				}else if (feature_type.equalsIgnoreCase("telomerase_RNA_gene")) {
+					item = createItem("TelomeraseRNAGene");
 				}
 
 				// set for all types, so you can use LSF to query for these
@@ -741,6 +743,8 @@ public class SgdConverter extends BioDBConverter {
 			name = "telomere";
 		}   else if (type.equalsIgnoreCase("Y_prime_element") && ptype.equalsIgnoreCase("telomere")) {
 			name = "telomere";
+		}  else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("telomerase_RNA_gene")) {
+			name = "telomere_rna_gene";
 		}
 
 		return name;

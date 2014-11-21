@@ -314,9 +314,9 @@
   <reference name="publication" referenced-type="Publication"/>
  </class>
 
-
  <class name="RRNAGene" extends="NcRNAGene" is-interface="true"> </class>
 
+ <class name="TelomeraseRNAGene" extends="NcRNAGene" is-interface="true"> </class>
 
  <class name="RepeatRegion" is-interface="true">
   <reference name="yprimeelement" referenced-type="YPrimeElement" reverse-reference="repeatregions"/>
