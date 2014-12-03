@@ -187,11 +187,11 @@
 
 <class name="MatrixAttachmentSite" extends="SequenceFeature" is-interface="true"> </class>
 
- <class name="BlockedReadingFrame" extends="SequenceFeature" is-interface="true">
+ <class name="BlockedReadingFrame" extends="Gene" is-interface="true">
   <collection name="CDSs" referenced-type="CDS" reverse-reference="blockedreadingframe"/>
   </class>
 
-<class name="InteinEncodingRegion" extends="SequenceFeature" is-interface="true"> 
+<class name="InteinEncodingRegion" extends="Gene" is-interface="true"> 
  <reference name="orf" referenced-type="ORF" reverse-reference="inteinencodingregions"/>
  </class>
 

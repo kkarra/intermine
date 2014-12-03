@@ -110,7 +110,6 @@ public class SgdConverter extends BioDBConverter {
 		processProteins(connection);
 		processAllPubs(connection);             //get all publications and their topics loaded								
 		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
-
 		processParalogs(connection);
 
 		if(!TEST_LOCAL) {
@@ -125,7 +124,6 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractionTypes();
 			storeInteractionExperiments();
 			storeInteractions();
-			//storePublications();
 		}
 		storePublications();
 		storeGenes();
@@ -289,7 +287,7 @@ public class SgdConverter extends BioDBConverter {
 		ResultSet res = PROCESSOR.getParalogs(connection); // ordered by
 		// featureNo
 		System.out.println("Processing Paralog pairs...");
-		
+
 		while (res.next()) {
 
 			String parentFeatureNo = res.getString("parent_feature_no");
@@ -304,12 +302,11 @@ public class SgdConverter extends BioDBConverter {
 			Item pmid = getExistingPub(refNo);
 			Item parentGene = genes.get(parentFeatureNo);
 			Item childGene = genes.get(childFeatureNo);
-			
-			if(parentGene!= null && childGene != null) {
 
-			processHomologues(parentGene.getIdentifier(), childGene.getIdentifier(), pmid.getIdentifier(), source);
-			processHomologues(childGene.getIdentifier(), parentGene.getIdentifier(), pmid.getIdentifier(), source);
-			
+			if(parentGene!= null && childGene != null) {	
+				processHomologues(parentGene.getIdentifier(), childGene.getIdentifier(), pmid.getIdentifier(), source);
+				processHomologues(childGene.getIdentifier(), parentGene.getIdentifier(), pmid.getIdentifier(), source);
+
 			}
 
 		}

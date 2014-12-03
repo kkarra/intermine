@@ -135,7 +135,7 @@
 			<fieldconfig fieldExpr="gfpTagged" />
 			<fieldconfig fieldExpr="gfpVisualized" />
 			<fieldconfig fieldExpr="tapVisualized" />
-			<fieldconfig fieldExpr="abundance" />
+			<fieldconfig fieldExpr="abundance"  label="Abundance in molecules/cell" />
 		</fields>
 	</class>
 	
@@ -424,8 +424,7 @@
 			<fieldconfig fieldExpr="homologue.organism.shortName" />
 		</fields>
 	</class>
-
-
+	
 	<class className="org.intermine.model.bio.Interaction">
 		<fields>
 			<fieldconfig fieldExpr="gene1.primaryIdentifier" />
