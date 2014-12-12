@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<classes>
+ <class name="Gene" is-interface="true">
+      <attribute name="functionSummary" type="java.lang.String"/>
+ </class>
+</classes>
+

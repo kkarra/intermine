@@ -1,0 +1,5 @@
+<project name="go-function-summary" default="default" basedir=".">
+  <description>build, test, package go-function-summary</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
