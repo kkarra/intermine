@@ -102,14 +102,12 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 			String gene =  line[8].trim();     
 			String annot = line[9].trim();
 			String t[] = annot.split("go_annotation_summary=");
-
-			//System.out.println("gene is .." + gene + "    annot..."+ annot);
 			
-			//if(t.length == 0) {
+			if(t.length > 0) {
 				String summary = t[1];			
 				System.out.println("summary is ... " + summary);
 				newProduct(gene, summary);
-			//}		
+			}		
 
 	}
 
