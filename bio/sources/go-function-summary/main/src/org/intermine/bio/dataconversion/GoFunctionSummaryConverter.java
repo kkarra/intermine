@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.Iterator;
 
@@ -35,32 +36,32 @@ import java.util.regex.Matcher;
  * @author
  */
 public class GoFunctionSummaryConverter extends BioFileConverter   {
-    //
-    private static final String DATASET_TITLE = "GO Function Summary";
-    private static final String DATA_SOURCE_NAME = "SGD curated";
+	//
+	private static final String DATASET_TITLE = "GO Function Summary";
+	private static final String DATA_SOURCE_NAME = "SGD curated";
 	private final Map<String, Item> genes = new HashMap<String, Item>();
 
-    /**
-     * Constructor
-     * @param writer the ItemWriter used to handle the resultant items
-     * @param model the Model
-     */
-    public GoFunctionSummaryConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-    }
+	/**
+	 * Constructor
+	 * @param writer the ItemWriter used to handle the resultant items
+	 * @param model the Model
+	 */
+	public GoFunctionSummaryConverter(ItemWriter writer, Model model) {
+		super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+	}
 
-    /**
-     * 
-     *
-     * {@inheritDoc}
-     */
-    public void process(Reader reader) throws Exception {
-    	processFile(reader); 
-    	storeGenes();
+	/**
+	 * 
+	 *
+	 * {@inheritDoc}
+	 */
+	public void process(Reader reader) throws Exception {
+		processFile(reader); 
+		storeGenes();
 
-    }
-    
-    
+	}
+
+
 	/**
 	 * 
 	 * @param reader
@@ -81,42 +82,50 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 		 * SGD:S000005446	
 		 * db_subset=Swiss-Prot|go_annotation_complete=20051214|go_annotation_summary=Alcohol dehydrogenase required for the reduction of acetaldehyde to ethanol
 		 */   	 
-		System.out.println("Processing Function Summary Data file....");    
+		System.out.println("Processing Function Summary Data file....");  
 
-		Iterator<?> tsvIter;
-		try {
-			tsvIter = FormattedTextParser.parseTabDelimitedReader(preader);
-		} catch (Exception e) {
-			throw new BuildException("cannot parse file: " + getCurrentFile(), e);
-		}
 
-		while (tsvIter.hasNext()) {
 
-			String[] line = (String[]) tsvIter.next();
+		BufferedReader br = new BufferedReader(preader);
+		String line = null;
 
-			if (line.length < 9) {
-				System.out.println("Couldn't process line. Expected 9 cols, but was " + line.length);
-				//continue;
+		while ((line = br.readLine()) != null) {
+
+			if (line.startsWith("!")) {
+				continue;
 			}
 
-			String gene =  line[8].trim();     
-			String annot = line[9].trim();
-			String t[] = annot.split("go_annotation_summary=");
-			
-			if(t.length > 0) {
-				String summary = t[1];			
-				System.out.println("summary is ... " + summary);
-				newProduct(gene, summary);
-			}		
+			String[] array = line.split("\t", -1); // keep trailing empty Strings
 
-	}
+			if (array.length < 10) {
+				throw new IllegalArgumentException("Not enough elements (should be  10 not "
+						+ array.length + ") in line: " + line);
+			}
+
+			String oldgene =  array[8].trim(); 
+			String gene = oldgene.replaceAll("SGD:", "");
+			
+			String annot = array[9].trim();
+
+			if(annot.indexOf("go_annotation_summary") > 0) {
+
+				String t[] = annot.split("go_annotation_summary=");
+
+				if(t.length != 0) {
+					String summary = t[1];			
+					newProduct(gene, summary);
+				}	
+
+			}
+
+		}
 
 		preader.close();
 
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 
 	 * @param geneId
@@ -125,14 +134,14 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 	 * @throws Exception
 	 */
 	private void newProduct(String geneId, String summary)
-					throws ObjectStoreException, Exception {		
+			throws ObjectStoreException, Exception {		
 
 		Item gene = getGeneItem(geneId);		
 		gene.setAttribute("functionSummary", summary);
 
 	}
-	
-	
+
+
 	private Item getGeneItem(String geneId) throws ObjectStoreException{
 
 		Item gene = genes.get(geneId);
@@ -146,7 +155,7 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 		return gene;
 
 	}
-	
+
 	/**
 	 * 
 	 * @throws Exception

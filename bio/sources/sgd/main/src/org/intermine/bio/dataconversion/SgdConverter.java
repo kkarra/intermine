@@ -158,7 +158,7 @@ public class SgdConverter extends BioDBConverter {
 				String qualifier = res.getString("qualifier");
 				String feat_attribute = res.getString("feat_attribute");
 				String status = res.getString("status");
-              System.out.println("feature type is.." + feature_type);
+                //System.out.println("feature type is.." + feature_type);
 				Item item = null;
 				if (feature_type.equalsIgnoreCase("ORF")) {
 					item = createItem("ORF");
@@ -620,7 +620,7 @@ public class SgdConverter extends BioDBConverter {
 
 			Item parent = genes.get(geneFeatureNo);
 
-			System.out.println("child feature type...."+ childFeatureType);
+			//System.out.println("child feature type...."+ childFeatureType);
 			// create the child Item
 			Item childItem = getChildItem(childFeatureType);
 
