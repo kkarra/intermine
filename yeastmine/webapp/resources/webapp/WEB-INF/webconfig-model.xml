@@ -599,7 +599,7 @@
 
 		<enrichmentwidgetdisplayer id="publication_enrichment"
 			title="Publication Enrichment" description="Publications enriched for genes in this list."
-			label="Publication" startClass="Gene" startClassDisplay="primaryIdentifier"
+			label="Publication" startClass="Gene" startClassDisplay="secondaryIdentifier"
 			enrich="publications.title" enrichIdentifier="publications.pubMedId"
 			constraints="organism.name=[list],primaryIdentifier != null"
 			typeClass="Gene"
@@ -614,7 +614,7 @@
 			description="Pathways enriched for genes in this list - data from KEGG and Reactome"
 			label="Pathways" filterLabel="DataSet"
 			filters="All,KEGG pathways data set,Reactome data set" startClass="Gene"
-			startClassDisplay="primaryIdentifier" enrich="pathways.name"
+			startClassDisplay="secondaryIdentifier" enrich="pathways.name"
 			enrichIdentifier="pathways.identifier"
 			constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
 			typeClass="Gene"
