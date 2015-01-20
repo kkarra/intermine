@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
 
@@ -181,7 +181,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
 
         String gene1 = getGene(holder1.identifier, holder1.symbol,
                 holder1.identifierType, holder1.taxonId);
@@ -257,7 +257,7 @@ public class TreefamConverter extends BioFileConverter
 
     // the gene is from an organism we want
     // the homologue is from an organism we want
-    private boolean isValidPair(GeneHolder holder1, GeneHolder holder2) {
+    private static boolean isValidPair(GeneHolder holder1, GeneHolder holder2) {
         if (holder1 == null || holder2 == null) {
             return false;
         }
@@ -302,6 +302,7 @@ public class TreefamConverter extends BioFileConverter
             String identifierType = DEFAULT_IDENTIFIER_TYPE;
             String geneField = DEFAULT_IDENTIFIER_COLUMN;
 
+
             if (config.containsKey(taxonId)) {
                 String[] configs = config.get(taxonId);
                 geneField = configs[0];
@@ -309,6 +310,7 @@ public class TreefamConverter extends BioFileConverter
             }
             identifier = setIdentifier(identifier, symbol, geneField);
             idsToGenes.put(id, new GeneHolder(identifier, symbol, identifierType, taxonId));
+
         }
     }
 
@@ -346,6 +348,7 @@ public class TreefamConverter extends BioFileConverter
      */
     public class GeneHolder
     {
+
         protected String identifier, symbol, taxonId, identifierType;
 
         /**
@@ -353,7 +356,9 @@ public class TreefamConverter extends BioFileConverter
          * @param identifierType which field to set, eg. primaryIdentifier or symbol
          * @param taxonId organism for this gene
          */
+        
         public GeneHolder(String identifier, String symbol, String identifierType, String taxonId) {
+
             this.identifier = identifier;
             this.symbol = symbol;
             this.taxonId = taxonId;
@@ -386,6 +391,7 @@ public class TreefamConverter extends BioFileConverter
             identifier = symbol;
         }
         return identifier;
+
     }
 
     /*private String resolveGene(String taxonId, String identifier, String symbol) {

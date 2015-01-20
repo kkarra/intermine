@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,9 +23,11 @@ import java.util.regex.Pattern;
 
 import org.intermine.InterMineException;
 //import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,6 +39,7 @@ import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.apache.log4j.Logger; // --kk
+
 
 /**
  * For a given list of input strings search for objects using default and configured queries for a
@@ -108,12 +111,12 @@ public class BagQueryRunner
         List<String> cleanInput = new ArrayList<String>();
         List<String> wildcardInput = new ArrayList<String>();
         Map<String, Pattern> patterns = new HashMap<String, Pattern>();
-        
+
         for (String inputString : input) {
         	
             if (!(inputString == null) && !(inputString.equals(""))) {
                 if (inputString.indexOf('*') == -1 || (!doWildcards)) {
-                	
+
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
                         cleanInput.add(inputString);
                         lowerCaseInput.put(inputString.toLowerCase(), inputString);
@@ -147,20 +150,13 @@ public class BagQueryRunner
         for (BagQuery bq : queries) {
         	    	
             // run the next query on identifiers not yet resolved
-//<<<<<<< HEAD
+
             if (!unresolved.isEmpty()) {
                 //Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 Query q = null;
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);                                  
-//=======
-            // OR all identifiers if matchOnFirst = FALSE
-          //  if (!unresolved.isEmpty() || !matchOnFirst) {
-             //   Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-              //  try {
-                //    Set<String> toProcess = (matchOnFirst) ? unresolved : unresolvedOriginal;
-                 //   Query q = bq.getQuery(toProcess, extraFieldValue);
-//>>>>>>> 213ffd02c6475b09515bfead2961b32b111a6e34
+
                     Results res = os.execute(q, 10000, true, true, false);
                     //LOG.error("size of results: " + res.size());
                     Iterator resIter = res.iterator();
@@ -236,6 +232,7 @@ public class BagQueryRunner
                 } catch (IllegalArgumentException e) {
                     // Query couldn't handle extra value
                 }
+
             }
             
         	//LOG.error("size of unresolved; " + unresolved.size());
@@ -259,6 +256,7 @@ public class BagQueryRunner
         }
         bqr.putUnresolved(unresolvedMap);
 
+        //bqr.addUnresolved(unresolved);
         return bqr;
     }
     
@@ -358,6 +356,7 @@ public class BagQueryRunner
             if (resolved) {
                 unresolved.remove(input);
             }
+
         }
 
         // now objsOfWrongType contains all wrong types found for this query, try converting
@@ -553,87 +552,6 @@ public class BagQueryRunner
         }
     }
 
-
-    /**
-     * Find any objects in the objsOfWrongType Map that can be converted to the destination type,
-     * add them to bqr as TYPE_CONVERTED issues and remove them from objsOfWrongType.
-     *
-    private void convertObjects(BagQueryResult bqr, BagQuery bq, Class<?> type,
-            Map<String, Set<Object>> objsOfWrongType)
-        throws InterMineException {
-        if (!objsOfWrongType.isEmpty()) {
-            // group objects by class
-            Map<InterMineObject, Set<String> > objectToInput =
-                new HashMap<InterMineObject, Set<String> >();
-            for (Map.Entry<String, Set<Object>> entry : objsOfWrongType.entrySet()) {
-                String input = entry.getKey();
-                for (Object o : entry.getValue()) {
-                    InterMineObject imo = (InterMineObject) o;
-                    Set<String> inputSet = objectToInput.get(imo);
-                    if (inputSet == null) {
-                        inputSet = new HashSet<String>();
-                        objectToInput.put(imo, inputSet);
-                    }
-                    inputSet.add(input);
-                }
-            }
-
-            Map objTypes = CollectionUtil.groupByClass(objectToInput.keySet(), true);
-
-            Iterator objTypeIter = objTypes.keySet().iterator();
-            while (objTypeIter.hasNext() && !objsOfWrongType.isEmpty()) {
-                Class fromClass = (Class) objTypeIter.next();
-                List candidateObjs = (List) objTypes.get(fromClass);
-
-                // we may have already converted some of these types, remove any that have been.
-                List<Object> objs = new ArrayList<Object>();
-                for (Object candidate : candidateObjs) {
-                    if (objectToInput.containsKey(candidate)) {
-                        objs.add(candidate);
-                    }
-                }
-
-                // there was nothing to convert for this class
-                if (objs.isEmpty()) {
-                    continue;
-                }
-
-                // try to convert objects to target type
-                Map<InterMineObject, List<InterMineObject>> convertedObjsMap =
-                    TypeConverter.getConvertedObjectMap(getConversionTemplates(), fromClass,
-                            type, objs, os);
-                if (convertedObjsMap == null) {
-                    // no conversion found
-                    continue;
-                }
-
-                // loop over the old objects
-                for (InterMineObject origObj : convertedObjsMap.keySet()) {
-                    boolean toRemove = false;
-                    // then for each new object ...
-                    for (InterMineObject convertedObj : convertedObjsMap.get(origObj)) {
-                        ConvertedObjectPair convertedPair = new ConvertedObjectPair(origObj,
-                                                                                    convertedObj);
-                        List<Object> objPairList = new ArrayList<Object>();
-                        objPairList.add(convertedPair);
-                        // remove this object so we don't try to convert it again
-                        toRemove = true;
-                        // make an issue for each input identifier that matched the objects in
-                        // this old/new pair
-                        for (String origInputString : objectToInput.get(origObj)) {
-                            bqr.addIssue(BagQueryResult.TYPE_CONVERTED,
-                                         bq.getMessage() + " found by converting from x",
-                                         origInputString, objPairList);
-                            objsOfWrongType.remove(origInputString);
-                        }
-                    }
-                    if (toRemove) {
-                        objectToInput.remove(origObj);
-                    }
-                }
-            }
-        }
-    }*/
 
     // temporary method - will be replaced by BagQueryHelper method
     private List<BagQuery> getBagQueriesForType(BagQueryConfig config, String type) {
