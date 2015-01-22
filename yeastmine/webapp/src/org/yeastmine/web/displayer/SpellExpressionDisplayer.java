@@ -16,7 +16,7 @@ import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.ORF;
 import org.intermine.model.bio.ExpressionScore;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 
 public class SpellExpressionDisplayer extends ReportDisplayer {

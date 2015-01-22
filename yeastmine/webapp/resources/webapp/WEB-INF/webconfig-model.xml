@@ -7,6 +7,15 @@
 		</fields>
 	</class>
 	
+		<class className="org.intermine.model.bio.Complex">
+		<fields>
+			<fieldconfig fieldExpr="identifier"></fieldconfig>
+			<fieldconfig fieldExpr="name"></fieldconfig>
+			
+		</fields>
+	</class>
+	
+	
 	<class className="org.intermine.model.bio.BioEntity">
 		<headerconfig>
 			<titles>
@@ -565,20 +574,26 @@
 
 	</reportdisplayers>
 
-	<widgets>
+	 <widgets>
 
-		<!-- <graphdisplayer id="chromosome_distribution_for_gene" title="Chromosome 
-			Distribution" description="Actual: number of items in this list found on 
-			each chromosome. Expected: given the total number of items on the chromosome 
-			and the number of items in this list, the number of items expected to be 
-			found on each chromosome." graphType="ColumnChart" rangeLabel="Count" domainLabel="Chromosome" 
-			filterLabel="Organism" filters="organism.name=[list]" startClass="Gene" typeClass="Gene" 
-			categoryPath="chromosome.primaryIdentifier" seriesLabels="Actual,Expected" 
-			seriesPath="ActualExpectedCriteria" constraints="organism.name=[Organism]" 
-			views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier, 
-			chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/> -->
+		  <graphdisplayer id="chromosome_distribution_for_gene"
+                      title="Chromosome Distribution"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="ColumnChart"
+                      rangeLabel="Count"
+                      domainLabel="Chromosome"
+                      filterLabel="Organism"
+                      filters="organism.name=[list]"
+                      startClass="SequenceFeature"
+                      typeClass="SequenceFeature"
+                      categoryPath="chromosome.primaryIdentifier"
+                      seriesLabels="Actual,Expected"
+                      seriesPath="ActualExpectedCriteria"
+                      constraints="organism.name=[Organism]"
+                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
+                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/> 
 
-		<enrichmentwidgetdisplayer id="go_enrichment_for_gene"
+		 <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
 			title="Gene Ontology Enrichment" description="GO terms enriched for items in this list."
 			label="GO Term" filterLabel="Ontology"
 			filters="biological_process,cellular_component,molecular_function"
@@ -593,7 +608,8 @@
 			views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
 	                                       goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
 	                                       goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
-			externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=" />
+			externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
+			correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient" />
 
 
 
@@ -621,7 +637,7 @@
 			views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name" />
 
 
-		<bagtabledisplayer id="interactions" title="Interactions"
+		 <bagtabledisplayer id="interactions" title="Interactions"
 			pathStrings="Gene.interactions.details.allInteractors"
 			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
 			displayFields="secondaryIdentifier, name" exportField="primaryIdentifier"
@@ -631,23 +647,8 @@
 	                                interactions.details.role1,
 	                                interactions.details.allInteractors.primaryIdentifier,
 	                                interactions.details.allInteractors.symbol,
-                                   interactions.details.experiment.name" />
+                                   interactions.details.experiment.name" /> 
                                   
-          <!-- <bagtabledisplayer id="interactions" title="Interactions"
-			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-			pathStrings="Gene.interactions"  displayFields="secondaryIdentifier, name" exportField="secondaryIdentifier"
-			typeClass="Gene" columnTitle="Interactions"
-			views="secondaryIdentifier, symbol, organism.shortName,
-	                            interactions.details.annotationType 
-								interactions.details.phenotype 
-								interactions.details.role1 
-								interactions.details.experimentType 
-								interactions.gene2.symbol 
-								interactions.gene2.secondaryIdentifier 
-								interactions.details.experiment.name 
-								interactions.details.relationshipType.name
-                                   " />  -->
-
 		 <bagtabledisplayer id="orthologues" title="Orthologues"
 			pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
 			description="Shows the number of Genes in list with orthologue not the number of orthologues."
@@ -658,5 +659,7 @@
 	                            homologues.homologue.symbol,
 	                            homologues.homologue.organism.shortName,
 	                            homologues.type" /> 
-	</widgets>
+	</widgets> 
+	
+	
 </webconfig>
