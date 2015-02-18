@@ -7,11 +7,8 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
 
-    <source name="sgd" type="sgd">      
-    	<property name="source.db.name" value="sgd"/>
-        <property name="dataSourceName" value="SGD"/>
-        <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
-    </source>
+
+
 
     <source name="sgd-gff" type="sgd-gff">
       <property name="gff3.taxonId" value="4932"/>
@@ -20,6 +17,14 @@
       <property name="gff3.dataSetTitle" value="Preliminary Transcripts"/>
       <property name="src.data.dir" location="/data/intermine/gff"/>
      </source> 
+
+    <source name="waern_23390610" type="waern_23390610">
+      <property name="gff3.taxonId" value="4932"/>
+      <property name="gff3.dataSourceName" value="Waern, K; Snyder, M. 2013 PMID  23390610"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSetTitle" value="Differentialy expressed genes under different growth condtions"/>
+      <property name="src.data.dir" location="/data/intermine/Waern_2013_PMID_23390610/track_files"/>
+     </source>
 
     <source name="eco" type="eco">
       <property name="src.data.file" location="/data/intermine/eco/eco.obo"/>
@@ -127,14 +132,21 @@
       <property name="src.data.dir.includes" value="ym_gene_association.sgd"/>
     </source>
 
-    <!--<source name="psi-mi-ontology" type="psi-mi-ontology">
+    <source name="sgd" type="sgd">      
+    	<property name="source.db.name" value="sgd"/>
+        <property name="dataSourceName" value="SGD"/>
+        <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
+    </source>
+
+    <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/data/intermine/psi/ontology/current/psi-mi.obo"/>
     </source> 
 
     <source name="psi-complexes" type="psi-complexes">
       <property name="src.data.dir" location="/data/intermine/psi/intact/complexes"/>
       <property name="intact.organisms" value="4932"/>
-    </source>-->
+      <property name="complexes.source" value="sgd"/>
+    </source>
 
     <source name="sgd-domains" type="sgd-domains">
      <property name="src.data.dir" location="/share/intermine/domains"/>
@@ -174,6 +186,7 @@
     <post-process name="create-location-range-index"/>
     <post-process name="create-overlap-view"/>
     <post-process name="create-gene-flanking-features"/>
+    <post-process name="populate-child-features"/>
     <post-process name="transfer-sequences"/>
     <post-process name="create-search-index"/>
     <post-process name="create-attribute-indexes"/>

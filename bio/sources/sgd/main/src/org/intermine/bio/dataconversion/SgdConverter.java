@@ -48,6 +48,7 @@ public class SgdConverter extends BioDBConverter {
 	private Map<MultiKey, Item> interactionsnew = new HashMap<MultiKey, Item>();
 	private Map<String, String> literatureTopics = new HashMap();
 	private Map<String, Item> genes = new HashMap();
+	private Map<String, Item> proteins = new HashMap();
 	private Map<String, Item> genesName = new HashMap();
 	private Map<String, String> genesAliases = new HashMap();
 	private Map<String, String> synonyms = new HashMap();
@@ -62,7 +63,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -108,9 +109,10 @@ public class SgdConverter extends BioDBConverter {
 		processChrLocations(connection);
 		processGeneChildrenLocations(connection);
 		processProteins(connection);
-		processAllPubs(connection);             //get all publications and their topics loaded								
-		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
-		processParalogs(connection);
+		processUniProtCrossReference(connection);
+		//processAllPubs(connection);             //get all publications and their topics loaded								
+		//processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
+		//processParalogs(connection);
 
 		if(!TEST_LOCAL) {
 			processPhenotypes(connection);
@@ -127,6 +129,7 @@ public class SgdConverter extends BioDBConverter {
 		}
 		storePublications();
 		storeGenes();
+		storeProteins();
 
 	}
 
@@ -438,6 +441,36 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 
+	
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+	private void processUniProtCrossReference(Connection connection)
+			throws SQLException, ObjectStoreException {
+
+		ResultSet res = PROCESSOR.getUniProtCrossReference(connection); // ordered by
+		// featureNo
+
+		System.out.println("Processing DbXRefs...");
+
+		while (res.next()) {
+
+			String geneFeatureNo = res.getString("feature_no");
+			String dbx_source = res.getString("source");
+			String dbxref_id = res.getString("dbxref_id");
+
+			Item item = proteins.get(geneFeatureNo);
+
+			if (item != null) {
+				item.setAttribute("primaryAccession", dbxref_id);
+			}
+		}
+
+	}
+	
 	/**
 	 * 
 	 * @param connection
@@ -935,12 +968,13 @@ public class SgdConverter extends BioDBConverter {
 
 			protein.setReference("sequence", seq.getIdentifier());
 			protein.addToCollection("genes", item.getIdentifier());
+			proteins.put(featureNo, protein);
 
-			try {
-				store(protein);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
+			//try {
+				//store(protein);
+			//} catch (ObjectStoreException e) {
+				//throw new ObjectStoreException(e);
+			//}
 
 		}
 
@@ -1154,6 +1188,22 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
+	
+	/**
+	 * 
+	 * @throws ObjectStoreException
+	 */
+
+	private void storeProteins() throws ObjectStoreException {
+		for (Item protein : proteins.values()) {
+			try {
+				store(protein);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+
 
 
 	/**
@@ -1591,8 +1641,6 @@ public class SgdConverter extends BioDBConverter {
 			// use these to switch from feature to next && annotation to next
 			String geneFeatureNo = res.getString("feature_no");
 			String phenotypeAnnotNo = res.getString("pheno_annotation_no");
-
-			System.out.println("phenotype gene feature no..." + geneFeatureNo);
 			
 			// set once
 			String experimentType = res.getString("experiment_type");
@@ -2082,13 +2130,15 @@ public class SgdConverter extends BioDBConverter {
 
 		Item storedInteractionType = interactiontype.get(interactionType);
 		if (storedInteractionType != null) {
-			detail.setReference("relationshipType", storedInteractionType.getIdentifier());
+			//detail.setReference("relationshipType", storedInteractionType.getIdentifier());
+			detail.setAttribute("relationshipType", storedInteractionType.getIdentifier());
 		} else {
 			storedInteractionType = createItem("InteractionTerm");
 			if (StringUtils.isNotEmpty(interactionType)) {
 				storedInteractionType.setAttribute("name", interactionType);
 			}
-			detail.setReference("relationshipType", storedInteractionType.getIdentifier());
+			//detail.setReference("relationshipType", storedInteractionType.getIdentifier());
+			detail.setAttribute("relationshipType", storedInteractionType.getIdentifier());
 			interactiontype.put(interactionType, storedInteractionType);
 		}
 
@@ -2158,8 +2208,8 @@ public class SgdConverter extends BioDBConverter {
 
 
 	}
-
-	private String getInteraction1_1_0_98(String interactionNo, String referenceNo,
+	
+	/*private String getInteraction1_1(String interactionNo, String referenceNo,
 			String interactionType, String experimentType,
 			String annotationType, String modification, Item interactingGene, String action,
 			String source, String phenotype, String citation, Item gene,
@@ -2168,34 +2218,6 @@ public class SgdConverter extends BioDBConverter {
 					throws ObjectStoreException {
 
 		Item item = getInteractionItem(gene.getIdentifier(), interactingGene.getIdentifier());	
-
-
-		//this would be for old		
-		item.setAttribute("interactionType", interactionType);		
-		item.setAttribute("annotationType", annotationType);
-		item.setAttribute("experimentType", experimentType);
-		if (modification != null) item.setAttribute("modification", modification);
-		if (phenotype != null) item.setAttribute("phenotype", phenotype);
-		item.setAttribute("role", action);
-		item.setReference("gene", gene.getIdentifier());
-		item.addToCollection("interactingGenes", interactingGene.getIdentifier());
-		item.addToCollection("dataSets", dsetIdentifier);		
-
-		Item storedInteractionType = interactiontype.get(interactionType);
-		if (storedInteractionType != null) {
-			item.setReference("type", storedInteractionType.getIdentifier());
-		} else {
-			storedInteractionType = createItem("InteractionTerm");
-			if (StringUtils.isNotEmpty(interactionType)) {
-				storedInteractionType.setAttribute("name", interactionType);
-			}
-			item.setReference("type", storedInteractionType.getIdentifier());
-			interactiontype.put(interactionType, storedInteractionType);
-		}
-
-		//item.setReference("experiment", storedExperimentType.getIdentifier()); - had to move this old down	
-
-		//this would be for new
 		Item detail = createItem("InteractionDetail");		   
 
 		detail.setAttribute("type", interactionType);		
@@ -2208,7 +2230,7 @@ public class SgdConverter extends BioDBConverter {
 		//detail.addToCollection("interactingGenes", interactingGene.getIdentifier());
 		detail.addToCollection("dataSets", dsetIdentifier);		
 
-		//Item storedInteractionType = interactiontype.get(interactionType);
+		Item storedInteractionType = interactiontype.get(interactionType);
 		if (storedInteractionType != null) {
 			detail.setReference("relationshipType", storedInteractionType.getIdentifier());
 		} else {
@@ -2272,8 +2294,6 @@ public class SgdConverter extends BioDBConverter {
 
 		detail.setReference("experiment", storedExperimentType.getIdentifier());	
 		detail.setReference("interaction", item);
-
-		item.setReference("experiment", storedExperimentType.getIdentifier()); //this is for old
 		//interactiondetail.put(detail.getIdentifier(), detail);	
 
 		try {
@@ -2287,7 +2307,8 @@ public class SgdConverter extends BioDBConverter {
 		return refId;
 
 
-	}
+	}*/
+
 
 
 	private Item getInteractionItem(String refId, String gene2RefId) throws ObjectStoreException {
@@ -2295,8 +2316,8 @@ public class SgdConverter extends BioDBConverter {
 		Item interaction = interactionsnew.get(key);
 		if (interaction == null) {
 			interaction = createItem("Interaction");
-			interaction.setReference("gene1", refId);
-			interaction.setReference("gene2", gene2RefId);
+			interaction.setReference("participant1", refId); //gene1
+			interaction.setReference("participant2", gene2RefId); //gene2
 			//interactionsnew.put(key, interaction);
 			//store(interaction);
 		}

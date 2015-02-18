@@ -424,6 +424,34 @@ public class SgdProcessor
     	return res;
     }
 
+    
+    
+    /**
+     * Return the results of getting cross-references from dbxref
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getUniProtCrossReference(Connection connection)
+    throws SQLException {
+
+    	String query = "select f.feature_no, dbx.dbxref_id,  dbx.source "
+    		+ " FROM bud.feature f, bud.dbxref dbx, bud.dbxref_feat df, bud.dbxref_url du, bud.url u"
+    		+ " where f.feature_no = df.feature_no AND df.dbxref_no = dbx.dbxref_no AND dbx.dbxref_no = du.dbxref_no AND du.url_no = u.url_no"
+    		+ " AND f.feature_type in (select col_value from bud.web_metadata "
+    		+ " WHERE application_name = 'Chromosomal Feature Search' "
+    		+ " AND col_name = 'FEATURE_TYPE') "
+    		+ " and dbx.source = 'EBI' and dbx.dbxref_type in ('UniProt/Swiss-Prot ID', 'UniProt/TrEMBL ID') "
+    		+ " group by f.feature_no, dbx.dbxref_id,  dbx.source"
+    		+ " order by f.feature_no asc";
+
+    	LOG.info("executing: " + query);        
+    	Statement stmt = connection.createStatement();
+    	ResultSet res = stmt.executeQuery(query);
+    	return res;
+    }
+    
+	
     /**
      * Return the results of getting cross-references from dbxref
      * @param connection the connection
