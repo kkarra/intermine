@@ -440,6 +440,14 @@
 		</fields>
 	</class>
 	
+	<class className="org.intermine.model.bio.Interactor">
+    <fields>
+      <fieldconfig fieldExpr="participant.primaryIdentifier" />
+      <fieldconfig fieldExpr="stoichiometry" />
+      <fieldconfig fieldExpr="biologicalRole" />
+    </fields>
+  </class>
+  
 	<class className="org.intermine.model.bio.Interaction">
 		<fields>
 			<fieldconfig fieldExpr="gene1.primaryIdentifier" />

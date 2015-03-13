@@ -5,11 +5,9 @@
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="yeastmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+
   <sources>
-
-
-
-
+    
     <source name="sgd-gff" type="sgd-gff">
       <property name="gff3.taxonId" value="4932"/>
       <property name="gff3.dataSourceName" value="SGD Transcriptome v1.0"/>
@@ -120,6 +118,10 @@
 
     <source name="go-function-summary" type="go-function-summary">
       <property name="src.data.dir" location="/share/intermine/go/function_summary"/>
+    </source>
+
+    <source name="phenotype-summary" type="phenotype-summary">
+      <property name="src.data.dir" location="/data/intermine/phenotype_summary"/>
     </source>
 
      <source name="go-slim" type="go-slim">

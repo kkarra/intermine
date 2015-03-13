@@ -110,9 +110,9 @@ public class SgdConverter extends BioDBConverter {
 		processGeneChildrenLocations(connection);
 		processProteins(connection);
 		processUniProtCrossReference(connection);
-		//processAllPubs(connection);             //get all publications and their topics loaded								
-		//processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
-		//processParalogs(connection);
+		processAllPubs(connection);             //get all publications and their topics loaded								
+		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
+		processParalogs(connection);
 
 		if(!TEST_LOCAL) {
 			processPhenotypes(connection);
