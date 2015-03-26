@@ -63,7 +63,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
-    private static final String PROTEIN = "MI:0326";
+    //private static final String PROTEIN = "MI:0326";
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
@@ -77,10 +77,14 @@ public class PsiComplexesConverter extends BioFileConverter
     // accession to stored object ID
     private Map<String, String> interactors = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
+    private Item organism;
 
     static {
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
+        INTERACTOR_TYPES.put("MI:0320", "Gene"); //name: ribonucleic acid  ncRNA and rrnagene 
+        INTERACTOR_TYPES.put("MI:0681", "Gene"); //name: double stranded deoxyribonucleic acid
+        INTERACTOR_TYPES.put("MI:0325", "Gene"); //name: transfer rna
     }
 
     /**
@@ -88,8 +92,15 @@ public class PsiComplexesConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public PsiComplexesConverter(ItemWriter writer, Model model) {
+    public PsiComplexesConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+		organism = createItem("Organism");
+		organism.setAttribute("taxonId", "4932");
+		organism.setAttribute("genus", "Saccharomyces");
+		organism.setAttribute("species", "cerevisiae");
+		organism.setAttribute("name", "Saccharomyces cerevisiae");
+		organism.setAttribute("shortName", "S. cerevisiae");
+		store(organism);
     }
 
     /**
@@ -337,34 +348,48 @@ public class PsiComplexesConverter extends BioFileConverter
             primaryIdentifier = accession;
         }
         String refId = interactors.get(primaryIdentifier);
+        
         if (refId == null) {
+        	
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
+            System.out.println("typetermidentifier is ... " + typeTermIdentifier);
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
+            
             if (interactorType == null) {
-                // we don't know how to handle non-protein, non-small molecules
-                return null;
+              
+                return null; // we don't know how to handle stuff that is not hardcoded in INTERACTOR_TYPES
             }
-            Item protein = createItem(interactorType);
-            if (PROTEIN.equals(typeTermIdentifier)) {
-                //-kk-protein.setAttribute("primaryAccession", accession);
-                protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            } else {
-                protein.setAttribute("primaryIdentifier", primaryIdentifier);
-                // small molecule
-                String smallMolecule = getChebiName(primaryIdentifier);
-                if (StringUtils.isNotEmpty(smallMolecule)) {
-                    protein.setAttribute("name", smallMolecule);
-                }
+            
+            if(interactorType.equals("Gene")) {
+
+            	Item gene = createItem(interactorType);
+            	gene.setAttribute("primaryIdentifier", primaryIdentifier);
+            	gene.setReference("organism", organism.getIdentifier());//organismRefId
+            	store(gene);
+            	refId = gene.getIdentifier();
+            	interactors.put(primaryIdentifier, refId);
+
+            }else if(interactorType.equals("Protein") || interactorType.equals("SmallMolecule")){
+
+            	Item protein = createItem(interactorType);
+            	if (interactorType.equals("Protein") ) {
+            		protein.setAttribute("primaryIdentifier", primaryIdentifier);
+            	} else {
+            		protein.setAttribute("primaryIdentifier", primaryIdentifier);
+            		// small molecule
+            		String smallMolecule = getChebiName(primaryIdentifier);
+            		if (StringUtils.isNotEmpty(smallMolecule)) {
+            			protein.setAttribute("name", smallMolecule);
+            		}
+            	}
+            	protein.setReference("organism", organism.getIdentifier());//organismRefId          	
+            	store(protein);
+            	refId = protein.getIdentifier();
+            	interactors.put(primaryIdentifier, refId);
             }
-            Organism organism = participant.getOrganism();
-            if (organism != null) {
-                String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
-                protein.setReference("organism", organismRefId);
-            }
-            store(protein);
-            refId = protein.getIdentifier();
-            interactors.put(primaryIdentifier, refId);
+
         }
+        
         if (createSynonym) {
             createSynonym(refId, originalAccession, true);
             String proIdentifier = originalAccession.substring(originalAccession.indexOf("-") + 1);

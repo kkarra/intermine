@@ -102,19 +102,27 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 						+ array.length + ") in line: " + line);
 			}
 
-			String oldgene =  array[8].trim(); 
-			String gene = oldgene.replaceAll("SGD:", "");
-			
+			//String oldgene =  array[8].trim(); 
+			//String gene = oldgene.replaceAll("SGD:", "");
+
 			String annot = array[9].trim();
 
 			if(annot.indexOf("go_annotation_summary") > 0) {
 
-				String t[] = annot.split("go_annotation_summary=");
+				String oldgene =  array[8].trim(); 
 
-				if(t.length != 0) {
-					String summary = t[1];			
-					newProduct(gene, summary);
-				}	
+				if(oldgene.indexOf("SGD:") > 0) {
+
+					String gene = oldgene.replaceAll("SGD:", "");
+
+					String t[] = annot.split("go_annotation_summary=");
+
+					if(t.length != 0) {
+						String summary = t[1];			
+						newProduct(gene, summary);
+					}	
+
+				}
 
 			}
 

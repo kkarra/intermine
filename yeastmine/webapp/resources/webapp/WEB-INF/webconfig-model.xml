@@ -511,7 +511,8 @@
 			jspName="model/homologueDisplayer.jsp" 
 			replacesFields="homologues"
 			placement="Genome"
-			 parameters="{'dataSets': ['TreeFam data set']}"
+			parameters="{'dataSets': ['TreeFam data set', 'CGD/CGOB file download', 'C.glabrata homologs from CGOB and YGOB', 'Ensembl Compara data set', 
+			 'HomoloGene data set', 'Manually Curated S.Pombe Homologs', 'Orthologs from FungiDB using the OrthoMCL database.', 'Panther data set', 'SGD data set']}" 
 			types="Gene" />
 			
 		<reportdisplayer
