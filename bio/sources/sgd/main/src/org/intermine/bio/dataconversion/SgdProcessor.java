@@ -414,7 +414,7 @@ public class SgdProcessor
     		+ " AND f.feature_type in (select col_value from bud.web_metadata "
     		+ " WHERE application_name = 'Chromosomal Feature Search' "
     		+ " AND col_name = 'FEATURE_TYPE') "
-    		+ " and dbx.source in ('EBI', 'GenBank/EMBL/DDBJ', 'IUBMB', 'NCBI', 'TCDB') "
+    		+ " and dbx.source in ('EBI', 'GenBank/EMBL/DDBJ', 'IUBMB', 'NCBI', 'TCDB', 'RNAcentral') "
     		+ " group by f.feature_no, dbx.dbxref_id,  dbx.source"
     		+ " order by f.feature_no asc";
 

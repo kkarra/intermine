@@ -83,6 +83,7 @@ public class CglabrataHomologsConverter extends BioFileConverter
             }
 
             processHomologue(refId1, refId2, source);
+            processHomologue(refId2, refId1, source);
 
         }
     }

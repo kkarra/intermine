@@ -95,6 +95,7 @@ public class FungiHomologsConverter extends BioFileConverter
     					continue;
     				}
     				processHomologue(refId1, refId2);
+    				processHomologue(refId2, refId1);
     			}
     		}
 

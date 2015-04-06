@@ -7,15 +7,15 @@
 		</fields>
 	</class>
 	
-		<class className="org.intermine.model.bio.Complex">
+		<class className="org.intermine.model.bio.Complex" label="Molecular Complex">
 		 <headerconfig>
            <titles>
               <title mainTitles="identifier|name"/>
             </titles>
          </headerconfig>
 		<fields>
-			<fieldconfig fieldExpr="identifier"></fieldconfig>
-			<fieldconfig fieldExpr="name"></fieldconfig>
+			<fieldconfig fieldExpr="identifier" label="EBI Complex ID" />
+			<fieldconfig fieldExpr="name" />
 			
 		</fields>
 	</class>
@@ -442,7 +442,7 @@
 	
 	<class className="org.intermine.model.bio.Interactor">
     <fields>
-      <fieldconfig fieldExpr="participant.primaryIdentifier" />
+      <fieldconfig fieldExpr="participant.secondaryIdentifier" />
       <fieldconfig fieldExpr="stoichiometry" />
       <fieldconfig fieldExpr="biologicalRole" />
     </fields>

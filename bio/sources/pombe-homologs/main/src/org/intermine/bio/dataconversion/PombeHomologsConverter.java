@@ -82,7 +82,7 @@ public class PombeHomologsConverter extends BioFileConverter
             }
 
             processHomologue(refId1, refId2);
-            //processHomologue(refId2, refId1); //no need for reverse I think --kk
+            processHomologue(refId2, refId1);
 
         }
     	

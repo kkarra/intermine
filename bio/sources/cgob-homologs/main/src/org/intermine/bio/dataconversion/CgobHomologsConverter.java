@@ -108,9 +108,16 @@ public class CgobHomologsConverter extends BioFileConverter
             }
 
             processHomologue(refId1, refId2);
+            processHomologue(refId2, refId1);
+            
             processHomologue(refId1, refId3);
+            processHomologue(refId3, refId1);
+            
             processHomologue(refId1, refId4);
+            processHomologue(refId4, refId1);
+            
             processHomologue(refId1, refId5);
+            processHomologue(refId5, refId1);
 
         }
     }
