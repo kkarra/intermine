@@ -30,7 +30,7 @@ import org.intermine.xml.full.Item;
 public class FungiHomologsConverter extends BioFileConverter
 {
     //
-    private static final String DATASET_TITLE = "Orthologs from FungiDB using the OrthoMCL database.";
+    private static final String DATASET_TITLE = "Orthologs from FungiDB using OrthoMCL";
     private static final String DATA_SOURCE_NAME = "FungiDB";
     private static HashMap taxonIds = new HashMap();
     private Map<String, String> genes = new HashMap<String, String>();
