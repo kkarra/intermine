@@ -1,0 +1,4 @@
+<project name="waern_23390610-tasks" default="default" basedir=".">
+  <description>build waern_23390610 tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

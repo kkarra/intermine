@@ -1,0 +1,5 @@
+<project name="waern_23390610" default="default" basedir=".">
+  <description>build, test, package waern_23390610</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
