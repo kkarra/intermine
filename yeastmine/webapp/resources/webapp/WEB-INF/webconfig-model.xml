@@ -254,6 +254,12 @@
 			<fieldconfig fieldExpr="name"></fieldconfig>
 		</fields>
 	</class>
+   <class className="org.intermine.model.bio.Complement">
+		<fields>
+			<fieldconfig fieldExpr="direction"></fieldconfig>
+			<fieldconfig fieldExpr="publications.pubMedId"></fieldconfig>
+		</fields>
+	</class>
 	<class className="org.intermine.model.bio.DataSet">
 		<fields>
 			<fieldconfig fieldExpr="name"></fieldconfig>
@@ -436,7 +442,7 @@
 		<fields>
 		<fieldconfig fieldExpr="gene.primaryIdentifier" label="Homolog Gene Identifier"></fieldconfig>
         <fieldconfig fieldExpr="homologue.primaryIdentifier" label="Homolog Gene Identifier"></fieldconfig>
-			<fieldconfig fieldExpr="homologue.organism.shortName" />
+	    <fieldconfig fieldExpr="homologue.organism.shortName"/>
 		</fields>
 	</class>
 	
@@ -571,11 +577,11 @@
 			 placement="Genome"
 			types="SequenceFeature" />  
 			
-	    <!-- <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+	    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
                  jspName="model/jbrowseDisplayer.jsp"
                  replacesFields=""
-                 placement="Genomics"
-                 types="SequenceFeature"/> -->
+                 placement="Genome"
+                 types="SequenceFeature"/>
 
 		<reportdisplayer
 			javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"

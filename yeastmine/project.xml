@@ -81,6 +81,10 @@
       <property name="ensemblcompara.homologues" value="9606 7227 6239 10090 10116 7955"/>
     </source>
 
+    <source name="sgd-complementation" type="sgd-complementation">
+     <property name="src.data.dir" location="/data/intermine/yeast_complementation"/>
+    </source>
+
     <source name="fungi-homologs" type="fungi-homologs">
         <property name="src.data.dir" location="/data/intermine/yeast_orthologs/fungidb"/>
      </source>
