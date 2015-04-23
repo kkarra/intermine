@@ -15,8 +15,17 @@
          </headerconfig>
 		<fields>
 			<fieldconfig fieldExpr="identifier" label="EBI Complex ID" />
-			<fieldconfig fieldExpr="name" />
-			
+			<fieldconfig fieldExpr="name" label="Complex Name"/>
+			<fieldconfig fieldExpr="systematicName" label="Complex Systematic Name"/>
+			<fieldconfig fieldExpr="properties" label="Complex Properties"/>
+			<fieldconfig fieldExpr="function" label="Complex Function"/>
+			<fieldconfig fieldExpr="goAnnotation" label="Complex GO Annotation"/>
+			<fieldconfig fieldExpr="publications.pubMedId" label="Complex Publications > PubMed ID"/>
+			<fieldconfig fieldExpr="allInteractors.type" label="Complex Participant > Type"/>
+			<fieldconfig fieldExpr="allInteractors.stoichiometry" label="Complex Participant > Stoichiometry"/>
+			<fieldconfig fieldExpr="allInteractors.participant.primaryIdentifier" label="Complex Participant > Primary DBID"/>
+			<fieldconfig fieldExpr="allInteractors.participant.secondaryIdentifier" label="Complex Participant > Secondary Identifier"/>
+			<fieldconfig fieldExpr="allInteractors.participant.symbol" label="Complex Participant > Standard Name"/>		
 		</fields>
 	</class>
 	

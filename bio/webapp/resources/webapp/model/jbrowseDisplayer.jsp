@@ -55,7 +55,7 @@ var dataDir = window.location.protocol
        + "//" + window.location.host
      + "/jbrowse/data";
 var b = new Browser({
-    containerID: "GenomeBrowser",
+    containerID: "GenomeBrowser view (JBrowse)",
     refSeqs: refSeqs,
     trackData: trackInfo,
     defaultTracks: "DNA,gene,transcript,noncodingRNA",

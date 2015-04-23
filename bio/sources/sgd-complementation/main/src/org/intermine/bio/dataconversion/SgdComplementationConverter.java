@@ -110,7 +110,7 @@ public class SgdComplementationConverter extends BioFileConverter {
 			Item hgene = getGeneItem(humanGeneId, "primaryIdentifier", horganism);		
 			
 			getComplement(complement, notes, source, pmid, ygene, hgene);
-			//getComplement(complement, notes, source, pmid, hgene, ygene);
+			getComplement(complement, notes, source, pmid, hgene, ygene);
 
 		}
 
