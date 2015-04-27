@@ -63,7 +63,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -115,6 +115,7 @@ public class SgdConverter extends BioDBConverter {
 		processParalogs(connection);
 
 		if(!TEST_LOCAL) {
+			
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
 			storePhenotypes();

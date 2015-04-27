@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <classes>
     <class name="InteractionExperiment" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
@@ -45,6 +46,7 @@
       <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
       <reference name="location" referenced-type="Location"/>
       <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
-    </class>
+    </class>   
+    
 </classes>
 
