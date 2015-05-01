@@ -2129,7 +2129,7 @@ public class SgdConverter extends BioDBConverter {
 		//detail.addToCollection("interactingGenes", interactingGene.getIdentifier());
 		detail.addToCollection("dataSets", dsetIdentifier);		
 
-		Item storedInteractionType = interactiontype.get(interactionType);
+		/*Item storedInteractionType = interactiontype.get(interactionType);
 		if (storedInteractionType != null) {
 			//detail.setReference("relationshipType", storedInteractionType.getIdentifier());
 			detail.setAttribute("relationshipType", storedInteractionType.getIdentifier());
@@ -2139,10 +2139,10 @@ public class SgdConverter extends BioDBConverter {
 				storedInteractionType.setAttribute("name", interactionType);
 			}
 			//detail.setReference("relationshipType", storedInteractionType.getIdentifier());
-			detail.setAttribute("relationshipType", storedInteractionType.getIdentifier());
+			detail.setAttribute("relationshipType", interactionType);
 			interactiontype.put(interactionType, storedInteractionType);
-		}
-
+		}*/
+		detail.setAttribute("relationshipType", interactionType);
 		String unqName = firstAuthor+"-"+pubMedId;
 
 		//add publication as experiment type
