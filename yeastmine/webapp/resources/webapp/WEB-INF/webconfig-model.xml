@@ -528,8 +528,7 @@
 			jspName="model/homologueDisplayer.jsp" 
 			replacesFields="homologues"
 			placement="Genome"
-			parameters="{'dataSets': ['CGD/CGOB file download', 'C.glabrata homologs from CGOB and YGOB', 
-			 'Manually Curated S.Pombe Homologs', 'Orthologs from FungiDB using OrthoMCL', 'Panther data set', 'SGD data set']}" 
+			parameters="{'dataSets': ['Manually Curated S.Pombe Homologs', 'Panther data set', 'SGD data set']}" 
 			types="Gene" />
 			
 		<reportdisplayer
@@ -544,7 +543,7 @@
 			jspName="model/cytoscapeNetworkDisplayer.jsp" 
 			replacesFields="interactions"
 			placement="Interactions" 
-			types="Gene,Protein" />
+			types="BioEntity" />
 
 		<reportdisplayer
 			javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
@@ -588,11 +587,11 @@
 			 placement="Genome"
 			types="SequenceFeature" />  
 			
-	    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+	    <!-- <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
                  jspName="model/jbrowseDisplayer.jsp"
                  replacesFields=""
                  placement="Genome"
-                 types="SequenceFeature"/>
+                 types="SequenceFeature"/>  -->
 
 		<reportdisplayer
 			javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
@@ -675,17 +674,17 @@
 			views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name" />
 
 
-		<!--  <bagtabledisplayer id="interactions" title="Interactions"
+		<bagtabledisplayer id="interactions" title="Interactions"
 			pathStrings="Gene.interactions.details.allInteractors"
 			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
 			displayFields="secondaryIdentifier, name" exportField="primaryIdentifier"
-			typeClass="Gene" columnTitle="Interactions"
+			typeClass="BioEntity" columnTitle="Interactions"
 			views="secondaryIdentifier, symbol, organism.shortName,
 	                                interactions.details.name, interactions.details.relationshipType,
 	                                interactions.details.role1,
-	                                interactions.details.allInteractors.primaryIdentifier,
-	                                interactions.details.allInteractors.symbol,
-                                   interactions.details.experiment.name" /> -->
+	                                interactions.details.allInteractors.participant.primaryIdentifier,
+	                                interactions.details.allInteractors.participant.symbol,
+                                   interactions.details.experiment.name" />
                                   
 		 <bagtabledisplayer id="orthologues" title="Orthologues"
 			pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
