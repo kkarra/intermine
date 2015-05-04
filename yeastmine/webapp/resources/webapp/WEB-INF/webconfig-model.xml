@@ -20,13 +20,16 @@
 			<fieldconfig fieldExpr="properties" label="Complex Properties"/>
 			<fieldconfig fieldExpr="function" label="Complex Function"/>
 			<fieldconfig fieldExpr="goAnnotation" label="Complex GO Annotation"/>
-			<fieldconfig fieldExpr="publications.pubMedId" label="Complex Publications > PubMed ID"/>
-			<fieldconfig fieldExpr="allInteractors.type" label="Complex Participant > Type"/>
-			<fieldconfig fieldExpr="allInteractors.stoichiometry" label="Complex Participant > Stoichiometry"/>
+			<fieldconfig fieldExpr="publications" label="Complex Publications"/>
+			<fieldconfig fieldExpr="allInteractors" label="Complex Participant"/>
+			
+		<!--<fieldconfig fieldExpr="publications.pubMedId" label="Complex Publications > PubMed ID"/>
+			<fieldconfig fieldExpr="allInteractors.type" label="Complex Participant Type"/>
+		   <fieldconfig fieldExpr="allInteractors.stoichiometry" label="Complex Participant > Stoichiometry"/>
 		    <fieldconfig fieldExpr="allInteractors.biologicalRole" label="Complex Participant > Biological Role"/>
 			<fieldconfig fieldExpr="allInteractors.participant.primaryIdentifier" label="Complex Participant > Primary DBID"/>
 			<fieldconfig fieldExpr="allInteractors.participant.secondaryIdentifier" label="Complex Participant > Secondary Identifier"/>
-			<fieldconfig fieldExpr="allInteractors.participant.symbol" label="Complex Participant > Standard Name"/>	
+			<fieldconfig fieldExpr="allInteractors.participant.symbol" label="Complex Participant > Standard Name"/>   -->
 		</fields>
 	</class>
 	
@@ -45,7 +48,6 @@
 			<fieldconfig fieldExpr="primaryIdentifier" label="Primary DBID"></fieldconfig>
 			<fieldconfig fieldExpr="secondaryIdentifier" label="Systematic Name"></fieldconfig>
 			<fieldconfig fieldExpr="symbol" label="Standard Name"></fieldconfig>
-			<fieldconfig fieldExpr="sgdAlias" label="Alias"></fieldconfig>
 		</fields>
 	</class>
 
@@ -100,8 +102,6 @@
 			<fieldconfig fieldExpr="organism.shortName"/>
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="name"></fieldconfig>
-			<fieldconfig fieldExpr="sgdAlias"></fieldconfig>
-			<fieldconfig fieldExpr="length"></fieldconfig>
 		</fields>
        <bagdisplayers>
            <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
@@ -115,8 +115,6 @@
 			<fieldconfig fieldExpr="organism.shortName"/>
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="name"></fieldconfig>
-			<fieldconfig fieldExpr="sgdAlias"></fieldconfig>
-			<fieldconfig fieldExpr="length"></fieldconfig>
 			<fieldconfig displayer="/model/sequenceShortDisplayerWithField.jsp" fieldExpr="length"></fieldconfig>
 		</fields>
 
@@ -266,8 +264,11 @@
 	</class>
    <class className="org.intermine.model.bio.Complement">
 		<fields>
-			<fieldconfig fieldExpr="direction"></fieldconfig>
+			<fieldconfig fieldExpr="direction" label="Complementation > Direction"></fieldconfig>
 			<fieldconfig fieldExpr="publications.pubMedId"></fieldconfig>
+			<fieldconfig fieldExpr="gene.primaryIdentifier" label="Complementation > Entrez Gene ID"></fieldconfig>
+			<fieldconfig fieldExpr="gene.symbol" label="Complementation > Standard Name"></fieldconfig>
+			<fieldconfig fieldExpr="gene.organism.shortName" label="Complementation > Organism.Short Name"></fieldconfig>
 		</fields>
 	</class>
 	<class className="org.intermine.model.bio.DataSet">
@@ -613,7 +614,7 @@
 
 	 <widgets>
 
-		  <graphdisplayer id="chromosome_distribution_for_gene"
+		 <!--<graphdisplayer id="chromosome_distribution_for_gene"
                       title="Chromosome Distribution"
                       description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
                       graphType="ColumnChart"
@@ -628,7 +629,7 @@
                       seriesPath="ActualExpectedCriteria"
                       constraints="organism.name=[Organism]"
                       views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
-                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/> 
+                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/> --> 
 
 		 <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
 			title="Gene Ontology Enrichment" description="GO terms enriched for items in this list."
