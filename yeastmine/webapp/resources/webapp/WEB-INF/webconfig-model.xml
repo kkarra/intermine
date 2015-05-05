@@ -467,10 +467,10 @@
   
 	<class className="org.intermine.model.bio.Interaction">
 		<fields>
-			<fieldconfig fieldExpr="gene1.primaryIdentifier" />
-			<fieldconfig fieldExpr="gene1.secondaryIdentifier" />
-			<fieldconfig fieldExpr="gene2.primaryIdentifier" />
-			<fieldconfig fieldExpr="gene2.secondaryIdentifier" />
+			<fieldconfig fieldExpr="participant1.primaryIdentifier" />
+			<fieldconfig fieldExpr="participant1.secondaryIdentifier" />
+			<fieldconfig fieldExpr="participant2.primaryIdentifier" />
+			<fieldconfig fieldExpr="participant2.secondaryIdentifier" />
 		</fields>
 	</class>
 

@@ -77,7 +77,7 @@ public class CytoscapeNetworkDBQueryRunner
 
         Set<Integer> interactingGeneSet = new HashSet<Integer>();
 
-        q.addView("Gene.interactions.gene2.id");
+        q.addView("Gene.interactions.participant2.id");
         q.addConstraint(Constraints.inIds("Gene", startingGeneSet));
 
         ExportResultsIterator results = executor.execute(q);
@@ -118,15 +118,15 @@ public class CytoscapeNetworkDBQueryRunner
         q.addViews("Gene.primaryIdentifier",
                 "Gene.symbol",
                 "Gene.interactions.details.type",
-                "Gene.interactions.gene2.primaryIdentifier",
-                "Gene.interactions.gene2.symbol",
+                "Gene.interactions.participant2.primaryIdentifier",
+                "Gene.interactions.participant2.symbol",
                 "Gene.interactions.details.dataSets.dataSource.name",
                 "Gene.interactions.details.name",
                 "Gene.id",
-                "Gene.interactions.gene2.id");
+                "Gene.interactions.participant2.id");
 
         q.addConstraint(Constraints.inIds("Gene", keys), "B");
-        q.addConstraint(Constraints.inIds("Gene.interactions.gene2", keys), "A");
+        q.addConstraint(Constraints.inIds("Gene.interactions.participant2", keys), "A");
         q.setConstraintLogic("B and A");
 
         ExportResultsIterator results = executor.execute(q);

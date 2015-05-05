@@ -73,10 +73,10 @@ public final class CytoscapeNetworkUtil
 
         PathQuery query = new PathQuery(model);
 
-        query.addViews("Interaction.gene1.organism.name",
+        query.addViews("Interaction.participant1.organism.name",
                 "Interaction.details.dataSets.dataSource.name");
 
-        query.addOrderBy("Interaction.gene1.organism.name", OrderDirection.ASC);
+        query.addOrderBy("Interaction.participant1.organism.name", OrderDirection.ASC);
 
         ExportResultsIterator result = executor.execute(query);
 
