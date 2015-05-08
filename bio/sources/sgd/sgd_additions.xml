@@ -132,7 +132,7 @@
 <attribute name="relationshipType" type="java.lang.String"/>
 <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
 <collection name="dataSets" referenced-type="DataSet"/>
-<collection name="allInteractors" referenced-type="Gene"/>
+<!--  <collection name="allInteractors" referenced-type="Gene"/> -->
 <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
 <attribute name="shortName" type="java.lang.String"/>
 <attribute name="experimentType" type="java.lang.String"/>

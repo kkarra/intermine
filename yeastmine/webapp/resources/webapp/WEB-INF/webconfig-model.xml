@@ -265,7 +265,7 @@
    <class className="org.intermine.model.bio.Complement">
 		<fields>
 			<fieldconfig fieldExpr="direction" label="Complementation > Direction"></fieldconfig>
-			<fieldconfig fieldExpr="publications.pubMedId"></fieldconfig>
+			<fieldconfig fieldExpr="publication.pubMedId"></fieldconfig>
 			<fieldconfig fieldExpr="gene.primaryIdentifier" label="Complementation > Entrez Gene ID"></fieldconfig>
 			<fieldconfig fieldExpr="gene.symbol" label="Complementation > Standard Name"></fieldconfig>
 			<fieldconfig fieldExpr="gene.organism.shortName" label="Complementation > Organism.Short Name"></fieldconfig>
@@ -675,15 +675,15 @@
 
 
 		<bagtabledisplayer id="interactions" title="Interactions"
-			pathStrings="Gene.interactions.details.allInteractors"
+			pathStrings="Gene.interactions.participant2"
 			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
 			displayFields="secondaryIdentifier, name" exportField="primaryIdentifier"
-			typeClass="BioEntity" columnTitle="Interactions"
+			typeClass="Gene" columnTitle="Interactions"
 			views="secondaryIdentifier, symbol, organism.shortName,
 	                                interactions.details.name, interactions.details.relationshipType,
 	                                interactions.details.role1,
-	                                interactions.details.allInteractors.participant.primaryIdentifier,
-	                                interactions.details.allInteractors.participant.symbol,
+	                                interactions.participant2.primaryIdentifier,
+	                                interactions.participant2.symbol,
                                    interactions.details.experiment.name" />
                                   
 		 <bagtabledisplayer id="orthologues" title="Orthologues"
