@@ -95,7 +95,7 @@ public class TransferSequences
         throws Exception {
         long startTime = System.currentTimeMillis();
 
-        ObjectStore os = osw.getObjectStore();
+       /* ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         QueryClass qcChr = new QueryClass(Chromosome.class);
         q.addFrom(qcChr);
@@ -114,7 +114,43 @@ public class TransferSequences
         }
 
         LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took "
+                + (System.currentTimeMillis() - startTime) + " ms.");*/
+        
+        
+        ObjectStore os = osw.getObjectStore();
+        Query q = new Query();
+        QueryClass qcChr = new QueryClass(Chromosome.class);
+        q.addFrom(qcChr);
+        q.addToSelect(qcChr);
+        QueryObjectReference seqRef = new QueryObjectReference(qcChr, "sequence");
+        QueryClass qcLoc = new QueryClass(Location.class);
+        q.addFrom(qcLoc);
+        QueryObjectReference locChromRef = new QueryObjectReference(qcLoc,"locatedOn");
+        QueryObjectReference locFeatRef = new QueryObjectReference(qcLoc,"feature");
+        QueryClass qcFeat = new QueryClass(SequenceFeature.class);
+        q.addFrom(qcFeat);
+        QueryObjectReference featSeqRef = new QueryObjectReference(qcFeat, "sequence");
+
+        ConstraintSet cSet = new ConstraintSet(ConstraintOp.AND);
+        cSet.addConstraint(new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL));
+        cSet.addConstraint(new ContainsConstraint(featSeqRef, ConstraintOp.IS_NULL));
+        cSet.addConstraint(new ContainsConstraint(locChromRef,ConstraintOp.CONTAINS,qcChr));
+        cSet.addConstraint(new ContainsConstraint(locFeatRef,ConstraintOp.CONTAINS,qcFeat));
+        q.setConstraint(cSet);
+        q.setDistinct(true);
+
+        SingletonResults res = os.executeSingleton(q);
+        Iterator<?> chrIter = res.iterator();
+
+        Set<Chromosome> chromosomes = new HashSet<Chromosome>();
+        while (chrIter.hasNext()) {
+            Chromosome chr = (Chromosome) chrIter.next();
+            chromosomes.add(chr);
+        }
+
+        LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took "
                 + (System.currentTimeMillis() - startTime) + " ms.");
+
 
         for (Chromosome chr : chromosomes) {
             String organism = "";

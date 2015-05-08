@@ -45,18 +45,19 @@ public class CreateFlankingRegions
     private DataSet dataSet;
     private DataSource dataSource;
     private Map<Integer, Chromosome> chrs = new HashMap<Integer, Chromosome>();
+    private Map<String, String> genes = new HashMap<String, String>();
 
     /**
      * The sizes in kb of flanking regions to create.
      */
-    private static double[] distances = new double[] {0.5, 1, 2, 5}; // ,10
+    private static double[] distances = new double[] {0.5, 1, 2}; // ,10
 
     /**
      * The values strings for up/down stream from a gene.
      */
     private static String[] directions = new String[] {"upstream", "downstream", "both"};
 
-    private static boolean[] includeGenes = new boolean[] {false}; //true
+    private static boolean[] includeGenes = new boolean[] {false, true};
 
     private static final Logger LOG = Logger.getLogger(CreateFlankingRegions.class);
 
@@ -101,10 +102,22 @@ public class CreateFlankingRegions
 
         osw.beginTransaction();
         while (resIter.hasNext()) {
+        	
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Integer chrId = (Integer) rr.get(0);
             Gene gene = (Gene) rr.get(1);
             Location loc = (Location) rr.get(2);
+            
+            System.out.println("Gene before createStore call is .." + gene.getPrimaryIdentifier());
+           
+            String geneId = genes.get(gene.getPrimaryIdentifier());
+            
+            if(geneId != null){
+            	continue;
+            }else{
+            	genes.put(gene.getPrimaryIdentifier(), "1");
+            }
+            
             createAndStoreFlankingRegion(getChromosome(chrId), loc, gene);
             if ((count % 1000) == 0) {
                 LOG.info("Created flanking regions for " + count + " genes.");
@@ -119,6 +132,7 @@ public class CreateFlankingRegions
 
     private void createAndStoreFlankingRegion(Chromosome chr, Location geneLoc, Gene gene)
         throws ObjectStoreException {
+    	
         // This code can't cope with chromosomes that don't have a length
         if (chr.getLength() == null) {
             LOG.warn("Attempted to create GeneFlankingRegions on a chromosome without a length: "
@@ -145,11 +159,12 @@ public class CreateFlankingRegions
             includeGenes = new boolean[] {false};
         }
 
-        for (double distance : distances) {
-            for (String direction : directions) {
+        System.out.println("Gene is .." + gene.getName());
+        for (double distance : distances) {              	
+            for (String direction : directions) {            	
                 for (boolean includeGene : includeGenes) {
+              	
                     String strand = geneLoc.getStrand();
-
                     // TODO what do we do if strand not set?
                     int geneStart = geneLoc.getStart().intValue();
                     int geneEnd = geneLoc.getEnd().intValue();
@@ -182,8 +197,7 @@ public class CreateFlankingRegions
                             + direction);
 
                     // this should be some clever algorithm
-                    int start = 0;
-                    int end = 0;
+                    int start, end;
 
                     if ("upstream".equals(direction) && "1".equals(strand)) {
                         start = geneStart - (int) Math.round(distance * 1000);
@@ -194,18 +208,19 @@ public class CreateFlankingRegions
                     } else if ("downstream".equals(direction) && "1".equals(strand)) {
                         start = includeGene ? geneStart : geneEnd + 1;
                         end = geneEnd + (int) Math.round(distance * 1000);
-                    } else if ( "downstream".equals(direction) && strand.equals("-1")) {
+                    } else if ("downstream".equals(direction) && strand.equals("-1")) {
                         start = geneStart - (int) Math.round(distance * 1000);
                         end = includeGene ? geneEnd : geneStart - 1;
-                    }else if("both".equals(direction)){  // && "1".equals(strand)
+                    } else if("both".equals(direction) && "1".equals(strand)) {  
                     	start = geneStart - (int) Math.round(distance * 1000);
                     	end = geneEnd + (int) Math.round(distance * 1000);                  	
                     }
-                    
-                    /*else { // if("both".equals(direction) && "-1".equals(strand)){
+                    else if("both".equals(direction) && "-1".equals(strand)){
                     	start = includeGene ? geneStart : geneEnd + 1;
                     	end = includeGene ? geneEnd : geneStart - 1;
-                    }*/
+                    }else{
+                    	continue;
+                    }
 
                     // if the region hangs off the start or end of a chromosome set it to finish
                     // at the end of the chromosome
