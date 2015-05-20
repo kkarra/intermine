@@ -123,11 +123,15 @@
     </source>
 
     <source name="psi-mi-ontology" type="psi-mi-ontology">
-      <property name="src.data.file" location="/data/intermine/psi/ontology/current/psi-mi.obo"/>
+      <property name="src.data.file" location="/share/intermine/psi/ontology/current/psi-mi.obo"/>
     </source> 
 
     <source name="go" type="go">
       <property name="src.data.file" location="/share/intermine/go/gene_ontology_edit.obo"/>
+    </source>
+
+    <source name="chebi" type="chebi">
+      <property name="src.data.file" location="/data/intermine/chebi_ontology/chebi-slim_subsets-20141217_bio.obo"/>
     </source>
 
     <source name="go-function-summary" type="go-function-summary">
@@ -149,7 +153,7 @@
     </source>
 
     <source name="psi-complexes" type="psi-complexes">
-      <property name="src.data.dir" location="/data/intermine/psi/intact/complexes"/>
+      <property name="src.data.dir" location="/share/intermine/psi/intact/complexes"/>
       <property name="intact.organisms" value="4932"/>
       <property name="complexes.source" value="sgd"/>
     </source>

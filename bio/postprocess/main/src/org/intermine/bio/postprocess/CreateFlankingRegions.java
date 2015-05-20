@@ -55,7 +55,7 @@ public class CreateFlankingRegions
     /**
      * The values strings for up/down stream from a gene.
      */
-    private static String[] directions = new String[] {"upstream", "downstream", "both"};
+    private static String[] directions = new String[] {"upstream", "downstream"};
 
     private static boolean[] includeGenes = new boolean[] {false, true};
 
@@ -106,9 +106,7 @@ public class CreateFlankingRegions
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Integer chrId = (Integer) rr.get(0);
             Gene gene = (Gene) rr.get(1);
-            Location loc = (Location) rr.get(2);
-            
-            System.out.println("Gene before createStore call is .." + gene.getPrimaryIdentifier());
+            Location loc = (Location) rr.get(2);           
            
             String geneId = genes.get(gene.getPrimaryIdentifier());
             
@@ -119,6 +117,8 @@ public class CreateFlankingRegions
             }
             
             createAndStoreFlankingRegion(getChromosome(chrId), loc, gene);
+            createAndStoreBothSidesFlankingRegion(getChromosome(chrId), loc, gene);
+            
             if ((count % 1000) == 0) {
                 LOG.info("Created flanking regions for " + count + " genes.");
             }
@@ -197,7 +197,7 @@ public class CreateFlankingRegions
                             + direction);
 
                     // this should be some clever algorithm
-                    int start, end;
+                    int start =0; int end = 0;
 
                     if ("upstream".equals(direction) && "1".equals(strand)) {
                         start = geneStart - (int) Math.round(distance * 1000);
@@ -211,15 +211,16 @@ public class CreateFlankingRegions
                     } else if ("downstream".equals(direction) && strand.equals("-1")) {
                         start = geneStart - (int) Math.round(distance * 1000);
                         end = includeGene ? geneEnd : geneStart - 1;
-                    } else if("both".equals(direction) && "1".equals(strand)) {  
-                    	start = geneStart - (int) Math.round(distance * 1000);
-                    	end = geneEnd + (int) Math.round(distance * 1000);                  	
-                    }
-                    else if("both".equals(direction) && "-1".equals(strand)){
-                    	start = includeGene ? geneStart : geneEnd + 1;
-                    	end = includeGene ? geneEnd : geneStart - 1;
-                    }else{
-                    	continue;
+                    } else if(includeGene && "both".equals(direction) && "1".equals(strand)) {  
+                    		//start = geneStart - (int) Math.round(distance * 1000); 
+                    		 start = geneStart - (int) Math.round(distance * 1000);
+                    		//end = geneEnd + (int) Math.round(distance * 1000);
+                    		 end = geneEnd + (int) Math.round(distance * 1000);                    		
+                    }else if(includeGene && "both".equals(direction) && "-1".equals(strand)){
+                    		start = geneStart - (int) Math.round(distance * 1000);
+                    		//start = includeGene ? geneStart : geneEnd + 1;
+                    		//end = includeGene ? geneEnd : geneStart - 1;
+                    		end = geneEnd + (int) Math.round(distance * 1000);
                     }
 
                     // if the region hangs off the start or end of a chromosome set it to finish
@@ -237,10 +238,96 @@ public class CreateFlankingRegions
 
                     osw.store(location);
                     osw.store(region);
-                }
-            }
-        }
+                }//for includegene
+            } //for direction
+        } //for distance
+        
+        
     }
+    
+    
+    private void createAndStoreBothSidesFlankingRegion(Chromosome chr, Location geneLoc, Gene gene)
+            throws ObjectStoreException {
+        	
+            // This code can't cope with chromosomes that don't have a length
+            if (chr.getLength() == null) {
+                LOG.warn("Attempted to create GeneFlankingRegions on a chromosome without a length: "
+                        + chr.getPrimaryIdentifier());
+                return;
+            }
+
+            String[] directions = new String[] {"both"};
+            boolean[] includeGenes = new boolean[] {true};
+          
+            System.out.println("Gene is .." + gene.getName());
+            for (double distance : distances) {              	
+                for (String direction : directions) {            	
+                    for (boolean includeGene : includeGenes) {
+                  	
+                        String strand = geneLoc.getStrand();
+                        // TODO what do we do if strand not set?
+                        int geneStart = geneLoc.getStart().intValue();
+                        int geneEnd = geneLoc.getEnd().intValue();
+                        int chrLength = chr.getLength().intValue();
+
+                        // gene touches a chromosome end so there isn't a flanking region
+                        if ((geneStart <= 1) || (geneEnd >= chrLength)) {
+                            continue;
+                        }
+
+                        GeneFlankingRegion region = (GeneFlankingRegion) DynamicUtil
+                        .createObject(Collections.singleton(GeneFlankingRegion.class));
+                        Location location = (Location) DynamicUtil
+                        .createObject(Collections.singleton(Location.class));
+
+                        region.setDistance("" + distance + "kb");
+                        region.setDirection(direction);
+                        try {
+                            PostProcessUtil.checkFieldExists(os.getModel(), "GeneFlankingRegion",
+                                    "includeGene", "Not setting");
+                            region.setFieldValue("includeGene", Boolean.valueOf(includeGene));
+                        } catch (MetaDataException e) {
+                            // GeneFlankingRegion.includeGene not in model so do nothing
+                        }
+                        region.setGene(gene);
+                        region.setChromosome(chr);
+                        region.setChromosomeLocation(location);
+                        region.setOrganism(gene.getOrganism());
+                        region.setPrimaryIdentifier(gene.getPrimaryIdentifier() + " " + distance + "kb "
+                                + direction);
+
+                        // this should be some clever algorithm
+                        int start =0; int end = 0;
+
+                        if(includeGene && "both".equals(direction) && "1".equals(strand)) {  
+                        		 start = geneStart - (int) Math.round(distance * 1000);
+                        		 end = geneEnd + (int) Math.round(distance * 1000);                    		
+                        }else if(includeGene && "both".equals(direction) && "-1".equals(strand)){
+                        		start = geneStart - (int) Math.round(distance * 1000);
+                        		end = geneEnd + (int) Math.round(distance * 1000);
+                        }
+
+                        // if the region hangs off the start or end of a chromosome set it to finish
+                        // at the end of the chromosome
+                        location.setStart(new Integer(Math.max(start, 1)));
+                        int e = Math.min(end, chr.getLength().intValue());
+                        location.setEnd(new Integer(e));
+
+                        location.setStrand(strand);
+                        location.setLocatedOn(chr);
+                        location.setFeature(region);
+
+                        region.setLength(new Integer((location.getEnd().intValue()
+                                - location.getStart().intValue()) + 1));
+
+                        osw.store(location);
+                        osw.store(region);
+                    }//for includegene
+                } //for direction
+            } //for distance
+            
+            
+        }
 
     private Chromosome getChromosome(Integer chrId) throws ObjectStoreException {
         Chromosome chr = chrs.get(chrId);
