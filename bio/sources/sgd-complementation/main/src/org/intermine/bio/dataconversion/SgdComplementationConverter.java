@@ -77,37 +77,45 @@ public class SgdComplementationConverter extends BioFileConverter {
 	ObjectStoreException {
 
 		/*
-		 * PMID [0] Yeast systematic name [1] Yeast gene name Human gene name
-		 * (HGNC) Human gene Entrez ID [4] Human gene HGNC ID Human gene OMIM ID
-		 * Human gene Ensembl gene ID Human gene Ensembl protein ID Direction of
-		 * complementation [9] Notes [10] Source [11]
+		 * EntrezID - added by KK [0]
+			Systematic name [1]
+ 			Gene name       
+			HGNC Approved Symbol    
+			HGNC ID 
+			Direction of complementation  [5]  
+			PMID    
+			Source 
+ 			Note 
 		 */
 		System.out
 		.println("Processing SGD-BioGRID complementation data file...."); 
 
 		BufferedReader br = new BufferedReader(preader);
 		String line = null;
+		String notes = "";
 
 
 		while ((line = br.readLine()) != null) {
 
 			String[] array = line.split("\t", -1); //keep trailing empty
-			if (array.length < 12) {
+			if (array.length < 8) {
 				throw new IllegalArgumentException(
-						"Not enough elements (should be  12 not "
+						"Not enough elements (should be  8 not "
 								+ array.length + ") in line: " + line);
 			}
-			String pmid = array[0].trim();
+			String entrezId = array[0].trim();
 			String yeastGene = array[1].trim();
-			String humanGeneId = array[4].trim();
-			String complement = array[9].trim();
-			String notes = array[10].trim();
-			String source = array[11].trim();
-
-			System.out.println("Processing line..." + yeastGene + "   "+ humanGeneId);
+			String complement = array[5].trim();
+			String pmid = array[6].trim();
+			String source = array[7].trim();
+			if(array.length > 8) {
+				 notes = array[8].trim();
+			}
+		    
+			System.out.println("Processing line..." + yeastGene + "   "+ entrezId);
 
 			Item ygene = getGeneItem(yeastGene, "secondaryIdentifier", yorganism);
-			Item hgene = getGeneItem(humanGeneId, "primaryIdentifier", horganism);		
+			Item hgene = getGeneItem(entrezId, "primaryIdentifier", horganism);		
 			
 			getComplement(complement, notes, source, pmid, ygene, hgene);
 			getComplement(complement, notes, source, pmid, hgene, ygene);

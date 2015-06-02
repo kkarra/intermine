@@ -73,6 +73,11 @@
 </td>
 </tr>
 
+<tr><td class="leftcol">
+<p> <h2>Complementation</h2></p></td>
+<td>Yeast Human gene functional complementation</td>
+<td><a href="http://biogrid.org" target="_new">P_POD (via SGD)</a> </td>
+</tr>
 
 <tr><td class="leftcol">
 <p> <h2>Disease</h2></p></td>
@@ -85,6 +90,12 @@
 <p> <h2>Proteins</h2></p></td>
 <td>Protein annotations</td>
 <td><a href="http://www.yeastgenome.org" target="_new">SGD</a> </td>
+</tr>
+
+<tr><td class="leftcol">
+<p> <h2>Complexes</h2></p></td>
+<td>Macromolecular Interaction Complexes</td>
+<td><a href="http://www.ebi.ac.uk/intact/" target="_new">IntAct-SGD</a> </td>
 </tr>
 
 <tr><td class="leftcol">
