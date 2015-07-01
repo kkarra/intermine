@@ -61,7 +61,7 @@ public class TreefamConverter extends BioFileConverter
     protected IdResolver rslv;
     @SuppressWarnings("unchecked")
     private Map<MultiKey, String> resolvedIds = new MultiKeyMap();
- 
+    private Set<MultiKey> homologuePairs = new HashSet<MultiKey>();
 
     /**
      * Constructor
@@ -188,8 +188,11 @@ public class TreefamConverter extends BioFileConverter
         String gene2 = getGene(holder2.identifier, holder2.symbol,
                 holder2.identifierType, holder2.taxonId);
 
-        // resolver didn't resolve
-        if (gene1 == null || gene2 == null) {
+        // resolver didn't resolve OR a duplicate
+        // AND genes can be paralogues with themselves so don't duplicate
+        if (gene1 == null || gene2 == null
+                || homologuePairs.contains(new MultiKey(gene1, gene2))
+                || gene1.equals(gene2)) {
             return;
         }
 
@@ -203,8 +206,8 @@ public class TreefamConverter extends BioFileConverter
             type = "paralogue";
         }
         homologue.setAttribute("type", type);
-
         store(homologue);
+        homologuePairs.add(new MultiKey(gene1, gene2));
     }
 
     private String getGene(String geneId, String symbol, String type, String taxonId)
