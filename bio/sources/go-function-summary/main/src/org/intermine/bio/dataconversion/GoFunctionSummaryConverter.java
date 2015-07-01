@@ -102,9 +102,6 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 						+ array.length + ") in line: " + line);
 			}
 
-			//String oldgene =  array[8].trim(); 
-			//String gene = oldgene.replaceAll("SGD:", "");
-
 			String annot = array[9].trim();
 
 			if(annot.indexOf("go_annotation_summary") > 0) {

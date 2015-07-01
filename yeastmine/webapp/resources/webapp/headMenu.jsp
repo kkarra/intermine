@@ -106,7 +106,7 @@
         <li><a href="http://www.yeastgenome.org/cgi-bin/suggestion">Contact Us</a></li>
         <li><a href="http://www.yeastgenome.org/help/video-tutorials/yeastmine">Video Tutorials</a></li>
         <li><a href="http://www.yeastgenome.org/yeastmine-help-page">Help</a></li>
-        <c:if test="${PROFILE.loggedIn}">
+       <c:if test="${PROFILE.loggedIn}">
             <li>
               <!-- display (optionally trimmed) username -->
               <c:choose>
@@ -133,7 +133,7 @@
                 </c:otherwise>
               </c:choose>
             </li>
-        </c:if>
+        </c:if> 
         <li class="last"><im:login/></li>
     </ul>
   </div>

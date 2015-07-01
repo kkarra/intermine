@@ -135,7 +135,7 @@
 <!--  <collection name="allInteractors" referenced-type="Gene"/> -->
 <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
 <attribute name="shortName" type="java.lang.String"/>
-<attribute name="experimentType" type="java.lang.String"/>
+<!--  <attribute name="experimentType" type="java.lang.String"/> -->
 <attribute name="annotationType" type="java.lang.String"/>
 <attribute name="modification" type="java.lang.String"/>
 <attribute name="phenotype" type="java.lang.String"/>

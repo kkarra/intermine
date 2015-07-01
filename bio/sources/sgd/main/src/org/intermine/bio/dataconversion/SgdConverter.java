@@ -45,6 +45,7 @@ public class SgdConverter extends BioDBConverter {
 	private Map<String, String> plasmids = new HashMap();
 	private Map<String, String> sequences = new HashMap();
 	private Map<String, Item> interactions = new HashMap();
+	private Map<String, String> interactionterms = new HashMap<String, String>();
 	private Map<MultiKey, Item> interactionsnew = new HashMap<MultiKey, Item>();
 	private Map<String, String> literatureTopics = new HashMap();
 	private Map<String, Item> genes = new HashMap();
@@ -63,7 +64,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -1204,9 +1205,6 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
-
-
-
 	/**
 	 * 
 	 * @throws ObjectStoreException
@@ -1608,7 +1606,7 @@ public class SgdConverter extends BioDBConverter {
 			String firstAuthor = res.getString("first_author");
 			String dbxrefid = res.getString("dbxref_id");
 
-			String interactionRefId = getInteraction1_1(interactionNo,
+			String interactionRefId = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
 					annotationType, modification, interactingGene, action, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
@@ -2108,7 +2106,7 @@ public class SgdConverter extends BioDBConverter {
 	 * @return
 	 * @throws ObjectStoreException
 	 */
-	private String getInteraction1_1(String interactionNo, String referenceNo,
+	private String getInteraction(String interactionNo, String referenceNo,
 			String interactionType, String experimentType,
 			String annotationType, String modification, Item interactingGene, String action,
 			String source, String phenotype, String citation, Item gene,
@@ -2121,7 +2119,7 @@ public class SgdConverter extends BioDBConverter {
 
 		detail.setAttribute("type", interactionType);		
 		detail.setAttribute("annotationType", annotationType);
-		detail.setAttribute("experimentType", experimentType);
+		//detail.setAttribute("experimentType", experimentType); --6/23
 		if (modification != null) detail.setAttribute("modification", modification);
 		if (phenotype != null) detail.setAttribute("phenotype", phenotype);
 		detail.setAttribute("role1", action);
@@ -2129,28 +2127,26 @@ public class SgdConverter extends BioDBConverter {
 		//detail.addToCollection("interactingGenes", interactingGene.getIdentifier());
 		detail.addToCollection("dataSets", dsetIdentifier);		
 
-		/*Item storedInteractionType = interactiontype.get(interactionType);
-		if (storedInteractionType != null) {
-			//detail.setReference("relationshipType", storedInteractionType.getIdentifier());
-			detail.setAttribute("relationshipType", storedInteractionType.getIdentifier());
-		} else {
-			storedInteractionType = createItem("InteractionTerm");
-			if (StringUtils.isNotEmpty(interactionType)) {
-				storedInteractionType.setAttribute("name", interactionType);
-			}
-			//detail.setReference("relationshipType", storedInteractionType.getIdentifier());
-			detail.setAttribute("relationshipType", interactionType);
-			interactiontype.put(interactionType, storedInteractionType);
-		}*/
-		detail.setAttribute("relationshipType", interactionType);
+		String shortType = interactionType.substring(0, interactionType.indexOf(' ')); 
+		detail.setAttribute("relationshipType", shortType); //interactionType
 		String unqName = firstAuthor+"-"+pubMedId;
 
 		//add publication as experiment type
 		Item storedExperimentType = experimenttype.get(unqName);		
-		if(storedExperimentType == null) {			
+		if(storedExperimentType == null) {	
+			
 			storedExperimentType = createItem("InteractionExperiment");
 			storedExperimentType.setAttribute("name", unqName);	
 			experimenttype.put(unqName, storedExperimentType);
+					
+			String storedTermId = interactionterms.get(experimentType);
+			if (storedTermId != null) {
+				storedExperimentType.addToCollection("interactionDetectionMethods", storedTermId );
+			} else {
+				storedTermId = getInteractionTerm(experimentType);
+				storedExperimentType.addToCollection("interactionDetectionMethods", storedTermId );
+			}
+
 		}
 
 		//add publication as reference on experiment
@@ -2209,108 +2205,6 @@ public class SgdConverter extends BioDBConverter {
 
 
 	}
-	
-	/*private String getInteraction1_1(String interactionNo, String referenceNo,
-			String interactionType, String experimentType,
-			String annotationType, String modification, Item interactingGene, String action,
-			String source, String phenotype, String citation, Item gene,
-			String pubMedId, String title, String volume, String page,
-			String year, String issue, String journal, String dsetIdentifier, String firstAuthor, String dbxrefid)
-					throws ObjectStoreException {
-
-		Item item = getInteractionItem(gene.getIdentifier(), interactingGene.getIdentifier());	
-		Item detail = createItem("InteractionDetail");		   
-
-		detail.setAttribute("type", interactionType);		
-		detail.setAttribute("annotationType", annotationType);
-		detail.setAttribute("experimentType", experimentType);
-		if (modification != null) detail.setAttribute("modification", modification);
-		if (phenotype != null) detail.setAttribute("phenotype", phenotype);
-		detail.setAttribute("role1", action);
-		detail.addToCollection("allInteractors", interactingGene.getIdentifier());
-		//detail.addToCollection("interactingGenes", interactingGene.getIdentifier());
-		detail.addToCollection("dataSets", dsetIdentifier);		
-
-		Item storedInteractionType = interactiontype.get(interactionType);
-		if (storedInteractionType != null) {
-			detail.setReference("relationshipType", storedInteractionType.getIdentifier());
-		} else {
-			storedInteractionType = createItem("InteractionTerm");
-			if (StringUtils.isNotEmpty(interactionType)) {
-				storedInteractionType.setAttribute("name", interactionType);
-			}
-			detail.setReference("relationshipType", storedInteractionType.getIdentifier());
-			interactiontype.put(interactionType, storedInteractionType);
-		}
-
-		String unqName = firstAuthor+"-"+pubMedId;
-
-		//add publication as experiment type
-		Item storedExperimentType = experimenttype.get(unqName);		
-		if(storedExperimentType == null) {			
-			storedExperimentType = createItem("InteractionExperiment");
-			storedExperimentType.setAttribute("name", unqName);	
-			experimenttype.put(unqName, storedExperimentType);
-		}
-
-		//add publication as reference on experiment
-		Item storedRef = publications.get(referenceNo);
-
-		if (storedRef != null) {
-			storedExperimentType.setReference("publication", storedRef.getIdentifier());
-		} else {
-
-			Item pub = createItem("Publication");
-
-			if (StringUtils.isNotEmpty(pubMedId)) {
-				pub.setAttribute("pubMedId", pubMedId);
-			}
-			if (StringUtils.isNotEmpty(dbxrefid)) {
-				pub.setAttribute("sgdDbXrefId", dbxrefid);
-			}
-			if (StringUtils.isNotEmpty(title)) {
-				pub.setAttribute("title", title);
-			}
-			if (StringUtils.isNotEmpty(citation)) {
-				pub.setAttribute("citation", citation);
-			}
-			if (StringUtils.isNotEmpty(journal)) {
-				pub.setAttribute("journal", journal);
-			}
-			if (StringUtils.isNotEmpty(volume)) {
-				pub.setAttribute("volume", volume);
-			}
-			if (StringUtils.isNotEmpty(page)) {
-				pub.setAttribute("pages", page);
-			}
-			if (StringUtils.isNotEmpty(year)) {
-				pub.setAttribute("year", year);
-			}
-			if (StringUtils.isNotEmpty(issue)) {
-				pub.setAttribute("issue", issue);
-			}
-			publications.put(referenceNo, pub);
-			storedExperimentType.setReference("publication", pub.getIdentifier());
-		}
-
-		detail.setReference("experiment", storedExperimentType.getIdentifier());	
-		detail.setReference("interaction", item);
-		//interactiondetail.put(detail.getIdentifier(), detail);	
-
-		try {
-			store(detail);
-		} catch (ObjectStoreException e) {
-			throw new ObjectStoreException(e);
-		}
-
-		interactions.put(item.getIdentifier(), item);	
-		String refId = item.getIdentifier();
-		return refId;
-
-
-	}*/
-
-
 
 	private Item getInteractionItem(String refId, String gene2RefId) throws ObjectStoreException {
 		MultiKey key = new MultiKey(refId, gene2RefId);
@@ -2323,125 +2217,6 @@ public class SgdConverter extends BioDBConverter {
 			//store(interaction);
 		}
 		return interaction;
-	}
-
-
-	/**
-	 * 
-	 * @param interactionNo
-	 * @param referenceNo
-	 * @param interactionType
-	 * @param experimentType
-	 * @param annotationType
-	 * @param modification
-	 * @param interactingGene
-	 * @param action
-	 * @param source
-	 * @param phenotype
-	 * @param citation
-	 * @param gene
-	 * @param pubMedId
-	 * @param title
-	 * @param volume
-	 * @param page
-	 * @param year
-	 * @param issue
-	 * @param journal
-	 * @param dsetIdentifier
-	 * @param firstAuthor
-	 * @param dbxrefid
-	 * @return
-	 * @throws ObjectStoreException
-	 */
-	private String getInteraction0_98(String interactionNo, String referenceNo,
-			String interactionType, String experimentType,
-			String annotationType, String modification, Item interactingGene, String action,
-			String source, String phenotype, String citation, Item gene,
-			String pubMedId, String title, String volume, String page,
-			String year, String issue, String journal, String dsetIdentifier, String firstAuthor, String dbxrefid)
-					throws ObjectStoreException {
-
-		Item item = createItem("Interaction");
-
-		item.setAttribute("interactionType", interactionType);		
-		item.setAttribute("annotationType", annotationType);
-		item.setAttribute("experimentType", experimentType);
-		if (modification != null) item.setAttribute("modification", modification);
-		if (phenotype != null) item.setAttribute("phenotype", phenotype);
-		item.setAttribute("role", action);
-		item.setReference("gene", gene.getIdentifier());
-		item.addToCollection("interactingGenes", interactingGene.getIdentifier());
-		item.addToCollection("dataSets", dsetIdentifier);		
-
-		Item storedInteractionType = interactiontype.get(interactionType);
-		if (storedInteractionType != null) {
-			item.setReference("type", storedInteractionType.getIdentifier());
-		} else {
-			storedInteractionType = createItem("InteractionTerm");
-			if (StringUtils.isNotEmpty(interactionType)) {
-				storedInteractionType.setAttribute("name", interactionType);
-			}
-			item.setReference("type", storedInteractionType.getIdentifier());
-			interactiontype.put(interactionType, storedInteractionType);
-		}
-
-		String unqName = firstAuthor+"-"+pubMedId;
-
-		//add publication as experiment type
-		Item storedExperimentType = experimenttype.get(unqName);		
-		if(storedExperimentType == null) {			
-			storedExperimentType = createItem("InteractionExperiment");
-			storedExperimentType.setAttribute("name", unqName);	
-			experimenttype.put(unqName, storedExperimentType);
-		}		
-
-		//add publication as reference on experiment
-		Item storedRef = publications.get(referenceNo);
-
-		if (storedRef != null) {
-			storedExperimentType.setReference("publication", storedRef.getIdentifier());
-		} else {
-
-			Item pub = createItem("Publication");
-
-			if (StringUtils.isNotEmpty(pubMedId)) {
-				pub.setAttribute("pubMedId", pubMedId);
-			}
-			if (StringUtils.isNotEmpty(dbxrefid)) {
-				pub.setAttribute("sgdDbXrefId", dbxrefid);
-			}
-			if (StringUtils.isNotEmpty(title)) {
-				pub.setAttribute("title", title);
-			}
-			if (StringUtils.isNotEmpty(citation)) {
-				pub.setAttribute("citation", citation);
-			}
-			if (StringUtils.isNotEmpty(journal)) {
-				pub.setAttribute("journal", journal);
-			}
-			if (StringUtils.isNotEmpty(volume)) {
-				pub.setAttribute("volume", volume);
-			}
-			if (StringUtils.isNotEmpty(page)) {
-				pub.setAttribute("pages", page);
-			}
-			if (StringUtils.isNotEmpty(year)) {
-				pub.setAttribute("year", year);
-			}
-			if (StringUtils.isNotEmpty(issue)) {
-				pub.setAttribute("issue", issue);
-			}
-			publications.put(referenceNo, pub);
-			storedExperimentType.setReference("publication", pub.getIdentifier());
-		}
-
-		item.setReference("experiment", storedExperimentType.getIdentifier());	
-		interactions.put(item.getIdentifier(), item);
-
-		String refId = item.getIdentifier();
-		return refId;
-
-
 	}
 
 
@@ -2514,14 +2289,10 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 	
-	
 	private Item getExistingPub(String referenceNo)
 					throws ObjectStoreException {
-
 		Item storedRef = publications.get(referenceNo);
-
 		return storedRef;
-
 	}
 	
 
@@ -2679,39 +2450,22 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 	}
-
-	/**
-	 * 
-	 * @param featureNo
-	 * @param issue
-	 * @param volume
-	 * @param pubMedId
-	 * @param pages
-	 * @param title
-	 * @param year
-	 * @param citation
-	 * @return
-	 * @throws ObjectStoreException
-	 */
-	/*
-	 * private String getPub(String featureNo, String issue, String volume,
-	 * String pubMedId, String pages, String title, String year, String
-	 * citation) throws ObjectStoreException { String refId =
-	 * publications.get(featureNo); if (refId == null) { Item item =
-	 * createItem("Publication"); if (StringUtils.isNotEmpty(issue)) {
-	 * item.setAttribute("issue", issue); } if
-	 * (StringUtils.isNotEmpty(pubMedId)) { item.setAttribute("pubMedId",
-	 * pubMedId); } if (StringUtils.isNotEmpty(title)) {
-	 * item.setAttribute("title", title); } if (StringUtils.isNotEmpty(volume))
-	 * { item.setAttribute("volume", volume); } item.setAttribute("year", year);
-	 * if (StringUtils.isNotEmpty(pages)) { item.setAttribute("pages", pages); }
-	 * if (StringUtils.isNotEmpty(citation)) { item.setAttribute("citation",
-	 * citation); } refId = item.getIdentifier(); publications.put(featureNo,
-	 * refId);
-	 * 
-	 * try { store(item); } catch (ObjectStoreException e) { throw new
-	 * ObjectStoreException(e); } } return refId; }
-	 */
+	
+    private String getInteractionTerm(String identifier)  throws ObjectStoreException {
+            String refId = interactionterms.get(identifier);
+            if (refId != null) {
+                return refId;
+            }
+            Item item = createItem("InteractionTerm");
+            item.setAttribute("identifier", identifier);
+            interactionterms.put(identifier, item.getIdentifier());
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+            return item.getIdentifier();
+        }
 
 	/**
 	 * {@inheritDoc}
