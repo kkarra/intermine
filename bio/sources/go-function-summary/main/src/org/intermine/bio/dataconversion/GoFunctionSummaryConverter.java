@@ -72,22 +72,35 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 
 		/*
 		 * Sample line 
-		 * UniProtKB	
-		 * P00330	
-		 * ADH1	
-		 * Alcohol dehydrogenase 1	
-		 * ADH1_YEAST|ADH1|ADC1|YOL086C|O0947	
-		 * protein	
-		 * taxon:559292		
-		 * SGD:S000005446	
-		 * db_subset=Swiss-Prot|go_annotation_complete=20051214|go_annotation_summary=Alcohol dehydrogenase required for the reduction of acetaldehyde to ethanol
+		 * UniProtKB	[0]
+		 * P00330	[1]
+		 * ADH1 [2]	
+		 * Alcohol dehydrogenase 1	[3]
+		 * ADH1_YEAST|ADH1|ADC1|YOL086C|O0947	[4]
+		 * protein	[5]
+		 * taxon:559292		[6]
+		 * SGD:S000005446	[7]
+		 * db_subset=Swiss-Prot|go_annotation_complete=20051214|go_annotation_summary=Alcohol dehydrogenase required for the reduction of acetaldehyde to ethanol [8]
 		 */   	 
+
+		/* -- new sample line 
+		 * UniProtKB	[0]
+		 * Q99344	[1]
+		 * UBA3	[2]
+		 * NEDD8-activating enzyme E1 catalytic subunit	[3]
+		 * UBA3_YEAST|UBA3|YPR066W|YP9499.21	[4]
+		 * protein	[5]
+		 * taxon:559292	[6]	
+		 * ***empty column*** [7]
+		 * SGD:S000006270	[8]
+		 * db_subset=Swiss-Prot|go_annotation_complete=20031028|go_annotation_summary=NEDD8 (Rub1) activating enzyme involved in protein neddylation|uniprot_proteome=UP000002311 [9]
+		 * 
+		 */
 		System.out.println("Processing Function Summary Data file....");  
-
-
 
 		BufferedReader br = new BufferedReader(preader);
 		String line = null;
+		int count = 0;
 
 		while ((line = br.readLine()) != null) {
 
@@ -95,42 +108,33 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 				continue;
 			}
 
+			if (line.indexOf("go_annotation_summary") < 0 || line.indexOf("SGD:") < 0){
+				System.out.println("Line does not contain summary and SGD:  " + count);				
+				continue;
+			}
+
 			String[] array = line.split("\t", -1); // keep trailing empty Strings
 
 			if (array.length < 10) {
-				throw new IllegalArgumentException("Not enough elements (should be  10 not "
-						+ array.length + ") in line: " + line);
+				System.out.println("Not enough elements (should be  10 not "+ array.length + ") in line: " + line);
+				continue;
 			}
-
 			String annot = array[9].trim();
+			String gene =  array[8].trim().replaceAll("SGD:", ""); 
 
-			if(annot.indexOf("go_annotation_summary") > 0) {
+			String t[] = annot.split("go_annotation_summary=");
 
-				String oldgene =  array[8].trim(); 
+			if(t.length != 0) {
+				String summary = t[1];			
+				newProduct(gene, summary);
+			}	
 
-				if(oldgene.indexOf("SGD:") > 0) {
-
-					String gene = oldgene.replaceAll("SGD:", "");
-
-					String t[] = annot.split("go_annotation_summary=");
-
-					if(t.length != 0) {
-						String summary = t[1];			
-						newProduct(gene, summary);
-					}	
-
-				}
-
-			}
-
+			count++;
 		}
 
 		preader.close();
 
 	}
-
-
-
 	/**
 	 * 
 	 * @param geneId
@@ -146,7 +150,12 @@ public class GoFunctionSummaryConverter extends BioFileConverter   {
 
 	}
 
-
+	/**
+	 * 
+	 * @param geneId
+	 * @return
+	 * @throws ObjectStoreException
+	 */
 	private Item getGeneItem(String geneId) throws ObjectStoreException{
 
 		Item gene = genes.get(geneId);
