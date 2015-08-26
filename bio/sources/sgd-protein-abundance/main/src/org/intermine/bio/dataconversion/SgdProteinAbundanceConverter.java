@@ -41,7 +41,7 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 	private static final String DATA_SOURCE_NAME = "SGD";
 	private final Map<String, Item> proteinIdMap = new HashMap<String, Item>();
 	private final Map<String, Item> sites = new HashMap<String, Item>();
-	Item publication;
+	private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
 
 	/**
 	 * Constructor
@@ -58,23 +58,10 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 	 * {@inheritDoc}
 	 */
 	public void process(Reader reader) throws Exception {
-		getPub();
 		processAbundanceDataFile(reader); 
 		storeProteins();
 	}
 
-
-
-	private void getPub() throws ObjectStoreException {
-		publication = createItem("Publication");			
-		publication.setAttribute("pubMedId", "14562106");
-		try {
-			store(publication);
-		} catch (ObjectStoreException e) {
-			throw new ObjectStoreException(e);
-		}	
-
-	}
 
 	/**
 	 * 
@@ -124,8 +111,9 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 			}
 			String error = line[7].trim();
 			String localization = line[8].trim();
+			String pmid = line[9].trim();
 
-			newProduct(protein, gfptagged, gfpvisualized, tapvisualized, newabundance, error, localization);
+			newProduct(protein, gfptagged, gfpvisualized, tapvisualized, newabundance, error, localization, pmid);
 
 		}
 
@@ -144,11 +132,11 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 	 * @throws Exception
 	 */
 	private void newProduct(String proteinId, String gfptagged, String gfpvisualized, String tapvisualized, String abundance,
-			String error, String localization)
+			String error, String localization, String pmid)
 					throws ObjectStoreException, Exception {		
 
 		Item protein = getProteinItem(proteinId);		
-		Item pmods = getProteinAbundance(gfptagged, gfpvisualized,tapvisualized, abundance, error, localization);
+		Item pmods = getProteinAbundance(gfptagged, gfpvisualized,tapvisualized, abundance, error, localization, pmid);
 		protein.addToCollection("proteinAbundance", pmods.getIdentifier());
 
 	}
@@ -181,17 +169,16 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 	 * @return
 	 */
 	private Item getProteinAbundance(String gfptagged, String gfpvisualized, String tapvisualized, String abundance,
-			String error, String localization) throws ObjectStoreException {
+			String error, String localization, String pmid) throws ObjectStoreException {
 
 		Item item = createItem("ProteinAbundance");
 
-		item.setAttribute("gfpTagged", gfptagged);
-		item.setAttribute("gfpVisualized", gfpvisualized);
-		item.setAttribute("tapVisualized", tapvisualized);
-		if(StringUtils.isNotEmpty(abundance)){ 
-			item.setAttribute("abundance", abundance);
-		}
-		item.setAttribute("error", error);
+		if(StringUtils.isNotEmpty(gfptagged)){  item.setAttribute("gfpTagged", gfptagged);}
+		if(StringUtils.isNotEmpty(gfpvisualized)){  item.setAttribute("gfpVisualized", gfpvisualized);}
+		if(StringUtils.isNotEmpty(tapvisualized)){  item.setAttribute("tapVisualized", tapvisualized);}
+		if(StringUtils.isNotEmpty(abundance)){ item.setAttribute("abundance", abundance);}
+		if(StringUtils.isNotEmpty(error)){  item.setAttribute("error", error);}
+		
 		item.setAttribute("source", "SGD");
 
 		if(!StringUtils.isEmpty(localization)) {
@@ -236,8 +223,21 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 			}
 		}
 
+		Item publication = pubmedIdMap.get(pmid);
 
-		item.setReference("publication", publication);      
+		if (publication == null) {
+			publication = createItem("Publication");			
+			publication.setAttribute("pubMedId", "14562106");			 
+			pubmedIdMap.put(pmid, publication);
+			item.setReference("publication", publication);  
+			try {
+				store(publication);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}				
+		}else{
+			item.setReference("publication", publication);   
+		}
 
 		try {
 			store(item);
