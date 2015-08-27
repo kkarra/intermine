@@ -248,36 +248,7 @@
  </class>
 
  <class name="Protein" is-interface="true">
-  <attribute name="symbol" type="java.lang.String"/>
-  <attribute name="pI" type="java.lang.Float"/>
-  <attribute name="fopScore" type="java.lang.Float"/>
-  <attribute name="gravyScore" type="java.lang.Float"/>
-  <attribute name="aromaticityScore" type="java.lang.Float"/>
-  <attribute name="cys" type="java.lang.Integer"/>
-  <attribute name="gln" type="java.lang.Integer"/>
-  <attribute name="glu" type="java.lang.Integer"/>
-  <attribute name="gly" type="java.lang.Integer"/>
-  <attribute name="his" type="java.lang.Integer"/>
-  <attribute name="ile" type="java.lang.Integer"/>
-  <attribute name="leu" type="java.lang.Integer"/>
-  <attribute name="lys" type="java.lang.Integer"/>
-  <attribute name="met" type="java.lang.Integer"/>
-  <attribute name="phe" type="java.lang.Integer"/>
-  <attribute name="pro" type="java.lang.Integer"/>
-  <attribute name="ser" type="java.lang.Integer"/>
-  <attribute name="thr" type="java.lang.Integer"/>
-  <attribute name="trp" type="java.lang.Integer"/>
-  <attribute name="tyr" type="java.lang.Integer"/>
-  <attribute name="val" type="java.lang.Integer"/>
-  <attribute name="ala" type="java.lang.Integer"/>
-  <attribute name="arg" type="java.lang.Integer"/>
-  <attribute name="asn" type="java.lang.Integer"/>
-  <attribute name="asp" type="java.lang.Integer"/>
-  <attribute name="ntermseq" type="java.lang.String"/>
-  <attribute name="ctermseq" type="java.lang.String"/>
-  <attribute name="cai" type="java.lang.Float"/>
-  <attribute name="codonBias" type="java.lang.Float"/>
-  
+  <attribute name="symbol" type="java.lang.String"/>  
  </class>
 
  <class name="ProteinCodingGene" extends="Gene" is-interface="true"> </class>

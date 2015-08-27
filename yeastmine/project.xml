@@ -59,7 +59,7 @@
 
    <source name="panther" type="panther">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/panther"/>
-	 <property name="panther.organisms" value="4932"/>   
+      <property name="panther.organisms" value="4932"/>   
       <property name="panther.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
 
@@ -160,6 +160,10 @@
       <property name="src.data.dir" location="/share/intermine/psi/intact/complexes"/>
       <property name="intact.organisms" value="4932"/>
       <property name="complexes.source" value="sgd"/>
+    </source>
+
+    <source name="sgd-protein-info" type="sgd-protein-info">
+     <property name="src.data.dir" location="/share/intermine/protein-info"/>
     </source>
 
     <source name="sgd-domains" type="sgd-domains">

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+
+ <class name="Protein" is-interface="true">
+  <attribute name="pI" type="java.lang.Float"/>
+  <attribute name="molecularWeight" type="java.lang.Float"/>
+  <attribute name="fopScore" type="java.lang.Float"/>
+  <attribute name="gravyScore" type="java.lang.Float"/>
+  <attribute name="aromaticityScore" type="java.lang.Float"/>
+  <attribute name="cys" type="java.lang.Integer"/>
+  <attribute name="gln" type="java.lang.Integer"/>
+  <attribute name="glu" type="java.lang.Integer"/>
+  <attribute name="gly" type="java.lang.Integer"/>
+  <attribute name="his" type="java.lang.Integer"/>
+  <attribute name="ile" type="java.lang.Integer"/>
+  <attribute name="leu" type="java.lang.Integer"/>
+  <attribute name="lys" type="java.lang.Integer"/>
+  <attribute name="met" type="java.lang.Integer"/>
+  <attribute name="phe" type="java.lang.Integer"/>
+  <attribute name="pro" type="java.lang.Integer"/>
+  <attribute name="ser" type="java.lang.Integer"/>
+  <attribute name="thr" type="java.lang.Integer"/>
+  <attribute name="trp" type="java.lang.Integer"/>
+  <attribute name="tyr" type="java.lang.Integer"/>
+  <attribute name="val" type="java.lang.Integer"/>
+  <attribute name="ala" type="java.lang.Integer"/>
+  <attribute name="arg" type="java.lang.Integer"/>
+  <attribute name="asn" type="java.lang.Integer"/>
+  <attribute name="asp" type="java.lang.Integer"/>
+  <attribute name="ntermseq" type="java.lang.String"/>
+  <attribute name="ctermseq" type="java.lang.String"/>
+  <attribute name="cai" type="java.lang.Float"/>
+  <attribute name="codonBias" type="java.lang.Float"/>
+  <attribute name="carbon" type="java.lang.String"/>
+  <attribute name="hydrogen" type="java.lang.String"/>
+  <attribute name="nitrogen" type="java.lang.String"/>
+  <attribute name="oxygen" type="java.lang.String"/>
+  <attribute name="sulphur" type="java.lang.String"/> 
+  <attribute name="instabilityIndex" type="java.lang.Float"/>
+  <attribute name="allCysHalf" type="java.lang.Float"/>
+  <attribute name="noCysHalf" type="java.lang.Float"/>
+  <attribute name="aliphaticIndex" type="java.lang.Float"/>
+ </class>
+ 
+</classes>

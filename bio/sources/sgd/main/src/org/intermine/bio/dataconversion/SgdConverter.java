@@ -64,7 +64,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = false;
+	private static final boolean TEST_LOCAL = true;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -828,7 +828,8 @@ public class SgdConverter extends BioDBConverter {
 			String symbol = res.getString("gene_name");
 			String residues = res.getString("residues");
 			String length = res.getString(6);
-			String molwt = res.getString("molecular_weight");
+			
+			/*String molwt = res.getString("molecular_weight");
 			String pi = res.getString("pi");
 			String fopScore = res.getString("fop_score");
 			String gravyScore = res.getString("gravy_score");
@@ -856,7 +857,7 @@ public class SgdConverter extends BioDBConverter {
 			String ntermseq = res.getString("n_term_seq");
 			String ctermseq = res.getString("c_term_seq");
 			String cai = res.getString("cai");
-			String codonBias = res.getString("codon_bias");
+			String codonBias = res.getString("codon_bias");*/
 
 			Item item = genes.get(featureNo);
 
@@ -872,7 +873,7 @@ public class SgdConverter extends BioDBConverter {
 				protein.setAttribute("symbol", modSymbol);
 			}
 
-			if (molwt != null) {
+			/*if (molwt != null) {
 				protein.setAttribute("molecularWeight", molwt);
 			}
 			if (pi != null) {
@@ -955,9 +956,8 @@ public class SgdConverter extends BioDBConverter {
 			}
 			if (codonBias != null) {
 				protein.setAttribute("codonBias", codonBias);
-			}
+			}*/
 			
-
 			Item seq = createItem("Sequence");
 			seq.setAttribute("residues", residues);
 			seq.setAttribute("length", length);
@@ -971,12 +971,6 @@ public class SgdConverter extends BioDBConverter {
 			protein.setReference("sequence", seq.getIdentifier());
 			protein.addToCollection("genes", item.getIdentifier());
 			proteins.put(featureNo, protein);
-
-			//try {
-				//store(protein);
-			//} catch (ObjectStoreException e) {
-				//throw new ObjectStoreException(e);
-			//}
 
 		}
 

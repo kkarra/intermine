@@ -226,8 +226,9 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 		Item publication = pubmedIdMap.get(pmid);
 
 		if (publication == null) {
+			
 			publication = createItem("Publication");			
-			publication.setAttribute("pubMedId", "14562106");			 
+			publication.setAttribute("pubMedId", pmid);			 
 			pubmedIdMap.put(pmid, publication);
 			item.setReference("publication", publication);  
 			try {
