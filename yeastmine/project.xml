@@ -182,6 +182,10 @@
       <property name="src.data.dir" location="/data/intermine/protein-abundance"/>
    </source>
 
+   <source name="sgd-protein-properties" type="sgd-protein-properties">
+      <property name="src.data.dir" location="/data/intermine/protein-properties"/>
+   </source>
+
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
