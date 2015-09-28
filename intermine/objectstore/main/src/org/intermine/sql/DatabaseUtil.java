@@ -579,6 +579,10 @@ public final class DatabaseUtil
             if ("TABLE".equals(res.getString(4))) {
                 tablenames.add(tablename);
             }
+            if ("VIEW".equals(res.getString(4))) {
+            	LOG.info("Dropping view " + tablename);
+                con.createStatement().execute("DROP VIEW " + tablename);
+            }
         }
         for (String tablename : tablenames) {
             LOG.info("Dropping table " + tablename);

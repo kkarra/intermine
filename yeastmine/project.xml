@@ -205,7 +205,7 @@
     <post-process name="do-sources"/>
     <post-process name="create-intergenic-region-features"/>
     <!--<post-process name="create-bioseg-location-index"/>-->
-    <post-process name="create-location-range-index"/>
+    <post-process name="create-location-overlap-index"/>
     <post-process name="create-overlap-view"/>
     <post-process name="create-gene-flanking-features"/>
     <post-process name="populate-child-features"/>

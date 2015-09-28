@@ -198,7 +198,7 @@ public class OmimConverter extends BioDirectoryConverter
                     String title = text.substring(0, terminateAt);
 
                     Item disease = getDisease(mimNumber);
-                    disease.setAttribute("name", title.replace("@", ""));
+                    disease.setAttribute("name", title.replace("@", "").trim());
                 }
 
                 sb = new StringBuilder();

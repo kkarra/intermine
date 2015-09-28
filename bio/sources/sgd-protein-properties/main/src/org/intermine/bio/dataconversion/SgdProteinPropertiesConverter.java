@@ -37,7 +37,7 @@ public class SgdProteinPropertiesConverter extends BioFileConverter
 {
 	//
 	protected static final Logger LOG = Logger.getLogger(SgdProteinPropertiesConverter.class);
-	private static final String DATASET_TITLE = "Protein Aggregation data from Wallace WJ 2015";
+	private static final String DATASET_TITLE = "Protein Aggregation data";
 	private static final String DATA_SOURCE_NAME = "SGD";
 	private final Map<String, Item> proteinIdMap = new HashMap<String, Item>();
 	private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
@@ -176,7 +176,7 @@ public class SgdProteinPropertiesConverter extends BioFileConverter
 		if (publication == null) {
 			
 			publication = createItem("Publication");			
-			publication.setAttribute("sgdDbXrefId", pmid);			 
+			publication.setAttribute("pubMedId", pmid);			 
 			pubmedIdMap.put(pmid, publication);
 			item.setReference("publication", publication);  
 			try {
