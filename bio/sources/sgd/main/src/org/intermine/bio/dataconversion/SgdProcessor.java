@@ -41,7 +41,8 @@ public class SgdProcessor
              + " left outer join "+ SCHEMA_OWNER + "feat_annotation f on g.feature_no = f.feature_no"
              + " where g.feature_type in (select col_value from "+ SCHEMA_OWNER+"web_metadata "
              + " where application_name = 'Chromosomal Feature Search' "
-             + " and col_name = 'FEATURE_TYPE')";
+             + " and col_name = 'FEATURE_TYPE') "
+             + " and g.status = 'Active'";
     	
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
