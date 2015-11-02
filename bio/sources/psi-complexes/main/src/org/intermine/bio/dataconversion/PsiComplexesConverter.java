@@ -20,10 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-<<<<<<< HEAD
-=======
 import org.apache.tools.ant.BuildException;
->>>>>>> 20dafb6f758c5c51aaa298c9f811d399cc36edda
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -67,12 +64,8 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
-<<<<<<< HEAD
-    //private static final String PROTEIN = "MI:0326";
-=======
     private static final String PROTEIN = "MI:0326";
     private static final String SMALL_MOLECULE = "MI:0328";
->>>>>>> 20dafb6f758c5c51aaa298c9f811d399cc36edda
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
@@ -86,7 +79,7 @@ public class PsiComplexesConverter extends BioFileConverter
     // accession to stored object ID
     private Map<String, String> interactors = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
-<<<<<<< HEAD
+
     private Item organism;
 
     static {
@@ -95,23 +88,17 @@ public class PsiComplexesConverter extends BioFileConverter
         INTERACTOR_TYPES.put("MI:0320", "Gene"); //name: ribonucleic acid  ncRNA and rrnagene 
         INTERACTOR_TYPES.put("MI:0681", "Gene"); //name: double stranded deoxyribonucleic acid
         INTERACTOR_TYPES.put("MI:0325", "Gene"); //name: transfer rna
-=======
-
-    // See #1168
-    static {
-        INTERACTOR_TYPES.put("MI:0326", "Protein");
-        INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
         INTERACTOR_TYPES.put("MI:0320", "RNA");
         INTERACTOR_TYPES.put("MI:0609", "SnoRNA");
->>>>>>> 20dafb6f758c5c51aaa298c9f811d399cc36edda
     }
+
+
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-<<<<<<< HEAD
     public PsiComplexesConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
 		organism = createItem("Organism");
@@ -121,10 +108,6 @@ public class PsiComplexesConverter extends BioFileConverter
 		organism.setAttribute("name", "Saccharomyces cerevisiae");
 		organism.setAttribute("shortName", "S. cerevisiae");
 		store(organism);
-=======
-    public PsiComplexesConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
->>>>>>> 20dafb6f758c5c51aaa298c9f811d399cc36edda
     }
 
     /**
@@ -305,12 +288,11 @@ public class PsiComplexesConverter extends BioFileConverter
             Position startPosition = range.getStart();
             Position endPosition = range.getEnd();
             Long start = startPosition.getStart();
-<<<<<<< HEAD
-	    if(start ==0){
+
+	       if(start ==0){
              continue;
             }
-=======
->>>>>>> 20dafb6f758c5c51aaa298c9f811d399cc36edda
+
             Long end = endPosition.getStart();
             if (start + end == 0) {
                 continue;
@@ -378,7 +360,6 @@ public class PsiComplexesConverter extends BioFileConverter
             primaryIdentifier = accession;
         }
         String refId = interactors.get(primaryIdentifier);
-<<<<<<< HEAD
         
         if (refId == null) {
         	
@@ -421,7 +402,6 @@ public class PsiComplexesConverter extends BioFileConverter
 
         }
         
-=======
         if (refId == null) {
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
@@ -448,7 +428,7 @@ public class PsiComplexesConverter extends BioFileConverter
             refId = protein.getIdentifier();
             interactors.put(primaryIdentifier, refId);
         }
->>>>>>> 20dafb6f758c5c51aaa298c9f811d399cc36edda
+
         if (createSynonym) {
             createSynonym(refId, originalAccession, true);
             String proIdentifier = originalAccession.substring(originalAccession.indexOf("-") + 1);
