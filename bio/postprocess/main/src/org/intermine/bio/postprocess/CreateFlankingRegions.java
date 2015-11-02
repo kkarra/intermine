@@ -159,7 +159,6 @@ public class CreateFlankingRegions
             includeGenes = new boolean[] {false};
         }
 
-        System.out.println("Gene is .." + gene.getName());
         for (double distance : distances) {              	
             for (String direction : directions) {            	
                 for (boolean includeGene : includeGenes) {

@@ -41,8 +41,7 @@ public class SgdProcessor
              + " left outer join "+ SCHEMA_OWNER + "feat_annotation f on g.feature_no = f.feature_no"
              + " where g.feature_type in (select col_value from "+ SCHEMA_OWNER+"web_metadata "
              + " where application_name = 'Chromosomal Feature Search' "
-             + " and col_name = 'FEATURE_TYPE') "
-             + " and g.status = 'Active'";
+             + " and col_name = 'FEATURE_TYPE')";
     	
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -73,7 +72,6 @@ public class SgdProcessor
              + "  where g.feature_type in (select col_value from " + SCHEMA_OWNER + "web_metadata "
              + " where application_name = 'Chromosomal Feature Search' "
              + " and col_name = 'FEATURE_TYPE') "
-             + " and g.status = 'Active' "
              + " AND (c.feature_type = 'chromosome' OR c.feature_type = 'plasmid') "
              + " AND l.is_current = 'Y' and s.seq_type = 'genomic' and s.is_current = 'Y'"
              +  " AND  r.sequence_release = (select max(sequence_release) from bud.release)";
@@ -130,7 +128,6 @@ public class SgdProcessor
                     +"AND fr.rank IN (2,4) "
                     +"AND f2.feature_no = fl.feature_no "
                     + "AND f2.feature_no = s2.feature_no "
-                    + "AND f1.status = 'Active' AND f2.status = 'Active' "
                     +"AND s.seq_no = FL.rootseq_no "
                     +"AND s2.is_current = 'Y' " 
                     +"AND s.is_current = 'Y' " 
@@ -197,7 +194,7 @@ public class SgdProcessor
     	        + " FROM "+ SCHEMA_OWNER + "feature g " 
     	        + " inner join " + SCHEMA_OWNER + "seq s on g.feature_no = s.feature_no "
                 + " left outer join " + SCHEMA_OWNER + "protein_info pi on pi.feature_no = g.feature_no"
-    	        + " WHERE g.status = 'Active' AND s.is_current = 'Y' "
+    	        + " WHERE s.is_current = 'Y' "
     	        + "AND s.seq_type = 'protein' ";
        
         LOG.info("executing: " + query);
@@ -220,14 +217,13 @@ public class SgdProcessor
                 + "FROM  "+ SCHEMA_OWNER + "reference r,  "+ SCHEMA_OWNER + "feature f,  "
                 + SCHEMA_OWNER + "litguide_feat lgf,  "+ SCHEMA_OWNER + "lit_guide lg, "+ SCHEMA_OWNER + "journal j "
                 + "WHERE f.feature_no = lgf.feature_no"
-                + " AND f.status = 'Active' "
-                + " AND lgf.lit_guide_no = lg.lit_guide_no"
-                + " AND lg.reference_no = r.reference_no"
+                + "   AND lgf.lit_guide_no = lg.lit_guide_no"
+                + "   AND lg.reference_no = r.reference_no"
                 + " AND j.journal_no  (+) =   r.journal_no"
-                +"  AND f.feature_type in (select col_value from "+ SCHEMA_OWNER+"web_metadata "
-                + " WHERE application_name = 'Chromosomal Feature Search' "
-                + " AND col_name = 'FEATURE_TYPE')"
-                + " ORDER by f.feature_no, r.reference_no";
+                +" AND f.feature_type in (select col_value from "+ SCHEMA_OWNER+"web_metadata "
+                + " where application_name = 'Chromosomal Feature Search' "
+                + " and col_name = 'FEATURE_TYPE')"
+                +" ORDER by f.feature_no, r.reference_no";
                 
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();

@@ -44,6 +44,7 @@ public class PantherConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "Panther";
     private static final Logger LOG = Logger.getLogger(PantherConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
+    private Set<String> allTaxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
     private Map<MultiKey, String> identifiersToGenes = new HashMap<MultiKey, String>();
     private Map<String, String> config = new HashMap<String, String>();
@@ -189,7 +190,9 @@ public class PantherConverter extends BioFileConverter
         }
 
         //Create id resolver
-        Set<String> allTaxonIds = new HashSet<String>() {
+        //Set<String> allTaxonIds = new HashSet<String>() {
+        	
+        allTaxonIds = new HashSet<String>() {
             private static final long serialVersionUID = 1L;
             {
                 addAll(taxonIds);
@@ -272,11 +275,13 @@ public class PantherConverter extends BioFileConverter
     // genes (in taxonIDs) are always processed
     // homologues are only processed if they are of an organism of interest
     private boolean isValid(String organism1, String organism2) {
-        if (taxonIds.isEmpty()) {
+       // if (taxonIds.isEmpty()) {
+    	 if (allTaxonIds.isEmpty()) {
             // no config so process everything
             return true;
         }
-        if (taxonIds.contains(organism1) && taxonIds.contains(organism2)) {
+        //if (taxonIds.contains(organism1) && taxonIds.contains(organism2)) {
+    	 if (allTaxonIds.contains(organism1) && allTaxonIds.contains(organism2)) {
             // both are organisms of interest
             return true;
         }
@@ -331,11 +336,6 @@ public class PantherConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-
-        // Human - Ensembl as pid
-        //if ("9606".equals(taxonId)) {
-            //return identifier;
-        //}
 
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
