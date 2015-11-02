@@ -152,10 +152,10 @@ public class PantherConverter extends BioFileConverter
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-
             if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                gene.setAttribute(identifierType, geneId);
+                gene.setAttribute(identifierType, resolvedGenePid);
+            } else {
+                gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
             }
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
@@ -191,7 +191,6 @@ public class PantherConverter extends BioFileConverter
 
         //Create id resolver
         //Set<String> allTaxonIds = new HashSet<String>() {
-        	
         allTaxonIds = new HashSet<String>() {
             private static final long serialVersionUID = 1L;
             {
@@ -275,13 +274,12 @@ public class PantherConverter extends BioFileConverter
     // genes (in taxonIDs) are always processed
     // homologues are only processed if they are of an organism of interest
     private boolean isValid(String organism1, String organism2) {
-       // if (taxonIds.isEmpty()) {
-    	 if (allTaxonIds.isEmpty()) {
+
+        if (allTaxonIds.isEmpty()) {
             // no config so process everything
             return true;
         }
-        //if (taxonIds.contains(organism1) && taxonIds.contains(organism2)) {
-    	 if (allTaxonIds.contains(organism1) && allTaxonIds.contains(organism2)) {
+        if (allTaxonIds.contains(organism1) && allTaxonIds.contains(organism2)) {
             // both are organisms of interest
             return true;
         }
@@ -338,6 +336,7 @@ public class PantherConverter extends BioFileConverter
     private String resolveGene(String taxonId, String identifier) {
 
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
+            LOG.error("no resolver available for " + taxonId);
             // no id resolver available, so return the original identifier
             return identifier;
         }

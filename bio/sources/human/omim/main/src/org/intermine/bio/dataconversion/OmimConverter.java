@@ -60,7 +60,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    //private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -177,7 +177,6 @@ public class OmimConverter extends BioDirectoryConverter
                 if (!Character.isDigit(s.charAt(0))) {
                     s = s.substring(1);
                 }
-
                 // MIM number is now first thing on line
                 String[] parts = s.split(" ", 2);
                 String mimNumber = parts[0];
@@ -280,7 +279,7 @@ public class OmimConverter extends BioDirectoryConverter
             }
             //String geneItemId = getGeneItemId(geneSymbol);
             String geneItemId = genes.get(geneSymbol);
-            
+       
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
