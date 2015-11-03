@@ -80,34 +80,21 @@ public class PsiComplexesConverter extends BioFileConverter
     private Map<String, String> interactors = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
 
-    private Item organism;
-
+    // See #1168
     static {
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
-        INTERACTOR_TYPES.put("MI:0320", "Gene"); //name: ribonucleic acid  ncRNA and rrnagene 
-        INTERACTOR_TYPES.put("MI:0681", "Gene"); //name: double stranded deoxyribonucleic acid
-        INTERACTOR_TYPES.put("MI:0325", "Gene"); //name: transfer rna
         INTERACTOR_TYPES.put("MI:0320", "RNA");
         INTERACTOR_TYPES.put("MI:0609", "SnoRNA");
     }
-
-
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public PsiComplexesConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public PsiComplexesConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-		organism = createItem("Organism");
-		organism.setAttribute("taxonId", "4932");
-		organism.setAttribute("genus", "Saccharomyces");
-		organism.setAttribute("species", "cerevisiae");
-		organism.setAttribute("name", "Saccharomyces cerevisiae");
-		organism.setAttribute("shortName", "S. cerevisiae");
-		store(organism);
     }
 
     /**
@@ -288,11 +275,6 @@ public class PsiComplexesConverter extends BioFileConverter
             Position startPosition = range.getStart();
             Position endPosition = range.getEnd();
             Long start = startPosition.getStart();
-
-	       if(start ==0){
-             continue;
-            }
-
             Long end = endPosition.getStart();
             if (start + end == 0) {
                 continue;
@@ -360,48 +342,6 @@ public class PsiComplexesConverter extends BioFileConverter
             primaryIdentifier = accession;
         }
         String refId = interactors.get(primaryIdentifier);
-        
-        if (refId == null) {
-        	
-            String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
-            System.out.println("typetermidentifier is ... " + typeTermIdentifier);
-            String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
-            
-            if (interactorType == null) {
-              
-                return null; // we don't know how to handle stuff that is not hardcoded in INTERACTOR_TYPES
-            }
-            
-            if(interactorType.equals("Gene")) {
-
-            	Item gene = createItem(interactorType);
-            	gene.setAttribute("primaryIdentifier", primaryIdentifier);
-            	gene.setReference("organism", organism.getIdentifier());//organismRefId
-            	store(gene);
-            	refId = gene.getIdentifier();
-            	interactors.put(primaryIdentifier, refId);
-
-            }else if(interactorType.equals("Protein") || interactorType.equals("SmallMolecule")){
-
-            	Item protein = createItem(interactorType);
-            	if (interactorType.equals("Protein") ) {
-            		protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            	} else {
-            		protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            		// small molecule
-            		String smallMolecule = getChebiName(primaryIdentifier);
-            		if (StringUtils.isNotEmpty(smallMolecule)) {
-            			protein.setAttribute("name", smallMolecule);
-            		}
-            	}
-            	protein.setReference("organism", organism.getIdentifier());//organismRefId          	
-            	store(protein);
-            	refId = protein.getIdentifier();
-            	interactors.put(primaryIdentifier, refId);
-            }
-
-        }
-        
         if (refId == null) {
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
@@ -428,7 +368,6 @@ public class PsiComplexesConverter extends BioFileConverter
             refId = protein.getIdentifier();
             interactors.put(primaryIdentifier, refId);
         }
-
         if (createSynonym) {
             createSynonym(refId, originalAccession, true);
             String proIdentifier = originalAccession.substring(originalAccession.indexOf("-") + 1);
