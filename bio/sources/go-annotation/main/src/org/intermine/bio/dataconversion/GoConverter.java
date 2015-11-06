@@ -200,13 +200,19 @@ public class GoConverter extends BioFileConverter
             int readColumn = config.readColumn();
             String productId = array[readColumn];
 
+            String symbol = array[2];
+            if (symbol.isEmpty()) {
+                continue;
+            }
             String goId = array[4];
             String qualifier = array[3];
             String strEvidence = array[6];
             String withText = array[7];
             String annotationExtension = null;
-
-            String annotType = array[15]; //kk
+            String annotType = null;
+            if (array.length >= 16) {
+               annotType = array[15]; //kk
+            }
             //if (array.length >= 16) {
             	//annotationExtension = array[15];
             //}
@@ -585,7 +591,7 @@ public class GoConverter extends BioFileConverter
    		if (evidenceCodes.get(combinationcode) == null) {
    			Item item = createItem("GOEvidenceCode");
    			item.setAttribute("code", code);
-   			item.setAttribute("annotType", annotType); 
+   			if(!annotType.isEmpty()) {item.setAttribute("annotType", annotType); }
    			if(!withText.isEmpty()) { item.setAttribute("withText", withText); } 
    			store(item);
    			evidenceCodes.put(combinationcode, item.getIdentifier()); 

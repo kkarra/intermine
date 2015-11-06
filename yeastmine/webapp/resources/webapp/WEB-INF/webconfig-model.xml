@@ -544,6 +544,12 @@
 			replacesFields="interactions"
 			placement="Interactions" 
 			types="BioEntity" />
+			
+	    <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
+             jspName="model/esynDisplayer.jsp"
+             replacesFields=""
+             placement="Interactions"
+             types="Gene"/>
 
 		<reportdisplayer
 			javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"

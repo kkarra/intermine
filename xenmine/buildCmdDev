@@ -1,0 +1,1 @@
+../bio/scripts/project_build -V dev -b -v localhost /tmp/xenmine-dev-dump

@@ -1,0 +1,5 @@
+<project name="trops_chipseq_histone_mod" default="default" basedir=".">
+  <description>build, test, package trops_chipseq_histone_mod</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

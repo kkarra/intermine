@@ -1,0 +1,5 @@
+<project name="trops_rna_seq" default="default" basedir=".">
+  <description>build, test, package trops_rna_seq</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

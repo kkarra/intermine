@@ -1,0 +1,5 @@
+<project name="xenmine" default="default" basedir=".">
+  <description>build, test, package xenmine</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

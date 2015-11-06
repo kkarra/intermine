@@ -1,0 +1,5 @@
+<project name="xenopus-anatomy" default="default" basedir=".">
+  <description>build, test, package xenopus-anatomy</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

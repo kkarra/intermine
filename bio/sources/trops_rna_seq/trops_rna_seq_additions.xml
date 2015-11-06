@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<classes>
+
+  <class name="Gene" is-interface="true">
+     <collection name="expressionScores" referenced-type="ExpressionScore" reverse-reference="gene"/>
+  </class>
+  
+  <class name="ExpressionScore" is-interface="true">
+    <attribute name="FPKM" type="java.lang.Float"/>
+    <attribute name="TPM" type="java.lang.Float"/>
+    <attribute name="effectiveCount" type="java.lang.Float"/>
+    <attribute name="expressionLevel" type="java.lang.String"/>
+    <attribute name="stage" type="java.lang.String"/>
+    <attribute name="order" type="java.lang.Integer"/>
+    <attribute name="experimentDetail" type="java.lang.String"/>
+    <reference name="devstage" referenced-type="DevelopmentalStage"/>
+    <reference name="tissue" referenced-type="Tissue"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="expressionScores"/>
+    <collection name="experiments" referenced-type="Experiment" reverse-reference="expscores"/>
+  </class>
+  
+  <class name="Experiment" is-interface="true">
+    <reference name="dataset" referenced-type="DataSet"/>
+    <collection name="expscores" referenced-type="ExpressionScore" reverse-reference="experiments"/>
+  </class>
+  
+    <!--<class name="DevelopmentalStage" is-interface="true">
+    <attribute name="condition" type="java.lang.String"/>
+   </class>
+   
+    <class name="Tissue" is-interface="true">
+    <attribute name="condition" type="java.lang.String"/>
+   </class>-->
+  
+  </classes>
+  

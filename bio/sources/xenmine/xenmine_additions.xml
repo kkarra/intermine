@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+
+  
+  <class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
+  </class>
+  
+  <class name="Gene" is-interface="true">
+    <attribute name="xenbaseGeneId" type="java.lang.String"/>
+    <attribute name="ensemblIdentifier" type="java.lang.String"/>
+    <attribute name="alias" type="java.lang.String"/>
+    <attribute name="genomeBuild" type="java.lang.String"/>
+     <attribute name="jgiModelName" type="java.lang.String"/>
+    <collection name="goAnnotation" referenced-type="GOAnnotation"/>
+    <collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>
+    <collection name="homologues" referenced-type="Homologue" reverse-reference="gene"/>
+    <collection name="expressionResults" referenced-type="ExpressionResult" reverse-reference="gene"/>
+    <collection name="anatomyMappings" referenced-type="AnatomyMapping" reverse-reference="gene"/>
+  </class>
+ 
+  <class name="Publication" is-interface="true">
+   <attribute name="DbPubId" type="java.lang.String"/>
+  </class>
+  
+  <class name="Interaction" is-interface="true">
+	<reference name="gene1" referenced-type="Gene" reverse-reference="interactions"/>
+	<reference name="gene2" referenced-type="Gene"/>
+ </class>
+<class name="Homologue" is-interface="true">
+  <attribute name="type" type="java.lang.String"/>
+  <reference name="gene" referenced-type="Gene" reverse-reference="homologues"/>
+  <reference name="homologue" referenced-type="Gene"/>
+</class>
+
+<!-- <class name="Homologue" is-interface="true">
+        <attribute name="source" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="bootstrapScore" type="java.lang.Integer"/>
+        <reference name="publication" referenced-type="Publication"/>
+        <reference name="gene" referenced-type="Gene" reverse-reference="homologues"/>
+        <reference name="homologue" referenced-type="Gene"/>
+        <collection name="evidence" referenced-type="OrthologueEvidence"/>
+        <collection name="crossReferences" referenced-type="CrossReference"/>
+        <collection name="dataSets" referenced-type="DataSet"/>
+</class> -->
+
+  <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
+ 
+ <class name="ExpressionResult" is-interface="true">
+    <attribute name="genotype" type="java.lang.String"/>
+    <attribute name="assay"  type="java.lang.String"/>
+    <attribute name="experimentId"  type="java.lang.String"/>
+    <attribute name="source"  type="java.lang.String"/>
+    <attribute name="curationStatus"  type="java.lang.String"/>
+    <reference name="startStage" referenced-type="XenopusAnatomyTerm"/>
+    <reference name="endStage" referenced-type="XenopusAnatomyTerm"/>
+    <reference name="publication" referenced-type="Publication"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="expressionResults"/>
+    <reference name="image" referenced-type="Image"/>
+    <collection name="anatomicalStages" referenced-type="XenopusAnatomyTerm"/>
+
+ </class>
+ 
+  <class name="AnatomyMapping" is-interface="true">
+    <reference name="startStage" referenced-type="XenopusAnatomyTerm"/>
+    <reference name="endStage" referenced-type="XenopusAnatomyTerm"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="anatomyMappings"/>
+    <collection name="tissues" referenced-type="XenopusAnatomyTerm"/>
+ </class>
+ 
+   <class name="Image" is-interface="true">
+    <attribute name="url" type="java.lang.String"/>
+  </class>
+  
+  <class name="XenopusAnatomyTerm" extends="OntologyTerm" is-interface="true"/>
+  
+  <class name="CrossReference" is-interface="true">
+	<attribute name="accession" type="java.lang.String"/>
+</class>
+
+  
+</classes>
+

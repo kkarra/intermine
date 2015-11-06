@@ -1,0 +1,7 @@
+<project name="xenmine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for xenmine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>

@@ -1,0 +1,50 @@
+<aspects>
+
+
+  <aspect name="Sequence">
+    <subtitle>Genome annotation</subtitle>
+    <icon-image>model/images/genomics.gif</icon-image>
+    <large-image>model/images/genomics.gif</large-image>
+    <intro-text>
+      The gene ID and other genome annotation in XenMine are provided by
+      Xenbase.  In most cases XenMine includes
+      all genome features that have chromosomal locations.
+    </intro-text>
+    <tile-name>model/genomics.jsp</tile-name>
+    <aspect-source name="Xenbase" url="http://www.xenbase.org"/>
+  </aspect>
+  	
+	<aspect name="ChIPSeq">
+		<subtitle>Regulation</subtitle>
+		<intro-text> &lt;p&gt;ChIP-seq data for &lt;i&gt;Xenopus
+			&lt;/i&gt;. </intro-text>
+		<aspect-source name="Regulation" url="http://www.stanford.edu/group/bakerlab/Welcome.html" />
+	</aspect>
+	
+	
+	<aspect name="RNASeq">
+		<subtitle>Homology</subtitle>
+		<intro-text> &lt;p&gt;RNA-seq Expression data for &lt;i&gt;Xenopus
+			&lt;/i&gt;. </intro-text>
+		<aspect-source name="Expression" url="http://www.stanford.edu/group/bakerlab/Welcome.html" />
+	</aspect>
+	
+	
+	  <aspect name="Xenbase">
+		<subtitle>GO, Interaction, Expression.</subtitle>
+		<intro-text> Interaction, Expression and Gene Ontology (GO) annotations. </intro-text>
+		<tile-name>model/GO.jsp</tile-name>
+		<tile-name>model/pathways.jsp</tile-name>
+		<aspect-source name="Xenbase" url="http://www.xenbase.org/" />
+	</aspect>
+		
+	  <aspect name="Genomics">
+		<subtitle>Genes, Chromosomes, Scaffolds.</subtitle>
+		<intro-text> Genes, Chromosomes, Scaffolds etc. </intro-text>
+	    <tile-name>model/genomics.jsp</tile-name>
+	  <aspect-source name="Genomics" url="http://www.xenbase.org/" />		
+	</aspect>
+	
+	
+	
+</aspects>

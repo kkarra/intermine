@@ -1,0 +1,4 @@
+<project name="xenmine-tasks" default="default" basedir=".">
+  <description>build xenmine tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

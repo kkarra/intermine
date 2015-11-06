@@ -1,0 +1,4 @@
+<project name="trops_rna_seq-tasks" default="default" basedir=".">
+  <description>build trops_rna_seq tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

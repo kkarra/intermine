@@ -1,0 +1,126 @@
+<project type="bio">
+
+  <property name="target.model" value="genomic"/>
+  <property name="source.location" location="../bio/sources/"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="xenmine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <sources>
+
+    <source name="trops-gff" type="trops-gff">
+      <property name="gff3.taxonId" value="8364"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSourceName" value="Tropicalis - Adam Berkeley"/>
+      <property name="gff3.dataSetTitle" value="Tropicalis Annotation file provided by Adam"/>
+      <property name="src.data.dir" location="/data/xenmine/current/trops_gff"/>
+    </source>
+
+    <source name="laevis-gff" type="laevis-gff">
+      <property name="gff3.taxonId" value="8355"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSourceName" value="Laevis - Adam Berkeley"/>
+     <property name="gff3.dataSetTitle" value="Laevis Annotation file provided by Adam"/>
+      <property name="src.data.dir" location="/data/xenmine/current/laevis_gff"/>
+    </source> 
+
+    <source name="tropicalis-chromosome-fasta" type="fasta" >
+      <property name="fasta.taxonId" value="8364"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.includes" value="*.fa"/>
+      <property name="fasta.dataSetTitle" value="XenBase X.tropicalis data set"/>
+      <property name="fasta.dataSourceName" value="XenBase/JGI"/>
+      <property name="src.data.dir" location="/data/xenmine/current/scaffold_trops"/>
+    </source>
+
+     <source name="laevis-chromosome-fasta" type="fasta" >
+      <property name="fasta.taxonId" value="8355"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.includes" value="*.fasta"/>
+      <property name="fasta.dataSetTitle" value="XenBase X.laevis data set"/>
+      <property name="fasta.dataSourceName" value="XenBase"/>
+      <property name="src.data.dir" location="/data/xenmine/current/scaffold_laevis"/>
+    </source> 
+
+   <source name="xenmine" type="xenmine">
+     <property name="src.data.dir" location="/data/xenmine/current"/>
+    </source>
+
+   <source name="panther" type="panther">
+      <property name="src.data.dir" location="/data/xenmine/current/panther"/>
+      <property name="panther.organisms" value="8364"/>   
+      <property name="panther.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>
+
+
+    <source name="trops_chipseq_histone_mod" type="trops_chipseq_histone_mod">
+      <property name="src.data.dir" location="/data/xenmine/current/trops_chipseq_histone_mod/"/>
+    </source>
+
+    <source name="trops_rna_seq" type="trops_rna_seq">
+      <property name="src.data.dir" location="/data/xenmine/current/trops_rna_seq"/>
+    </source>
+
+    <!-- <source name="trops_chipseq_tf" type="trops_chipseq_tf">
+      <property name="src.data.dir" location="/data/xenmine/trops_chipseq_tf"/>
+    </source>
+
+    <source name="laevis_chipseq_histone_mod" type="laevis_chipseq_histone_mod">
+      <property name="src.data.dir" location="/data/xenmine/laevis_chipseq_histone_mod"/>
+    </source> 
+
+     <source name="laevis_chipseq_tf" type="laevis_chipseq_tf">
+        <property name="src.data.dir" location="/data/xenmine/laevis_chipseq_tf"/>
+    </source>
+     <source name="laevis_rna_seq" type="laevis_rna_seq">
+        <property name="src.data.dir" location="/data/xenmine/laevis_rna_seq"/>
+     </source> -->
+
+    <source name="go" type="go">
+      <property name="src.data.file" location="/data/xenmine/current/go/gene_ontology_edit.obo"/>
+    </source>
+
+     <source name="go-annotation" type="go-annotation">
+      <property name="ontologyfile" location="/data/xenmine/current/go/gene_ontology_edit.obo"/>
+      <property name="src.data.dir" location="/data/xenmine/current/go"/>
+      <property name="src.data.dir.includes" value="gene_association.goa"/>
+    </source>
+
+    <source name="xenopus-anatomy" type="xenopus-anatomy">
+      <property name="src.data.file" location="/data/xenmine/current/xenopus_anatomy.obo"/>
+    </source>
+
+    <!-- <source name="biogrid" type="biogrid">
+       <property name="src.data.dir" location="/data/xenmine/current/laevis_interactions"/>
+       <property name="src.data.dir.includes" value="*psi25.xml"/>
+       <property name="biogrid.organisms" value="8355"/>
+     </source> -->
+
+    <source name="update-publications" type="update-publications">
+      <property name="src.data.file" location="build/publications.xml"/>
+    </source>
+
+     <source name="entrez-organism" type="entrez-organism">
+      <property name="src.data.file" location="build/organisms.xml"/>
+    </source>
+
+     <source name="so" type="so">
+      <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
+    </source>
+
+  </sources>
+
+  <post-processing>
+    <!--<post-process name="populate-child-features"/>-->
+    <post-process name="create-references"/>
+    <post-process name="do-sources"/>
+    <post-process name="create-location-overlap-index"/>
+    <post-process name="create-overlap-view"/>
+    <post-process name="create-gene-flanking-features"/>
+    <post-process name="transfer-sequences"/>
+    <post-process name="create-search-index"/>
+    <post-process name="create-attribute-indexes"/>
+    <post-process name="summarise-objectstore"/>
+    <post-process name="create-autocomplete-index"/>
+  </post-processing>
+
+</project>

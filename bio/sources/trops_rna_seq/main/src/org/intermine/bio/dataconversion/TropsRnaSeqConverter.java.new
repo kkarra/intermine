@@ -1,0 +1,353 @@
+package org.intermine.bio.dataconversion;
+
+/*
+ * Copyright (C) 2002-2013 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import java.io.BufferedReader;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.FormattedTextParser;
+import org.intermine.xml.full.Item;
+
+
+/**
+ * Converter to parse modENCODE expression data.
+ *
+ * @author Julie Sullivan
+ */
+public class TropsRnaSeqConverter extends BioFileConverter
+{
+	private static final Logger LOG = Logger.getLogger(TropsRnaSeqConverter.class);
+	private static final String DATASET_TITLE = "Xenopus RNA-Seq";
+	private static final String DATA_SOURCE_NAME = "GEO files from Christine/Jessica";
+	private Item organism;
+	private static final String TAXON_ID = "8364";
+	private Map<String, Item> genes = new HashMap();
+	private Map<String, String> terms = new HashMap<String, String>();
+	private Map<Integer, String> header = new HashMap<Integer, String>();
+	private Map<String, Item> organisms = new HashMap();
+	private Map<String, Item> devstages = new HashMap();
+
+
+	/**
+	 * Constructor
+	 * @param writer the ItemWriter used to handle the resultant items
+	 * @param model the Model
+	 */
+	public TropsRnaSeqConverter(ItemWriter writer, Model model) {
+		super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+
+		organism = createItem("Organism");
+		organism.setAttribute("taxonId", TAXON_ID);
+		try {
+			store(organism);
+			organisms.put("X. tropicalis", organism);
+		} catch (ObjectStoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/*.xprs file columns
+	 * bundle_id	
+	 * target_id	
+	 * length	
+	 * eff_length	
+	 * tot_counts	
+	 * uniq_counts	
+	 * est_counts	
+	 * eff_counts	
+	 * ambig_distr_alpha	
+	 * ambig_distr_beta	
+	 * fpkm	
+	 * fpkm_conf_low	
+	 * fpkm_conf_high	
+	 * solvable	
+	 * tpm
+	 */
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void process(Reader reader) throws Exception {
+		processScoreFile(reader);
+		storeGenes();
+	}
+
+
+	private void processScoreFile(Reader reader) throws Exception, ObjectStoreException {
+
+		BufferedReader br = new BufferedReader(reader);
+		String lines = null;
+		String metadata[] = new String[15];  //needs adjustment or a better strategy
+		int i = 0;
+		boolean first = true;
+		Item exp = null;
+
+		while ((lines = br.readLine()) != null) {
+
+			if (lines.startsWith("!")) { 
+				metadata[i] = lines;
+				i++;
+				continue;
+			}
+
+			if(first) {
+				exp = processMetaData(metadata);
+				first = false;
+			}
+
+			String[] line = lines.split("\t", -1);
+
+			if (line.length < 10 && StringUtils.isNotEmpty(line.toString())) {
+				throw new RuntimeException("Invalid line, should be 10 columns but is '"
+						+ line.length + "' instead");
+			}
+
+			String bundle_id = line[0];
+			String target_id = line[1];
+			String geneId = "";
+			/*if(target_id.indexOf("Xetrov") != -1){
+				geneId = target_id+".g";
+			}else{
+				geneId = target_id;
+			}*/
+
+			String length = line[2];	
+			String eff_length = line[3];	
+			String tot_counts = line[4];	
+			String uniq_counts = line[5];	
+			String est_counts = line[6];	
+			String eff_counts = line[7];	
+			String ambig_distr_alpha = line[8];	
+			String ambig_distr_beta = line[9];	
+			String fpkm = line[10];	
+			String fpkm_conf_low = line[11];	
+			String fpkm_conf_high = line[12];
+			String  solvable = line[13];	
+
+			Item gene = genes.get(geneId);
+
+			if(gene == null) {
+				gene = getGene(geneId);
+			}
+
+			for(int j=1; j<line.length; j++){
+
+				String rpkm = line[j];	
+
+				Item result = createItem("ExpressionScores");
+
+				if (StringUtils.isNotEmpty(rpkm)) {
+					try {
+						Float.valueOf(rpkm);
+						result.setAttribute("FPKM", rpkm);
+					} catch (NumberFormatException e) {
+						LOG.warn("bad score: " + rpkm, e);
+					}
+				}
+
+				result.setReference("gene", gene);
+				result.addToCollection("experiments", exp.getIdentifier());
+				store(result);
+
+
+			}  	
+
+		}
+
+
+	}
+
+	/**
+	 * 
+	 * @param reader
+	 *            Experiment Name ChIP-Seq Identification of X.tropicalis TF Binding Sites 
+	 *            Experiment Category: TF binding sites 
+	 *            Experiment Type: ChIP-seq 
+	 *            Experiment Title Stage8-Smad2-Trops-ChIP-Seq
+	 *            Experiment Description Something more descriptive and detailed
+	 *            Experiment Date 05/28/2014 
+	 *            Experiment PMID 1234 
+	 *            Organism: X. (Silurana) tropicalis 
+	 *            Experimental Factor Name: Any Name -- kw  pair 
+	 *            Experimental Factor Type: Any Value 
+	 *            Experiment Property Name: Any Name --kw pair 
+	 *            Experiment Property Type: Any Value
+	 *            Developmental Stage: Stage 8 
+	 *            Developmental Stage Sex: Female
+	 *            Tissue Organism Part: Whole Frog 
+	 *            Antibody TargetName: XB-GENE-482930
+	 *             Antibody HostOrganism: Unknown 
+	 *             Antibody Antigen: Unknown
+	 */
+
+	private Item processMetaData(String[] md) throws ObjectStoreException {
+
+		Item experiment = null;
+		String experimentName = "";
+		String experimentCategory = "";
+		String experimentType = "";
+		String experimentTitle = "";
+		String experimentDescription = "";
+		String experimentDate = "";
+		String organism = "";
+		String stage = "";
+
+
+		for(int i=0; i< md.length; i++) {
+
+			String[] line = md[i].split("\\:"); 
+
+			String name = line[0].trim();
+			String value = line[1].trim();
+
+			if(name.equalsIgnoreCase("!Experiment Name")){
+				experimentName = value;
+			}else if (name.equalsIgnoreCase("!Experiment Category")){
+				experimentCategory = value;
+			}else if (name.equalsIgnoreCase("!Experiment Type")){
+				experimentType = value;
+			}else if (name.equalsIgnoreCase("!Experiment Title")){
+				experimentTitle = value;
+			}else if (name.equalsIgnoreCase("!Experiment Description")){
+				experimentDescription = value;
+			}else if (name.equalsIgnoreCase("!Experiment Date")){
+				experimentDate = value;
+			}else if (name.equalsIgnoreCase("!Organism")){
+				organism = value;
+			}else if (name.equalsIgnoreCase("!Developmental Stage")){
+				stage = value;
+			}
+
+		}
+
+		experiment = getExperiment(experimentName, experimentCategory,  experimentType, experimentTitle, experimentDescription, 
+				experimentDate, organism, stage);
+
+		return experiment;
+
+	}
+
+	/**
+	 * 
+	 * @param experimentName
+	 * @param experimentCategory
+	 * @param experimentType
+	 * @param experimentTitle
+	 * @param experimentDescription
+	 * @param experimentDate
+	 * @param organism
+	 * @param stage
+	 * @param antibodyTarget
+	 * @return
+	 * @throws ObjectStoreException
+	 */
+	private Item getExperiment(String experimentName, String experimentCategory,  String experimentType, String experimentTitle, String experimentDescription, 
+			String experimentDate, String organism, String stage) throws ObjectStoreException {
+
+		Item org = organisms.get(organism);
+		if(org == null){
+			org = createItem("Organism");
+			org.setAttribute("shortname", organism);
+			try {
+				store(org);
+			} catch (ObjectStoreException e) {
+				e.printStackTrace();
+				throw new ObjectStoreException(e);
+			}
+		}
+
+		Item devstage = devstages.get(stage);
+		if(devstage == null){
+			devstage = createItem("DevelopmentalStage");
+			devstage.setAttribute("name", stage);
+			try {
+				store(devstage);
+			} catch (ObjectStoreException e) {
+				e.printStackTrace();
+				throw new ObjectStoreException(e);
+			}
+			devstages.put(stage, devstage);
+		}
+
+		Item exp = createItem("Experiment");
+		exp.setAttribute("name", experimentName);
+		exp.setAttribute("category", experimentCategory);
+		exp.setAttribute("experimentType", experimentType);
+		exp.setAttribute("title", experimentTitle);
+		exp.setAttribute("description", experimentDescription);
+		exp.setAttribute("experimentDate", experimentDate);
+		exp.setReference("organism", org.getIdentifier());
+		exp.addToCollection("developmentalStages", devstage.getIdentifier());
+
+
+		try {
+			store(exp);
+		} catch (ObjectStoreException e) {
+			e.printStackTrace();
+			throw new ObjectStoreException(e);
+		}
+
+		return exp;
+
+	}
+
+
+	private Item getGene(String ens) throws ObjectStoreException {
+
+		String identifier = ens;
+		if (StringUtils.isEmpty(identifier)) {
+			return null;
+		}
+		if (genes.containsKey(identifier)) {
+			return genes.get(identifier);
+		}
+		Item gene = createItem("Gene");
+		//gene.setAttribute("primaryIdentifier", identifier);
+		gene.setAttribute("symbol", identifier);
+		gene.setReference("organism", organism);
+		//String refId = gene.getIdentifier();
+		genes.put(identifier, gene);
+		//store(gene);
+		return gene;
+	}
+
+
+	/**
+	 * 
+	 * @throws ObjectStoreException
+	 */
+
+	private void storeGenes() throws ObjectStoreException {
+		for (Item gene : genes.values()) {
+			try {
+				store(gene);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+
+
+}

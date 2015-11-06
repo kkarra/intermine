@@ -1,0 +1,4 @@
+<project name="trops_chipseq_histone_mod-tasks" default="default" basedir=".">
+  <description>build trops_chipseq_histone_mod tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
