@@ -45,7 +45,7 @@ public class HomologeneConverter extends BioFileConverter
 
     private static final String PROP_FILE = "homologene_config.properties";
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
-    private static final String DEFAULT_GENEID_TYPE = "symbol";
+    //private static final String DEFAULT_GENEID_TYPE = "symbol";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();

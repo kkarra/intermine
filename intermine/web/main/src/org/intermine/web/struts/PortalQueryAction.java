@@ -91,8 +91,7 @@ public class PortalQueryAction extends InterMineAction
         if (StringUtils.isBlank(extId)) {
             extId = request.getParameter("externalids");
         }
-        
-        //String extraFieldValue = request.getParameter("filter");
+
         String extraFieldValue = request.getParameter("extraValue");
 
         // Add a message to welcome the user
@@ -117,7 +116,9 @@ public class PortalQueryAction extends InterMineAction
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
             String defaultClass = properties.getProperty("webapp.portal.defaultClass");
             BagQueryRunner bagRunner = im.getBagQueryRunner();
-            BagQueryResult bqr = bagRunner.searchForBag(defaultClass, Arrays.asList(idList), extraFieldValue,  false);
+            BagQueryResult bqr
+                = bagRunner.searchForBag(defaultClass, Arrays.asList(idList), extraFieldValue,
+                        false);
 
             Map<Integer, List> matches = bqr.getMatches();
             Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
@@ -170,8 +171,6 @@ public class PortalQueryAction extends InterMineAction
         PathQuery pathQuery = new PathQuery(model);
         pathQuery.addViews(PathQueryResultHelper.getDefaultViewForClass(className, model,
                 webConfig, null));
-
-        //pathQuery.addConstraint(Constraints.lookup(className, extId, null));
         pathQuery.addConstraint(Constraints.lookup(className, extId, extraFieldValue));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();

@@ -49,13 +49,14 @@
 	</class>
 
 	<class className="org.intermine.model.bio.Gene">
-	  <headerconfig>
-      <customlinks>
-        <customlink
-          url="http://www.xenbase.org/gene/showgene.do?method=displayGeneSummary&amp;geneId={xenbaseGeneId}"
-          image="frog.png"/>
-      </customlinks>
-     </headerconfig>
+        <headerconfig>
+           <customlinks>
+              <customlink
+               url="http://www.xenbase.org/gene/showgene.do?method=displayGeneSummary&amp;geneId={xenbaseGeneId}"
+               image="xenbase_logo.png"
+               />
+           </customlinks>
+       </headerconfig>
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier" />
 			<fieldconfig fieldExpr="secondaryIdentifier" />

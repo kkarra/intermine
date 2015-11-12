@@ -116,8 +116,7 @@ public class TableWidgetLdr extends WidgetLdr
 
         List<?> results;
         try {
-            //results = os.execute(q, 0, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
-        	results = os.execute(q, 0, 2000, true, true, ObjectStore.SEQUENCE_IGNORE);
+            results = os.execute(q, 0, 5000, true, true, ObjectStore.SEQUENCE_IGNORE);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }

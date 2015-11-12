@@ -22,14 +22,6 @@
       <property name="src.data.dir" location="/data/intermine/gff"/>
      </source> 
 
-    <!--<source name="waern_23390610" type="waern_23390610">
-      <property name="gff3.taxonId" value="4932"/>
-      <property name="gff3.dataSourceName" value="Waern, K; Snyder, M. 2013 PMID  23390610"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Differentialy expressed genes under different growth condtions"/>
-      <property name="src.data.dir" location="/data/intermine/Waern_2013_PMID_23390610/track_files"/>
-     </source>-->
-
     <source name="eco" type="eco">
       <property name="src.data.file" location="/data/intermine/eco/eco.obo"/>
     </source>
@@ -48,38 +40,6 @@
         <property name="dataSourceName" value="yeast"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.SpellExpressionConverter"/>
    </source> 
-
-  <source name="treefam" type="treefam">
-      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/treefam"/>
-      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
-      <property name="geneFile" value="/data/intermine/yeast_orthologs/treefam/genes.txt.table"/>
-      <property name="treefam.organisms" value="4932"/> 
-      <property name="treefam.homologues" value="7227 6239 7165 9606 10090 10116 7955"/>
-   </source>
-
-   <source name="panther" type="panther">
-      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/panther"/>
-      <property name="panther.organisms" value="4932"/>   
-      <property name="panther.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source>
-
-    <source name="homologene" type="homologene">
-      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/homologene"/>
-      <property name="homologene.organisms" value="4932"/>   
-      <property name="homologene.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source>
-
-     <!--<source name="orthodb" type="orthodb">
-      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/orthoDB"/>
-      <property name="orthodb.organisms" value="4932"/>   
-      <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source>-->
-
-    <source name="ensembl-compara" type="ensembl-compara">
-      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/ensembl_compara"/>
-      <property name="ensemblcompara.organisms" value="4932"/>
-      <property name="ensemblcompara.homologues" value="9606 7227 6239 10090 10116 7955"/>
-    </source>
 
     <source name="sgd-complementation" type="sgd-complementation">
      <property name="src.data.dir" location="/data/intermine/yeast_complementation"/>
@@ -120,6 +80,37 @@
 
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/data/intermine/omim"/>
+    </source>
+  <source name="treefam" type="treefam">
+      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/treefam"/>
+      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
+      <property name="geneFile" value="/data/intermine/yeast_orthologs/treefam/genes.txt.table"/>
+      <property name="treefam.organisms" value="4932"/> 
+      <property name="treefam.homologues" value="7227 6239 7165 9606 10090 10116 7955"/>
+   </source>
+
+   <source name="panther" type="panther">
+      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/panther"/>
+      <property name="panther.organisms" value="4932"/>   
+      <property name="panther.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>
+
+    <source name="homologene" type="homologene">
+      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/homologene"/>
+      <property name="homologene.organisms" value="4932"/>   
+      <property name="homologene.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>
+
+     <!--<source name="orthodb" type="orthodb">
+      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/orthoDB"/>
+      <property name="orthodb.organisms" value="4932"/>   
+      <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>-->
+
+    <source name="ensembl-compara" type="ensembl-compara">
+      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/ensembl_compara"/>
+      <property name="ensemblcompara.organisms" value="4932"/>
+      <property name="ensemblcompara.homologues" value="9606 7227 6239 10090 10116 7955"/>
     </source>
 
     <source name="psi-mi-ontology" type="psi-mi-ontology">
