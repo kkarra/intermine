@@ -86,7 +86,7 @@ public class PsiComplexesConverter extends BioFileConverter
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
         //INTERACTOR_TYPES.put("MI:0320", "RNA");
-        //INTERACTOR_TYPES.put("MI:0609", "SnoRNA");
+        INTERACTOR_TYPES.put("MI:0611", "Gene"); // name: signal recognition particle rna
         INTERACTOR_TYPES.put("MI:0320", "Gene"); //name: ribonucleic acid  ncRNA and rrnagene 
         INTERACTOR_TYPES.put("MI:0681", "Gene"); //name: double stranded deoxyribonucleic acid
         INTERACTOR_TYPES.put("MI:0325", "Gene"); //name: transfer rna

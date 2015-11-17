@@ -60,6 +60,7 @@
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier" />
 			<fieldconfig fieldExpr="secondaryIdentifier" />
+			<fieldconfig fieldExpr="xenbaseGeneId" />
 			<fieldconfig fieldExpr="symbol" />
 			<fieldconfig fieldExpr="name" />
 			<fieldconfig fieldExpr="chromosomeLocation"
@@ -269,6 +270,7 @@
 			<fieldconfig fieldExpr="volume" />
 			<fieldconfig fieldExpr="pages" />
 			<fieldconfig fieldExpr="pubMedId" />
+			<fieldconfig fieldExpr="DbPubId" />
 		</fields>
 	</class>
 
