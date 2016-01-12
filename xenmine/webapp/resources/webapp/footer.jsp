@@ -56,7 +56,7 @@
         <blockquote><font size="-2">XenMine is a collaboration between Baker, Li and Cherry Labs and the Intermine project at the <a href=" http://www.sysbiol.cam.ac.uk/"> Cambridge Systems Biology Centre</a>. XenMine is funded by NHGRI grant 5R01HD076839-02.
         </font></blockquote>
 
-        <blockquote><font size="-2">Copyright &#169; 1997-2015 The Board of Trustees of Leland Stanford Junior University. Permission to use the information contained in this database was given by the researchers/institutes who contributed or published the information. Users of the database are solely responsible for compliance with any copyright restrictions, including those applying to the author abstracts. Documents from this server are provided "AS-IS" without any warranty, expressed or implied.
+        <blockquote><font size="-2">Copyright &#169; 1997-2016 The Board of Trustees of Leland Stanford Junior University. Permission to use the information contained in this database was given by the researchers/institutes who contributed or published the information. Users of the database are solely responsible for compliance with any copyright restrictions, including those applying to the author abstracts. Documents from this server are provided "AS-IS" without any warranty, expressed or implied.
         <br>
         <br></font></blockquote>
 
