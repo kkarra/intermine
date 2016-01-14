@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -64,8 +63,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
-    private static final String PROTEIN = "MI:0326";
-    private static final String SMALL_MOLECULE = "MI:0328";
+    //private static final String PROTEIN = "MI:0326";
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
@@ -79,13 +77,14 @@ public class PsiComplexesConverter extends BioFileConverter
     // accession to stored object ID
     private Map<String, String> interactors = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
+    private Item organism;
 
-    // See #1168
     static {
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
-        INTERACTOR_TYPES.put("MI:0320", "RNA");
-        INTERACTOR_TYPES.put("MI:0609", "SnoRNA");
+        INTERACTOR_TYPES.put("MI:0320", "Gene"); //name: ribonucleic acid  ncRNA and rrnagene 
+        INTERACTOR_TYPES.put("MI:0681", "Gene"); //name: double stranded deoxyribonucleic acid
+        INTERACTOR_TYPES.put("MI:0325", "Gene"); //name: transfer rna
     }
 
     /**
@@ -93,8 +92,15 @@ public class PsiComplexesConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public PsiComplexesConverter(ItemWriter writer, Model model) {
+    public PsiComplexesConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+		organism = createItem("Organism");
+		organism.setAttribute("taxonId", "4932");
+		organism.setAttribute("genus", "Saccharomyces");
+		organism.setAttribute("species", "cerevisiae");
+		organism.setAttribute("name", "Saccharomyces cerevisiae");
+		organism.setAttribute("shortName", "S. cerevisiae");
+		store(organism);
     }
 
     /**
@@ -275,6 +281,9 @@ public class PsiComplexesConverter extends BioFileConverter
             Position startPosition = range.getStart();
             Position endPosition = range.getEnd();
             Long start = startPosition.getStart();
+	    if(start ==0){
+             continue;
+            }
             Long end = endPosition.getStart();
             if (start + end == 0) {
                 continue;
@@ -342,32 +351,48 @@ public class PsiComplexesConverter extends BioFileConverter
             primaryIdentifier = accession;
         }
         String refId = interactors.get(primaryIdentifier);
+        
         if (refId == null) {
+        	
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
+            System.out.println("typetermidentifier is ... " + typeTermIdentifier);
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
+            
             if (interactorType == null) {
-                // see #1168 - this needs to be automatic
-                throw new BuildException("Unknown interactor type: " + typeTermIdentifier);
+              
+                return null; // we don't know how to handle stuff that is not hardcoded in INTERACTOR_TYPES
             }
-            Item protein = createItem(interactorType);
-            protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            if (PROTEIN.equals(typeTermIdentifier)) {
-                protein.setAttribute("primaryAccession", accession);
-            } else if (SMALL_MOLECULE.equals(typeTermIdentifier)) {
-                String smallMolecule = getChebiName(primaryIdentifier);
-                if (StringUtils.isNotEmpty(smallMolecule)) {
-                    protein.setAttribute("name", smallMolecule);
-                }
+            
+            if(interactorType.equals("Gene")) {
+
+            	Item gene = createItem(interactorType);
+            	gene.setAttribute("primaryIdentifier", primaryIdentifier);
+            	gene.setReference("organism", organism.getIdentifier());//organismRefId
+            	store(gene);
+            	refId = gene.getIdentifier();
+            	interactors.put(primaryIdentifier, refId);
+
+            }else if(interactorType.equals("Protein") || interactorType.equals("SmallMolecule")){
+
+            	Item protein = createItem(interactorType);
+            	if (interactorType.equals("Protein") ) {
+            		protein.setAttribute("primaryIdentifier", primaryIdentifier);
+            	} else {
+            		protein.setAttribute("primaryIdentifier", primaryIdentifier);
+            		// small molecule
+            		String smallMolecule = getChebiName(primaryIdentifier);
+            		if (StringUtils.isNotEmpty(smallMolecule)) {
+            			protein.setAttribute("name", smallMolecule);
+            		}
+            	}
+            	protein.setReference("organism", organism.getIdentifier());//organismRefId          	
+            	store(protein);
+            	refId = protein.getIdentifier();
+            	interactors.put(primaryIdentifier, refId);
             }
-            Organism organism = participant.getOrganism();
-            if (organism != null) {
-                String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
-                protein.setReference("organism", organismRefId);
-            }
-            store(protein);
-            refId = protein.getIdentifier();
-            interactors.put(primaryIdentifier, refId);
+
         }
+        
         if (createSynonym) {
             createSynonym(refId, originalAccession, true);
             String proIdentifier = originalAccession.substring(originalAccession.indexOf("-") + 1);
