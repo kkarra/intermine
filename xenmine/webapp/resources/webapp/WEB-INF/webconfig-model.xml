@@ -111,8 +111,7 @@
 		<fields>
 			<fieldconfig fieldExpr="gene.primaryIdentifier"></fieldconfig>
 			<fieldconfig fieldExpr="homologue.primaryIdentifier"></fieldconfig>
-			<fieldconfig fieldExpr="homologue.organism.shortName" />
-			<fieldconfig fieldExpr="type" />
+			<fieldconfig fieldExpr="homologue.organism.commonName"></fieldconfig>
 		</fields>
 	</class>
 
@@ -342,6 +341,14 @@
 			jspName="model/sequenceFeatureDisplayer.jsp"
 			replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
 			placement="Summary" types="SequenceFeature" />
+			
+			
+	   <!--<reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+			jspName="model/homologueDisplayer.jsp" 
+			replacesFields="homologues"
+			placement="Gene"
+			parameters="{'dataSets': ['Panther data set']}" 
+			types="Gene" />-->
 			
 		<reportdisplayer
 			javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
