@@ -64,7 +64,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -2123,7 +2123,7 @@ public class SgdConverter extends BioDBConverter {
 
 		String shortType = interactionType.substring(0, interactionType.indexOf(' ')); 
 		detail.setAttribute("relationshipType", shortType); //interactionType
-		String unqName = firstAuthor+"-"+pubMedId;
+		String unqName = firstAuthor+"-"+pubMedId+"-"+experimentType;  //1/21/6
 
 		//add publication as experiment type
 		Item storedExperimentType = experimenttype.get(unqName);		
@@ -2131,8 +2131,8 @@ public class SgdConverter extends BioDBConverter {
 			
 			storedExperimentType = createItem("InteractionExperiment");
 			storedExperimentType.setAttribute("name", unqName);	
-			experimenttype.put(unqName, storedExperimentType);
-					
+			experimenttype.put(unqName, storedExperimentType);			
+			
 			String storedTermId = interactionterms.get(experimentType);
 			if (storedTermId != null) {
 				storedExperimentType.addToCollection("interactionDetectionMethods", storedTermId );
@@ -2140,7 +2140,6 @@ public class SgdConverter extends BioDBConverter {
 				storedTermId = getInteractionTerm(experimentType);
 				storedExperimentType.addToCollection("interactionDetectionMethods", storedTermId );
 			}
-
 		}
 
 		//add publication as reference on experiment
