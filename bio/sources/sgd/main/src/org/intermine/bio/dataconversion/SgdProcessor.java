@@ -408,14 +408,14 @@ public class SgdProcessor
     protected ResultSet getCrossReferences(Connection connection)
     throws SQLException {
 
-    	String query = "select f.feature_no, dbx.dbxref_id,  dbx.source "
+    	String query = "select f.feature_no, dbx.dbxref_id,  dbx.source, dbx.dbxref_type"
     		+ " FROM bud.feature f, bud.dbxref dbx, bud.dbxref_feat df, bud.dbxref_url du, bud.url u"
     		+ " where f.feature_no = df.feature_no AND df.dbxref_no = dbx.dbxref_no AND dbx.dbxref_no = du.dbxref_no AND du.url_no = u.url_no"
     		+ " AND f.feature_type in (select col_value from bud.web_metadata "
     		+ " WHERE application_name = 'Chromosomal Feature Search' "
     		+ " AND col_name = 'FEATURE_TYPE') "
-    		+ " and dbx.source in ('EBI', 'GenBank/EMBL/DDBJ', 'IUBMB', 'NCBI', 'TCDB', 'RNAcentral') "
-    		+ " group by f.feature_no, dbx.dbxref_id,  dbx.source"
+    		+ " and dbx.source != 'SGD'"  //in ('EBI', 'GenBank/EMBL/DDBJ', 'IUBMB', 'NCBI', 'TCDB', 'RNAcentral') "
+    		+ " group by f.feature_no, dbx.dbxref_id,  dbx.source, dbx.dbxref_type"
     		+ " order by f.feature_no asc";
 
     	LOG.info("executing: " + query);        

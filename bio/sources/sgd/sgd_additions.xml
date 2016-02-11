@@ -51,7 +51,8 @@
   <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
  </class>
  <class name="CrossReference" is-interface="true">
-        <attribute name="dbxrefsource" type="java.lang.String"/>
+        <attribute name="dbxreftype" type="java.lang.String"/>
+        <attribute name="url" type="java.lang.String"/>
 </class>
  <class name="ExternalTranscribedSpacerRegion" extends="SequenceFeature" is-interface="true">
   <reference name="ncrna_gene" referenced-type="NcRNAGene" reverse-reference="externaltranscribedspacerregions"/>

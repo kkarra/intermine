@@ -121,13 +121,13 @@
       <property name="src.data.file" location="/share/intermine/go/gene_ontology_edit.obo"/>
     </source>
 
-    <source name="chebi" type="chebi">
+    <!--<source name="chebi" type="chebi">
       <property name="src.data.file" location="/data/intermine/chebi_ontology/chebi-slim_subsets-20141217_bio.obo"/>
     </source>
    
     <source name="chebi-slim" type="chebi-slim">
       <property name="src.data.file" location="/data/intermine/chebi_ontology/ChEBI_sgd_biological_role_slim.obo"/>
-    </source>
+    </source>-->
 
     <source name="go-function-summary" type="go-function-summary">
       <property name="src.data.dir" location="/share/intermine/go/function_summary"/>

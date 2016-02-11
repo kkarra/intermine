@@ -423,8 +423,7 @@ public class SgdConverter extends BioDBConverter {
 	private void processCrossReferences(Connection connection)
 			throws SQLException, ObjectStoreException {
 
-		ResultSet res = PROCESSOR.getCrossReferences(connection); // ordered by
-		// featureNo
+		ResultSet res = PROCESSOR.getCrossReferences(connection); // ordered by featureNo
 
 		System.out.println("Processing DbXRefs...");
 
@@ -433,16 +432,135 @@ public class SgdConverter extends BioDBConverter {
 			String geneFeatureNo = res.getString("feature_no");
 			String dbx_source = res.getString("source");
 			String dbxref_id = res.getString("dbxref_id");
+			String dbxref_type = res.getString("dbxref_type");
 
 			Item item = genes.get(geneFeatureNo);
 
 			if (item != null) {
-				getCrossReference(item.getIdentifier(), dbxref_id, dbx_source);
+				String url = getCrossRefURL(dbx_source,dbxref_id, dbxref_type);
+				getCrossReference(item.getIdentifier(), dbxref_id, dbx_source, dbxref_type, url);
 			}
 		}
 
 	}
 
+	
+	private String getCrossRefURL(String source, String dbxref_id, String dbxref_type) throws SQLException, ObjectStoreException {
+		
+		String url = "";
+		
+		if(source.equalsIgnoreCase("AspGD")){
+			url = "http://www.aspgd.org/cgi-bin/locus.pl?locus="+dbxref_id;
+		}else if (source.equalsIgnoreCase("BioGRID")){
+			url = "http://thebiogrid.org/"+dbxref_id;
+		}else if (source.equalsIgnoreCase("CGD")){
+			url = " http://www.candidagenome.org/cgi-bin/locus.pl?locus="+dbxref_id;
+		}else if (source.equalsIgnoreCase("DIP")){
+			url = "http://dip.doe-mbi.ucla.edu/dip/Browse.cgi?PK="+dbxref_id;
+		}else if (source.equalsIgnoreCase("EBI")){
+			url = "http://www.uniprot.org/uniprot/"+dbxref_id;
+		}else if (source.equalsIgnoreCase("EUROSCARF")){
+	        url = "http://web.uni-frankfurt.de/fb15/mikro/euroscarf/data/"+dbxref_id;
+		}else if (source.equalsIgnoreCase("IUBMB")){
+			url = "http://www.expasy.org/enzyme/"+dbxref_id;
+		}else if (source.equalsIgnoreCase("LoQate")){
+			url = "http://www.weizmann.ac.il/molgen/loqate/gene/view/"+dbxref_id;
+		}else if (source.equalsIgnoreCase("MetaCyc")){
+			url = "http://pathway.yeastgenome.org/YEAST/new-image?type=PATHWAY&object="+dbxref_id;
+		}else if (source.equalsIgnoreCase("PDB")){
+			url = "http://www.rcsb.org/pdb/explore/explore.do?structureId="+dbxref_id;
+        }else if (source.equalsIgnoreCase("NCBI") && (dbxref_type.equalsIgnoreCase("Gene ID"))){
+			url = "http://www.ncbi.nlm.nih.gov/gene/"+dbxref_id;
+        }else if (source.equalsIgnoreCase("NCBI") && (dbxref_type.equalsIgnoreCase("RefSeq protein version ID"))){
+			url = "http://www.ncbi.nlm.nih.gov:80/entrez/viewer.fcgi?val="+dbxref_id;
+        }else if (source.equalsIgnoreCase("PomBase")){
+	       url = "http://www.pombase.org/spombe/result/"+dbxref_id;
+        }else if (source.equalsIgnoreCase("RNAcentral")){
+        	url = "http://rnacentral.org/rna/"+dbxref_id;
+        }else if (source.equalsIgnoreCase("TCDB")){
+        	url = "http://www.tcdb.org/tcdb/index.php?tc="+dbxref_id;
+        }
+			
+		return url;
+	}
+	
+	
+	private String getCrossReference(String subjectId, String id, String source, String dbxref_type, String url)
+			throws ObjectStoreException {
+
+		String refId = "";
+		Item crf = createItem("CrossReference");
+		crf.setReference("subject", subjectId);
+		crf.setAttribute("identifier", id);
+		crf.setAttribute("dbxreftype", dbxref_type);
+		crf.setAttribute("url", url);
+
+		String dsId = datasources.get(source);
+		if (dsId == null) {
+			Item ds = createItem("DataSource");
+			ds.setAttribute("name", source);
+			String sourceUrl = getSourceURL(source);
+			ds.setAttribute("url", sourceUrl);
+			try {
+				store(ds);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+
+			crf.setReference("source", ds.getIdentifier());
+			datasources.put(source, ds.getIdentifier());
+		} else {
+			crf.setReference("source", dsId);
+		}
+
+		try {
+			store(crf);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}
+
+		refId = crf.getIdentifier();
+		return refId;
+
+	}
+
+	private String getSourceURL(String source) throws ObjectStoreException {
+		
+		String url = "";
+		
+		if(source.equalsIgnoreCase("AspGD")){
+			url = "http://www.aspgd.org/";
+		}else if (source.equalsIgnoreCase("BioGRID")){
+			url = "http://thebiogrid.org/";
+		}else if (source.equalsIgnoreCase("CGD")){
+			url = " http://www.candidagenome.org/";
+		}else if (source.equalsIgnoreCase("DIP")){
+			url = "http://dip.doe-mbi.ucla.edu/";
+		}else if (source.equalsIgnoreCase("EBI")){
+			url = "http://www.uniprot.org/uniprot/";
+		}else if (source.equalsIgnoreCase("EUROSCARF")){
+	        url = "http://web.uni-frankfurt.de/";
+		}else if (source.equalsIgnoreCase("IUBMB")){
+			url = "http://www.expasy.org/";
+		}else if (source.equalsIgnoreCase("LoQate")){
+			url = "http://www.weizmann.ac.il/molgen/loqate/";
+		}else if (source.equalsIgnoreCase("MetaCyc")){
+			url = "http://pathway.yeastgenome.org/";
+		}else if (source.equalsIgnoreCase("PDB")){
+			url = "http://www.rcsb.org/pdb/";
+        }else if (source.equalsIgnoreCase("NCBI")){
+			url = "http://www.ncbi.nlm.nih.gov/";
+        }else if (source.equalsIgnoreCase("PomBase")){
+	       url = "http://www.pombase.org/";
+        }else if (source.equalsIgnoreCase("RNAcentral")){
+        	url = "http://rnacentral.org/rna/";
+        }else if (source.equalsIgnoreCase("TCDB")){
+        	url = "http://www.tcdb.org/tcdb/";
+        }
+		
+		return url;
+	}
+	
 	
 	/**
 	 * 
@@ -1995,41 +2113,6 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 
-	private String getCrossReference(String subjectId, String id, String source)
-			throws ObjectStoreException {
-
-		String refId = "";
-		Item crf = createItem("CrossReference");
-		crf.setReference("subject", subjectId);
-		crf.setAttribute("identifier", id);
-		crf.setAttribute("dbxrefsource", source);
-
-		String dsId = datasources.get(source);
-		if (dsId == null) {
-			Item ds = createItem("DataSource");
-			ds.setAttribute("name", source);
-			try {
-				store(ds);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-
-			crf.setReference("source", ds.getIdentifier());
-			datasources.put(source, ds.getIdentifier());
-		} else {
-			crf.setReference("source", dsId);
-		}
-
-		try {
-			store(crf);
-		} catch (ObjectStoreException e) {
-			throw new ObjectStoreException(e);
-		}
-
-		refId = crf.getIdentifier();
-		return refId;
-
-	}
 
 	private void getPhenotype(String prevPhenotypeAnnotNo,
 			String prevQualifier, String prevObservable,
