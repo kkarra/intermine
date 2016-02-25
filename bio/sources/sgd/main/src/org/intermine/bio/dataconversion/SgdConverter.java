@@ -498,7 +498,8 @@ public class SgdConverter extends BioDBConverter {
 		String dsId = datasources.get(source);
 		if (dsId == null) {
 			Item ds = createItem("DataSource");
-			ds.setAttribute("name", source);
+			//ds.setAttribute("name", source);
+			ds.setAttribute("name", dbxref_type);
 			String sourceUrl = getSourceURL(source);
 			ds.setAttribute("url", sourceUrl);
 			try {
