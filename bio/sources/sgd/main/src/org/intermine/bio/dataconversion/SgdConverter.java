@@ -110,7 +110,7 @@ public class SgdConverter extends BioDBConverter {
 		processChrLocations(connection);
 		processGeneChildrenLocations(connection);
 		processProteins(connection);
-		processUniProtCrossReference(connection);
+		//processUniProtCrossReference(connection);
 		processAllPubs(connection);             //get all publications and their topics loaded								
 		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
 		processParalogs(connection);
@@ -493,7 +493,9 @@ public class SgdConverter extends BioDBConverter {
 		crf.setReference("subject", subjectId);
 		crf.setAttribute("identifier", id);
 		crf.setAttribute("dbxreftype", dbxref_type);
-		crf.setAttribute("url", url);
+		if(! StringUtils.isEmpty(url)) {
+			crf.setAttribute("url", url);	
+		}
 
 		String dsId = datasources.get(source);
 		if (dsId == null) {
@@ -501,7 +503,9 @@ public class SgdConverter extends BioDBConverter {
 			//ds.setAttribute("name", source);
 			ds.setAttribute("name", dbxref_type);
 			String sourceUrl = getSourceURL(source);
-			ds.setAttribute("url", sourceUrl);
+			if(! StringUtils.isEmpty(sourceUrl)) {
+				ds.setAttribute("url", sourceUrl);
+			}
 			try {
 				store(ds);
 			} catch (ObjectStoreException e) {
