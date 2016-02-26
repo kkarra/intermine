@@ -501,7 +501,8 @@ public class SgdConverter extends BioDBConverter {
 		if (dsId == null) {
 			Item ds = createItem("DataSource");
 			//ds.setAttribute("name", source);
-			ds.setAttribute("name", dbxref_type);
+			String join = source+"/"+dbxref_type;
+			ds.setAttribute("name", join);
 			String sourceUrl = getSourceURL(source);
 			if(! StringUtils.isEmpty(sourceUrl)) {
 				ds.setAttribute("url", sourceUrl);
@@ -513,7 +514,7 @@ public class SgdConverter extends BioDBConverter {
 			}
 
 			crf.setReference("source", ds.getIdentifier());
-			datasources.put(source, ds.getIdentifier());
+			datasources.put(join, ds.getIdentifier());
 		} else {
 			crf.setReference("source", dsId);
 		}
