@@ -587,13 +587,13 @@
 			placement="Regulation" 
 			types="Gene" />
 
-		<reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
+		<!--m<reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
 			jspName="model/gbrowseDisplayer.jsp"
 			 replacesFields="" 
 			 placement="Genome"
 			types="SequenceFeature" />  
 			
-	    <!-- <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+	     <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
                  jspName="model/jbrowseDisplayer.jsp"
                  replacesFields=""
                  placement="Genome"
