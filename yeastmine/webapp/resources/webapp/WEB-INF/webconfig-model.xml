@@ -613,6 +613,12 @@
 			replacesFields="publications"
 			placement="Literature" 
 			types="BioEntity" />
+		
+		<reportdisplayer javaClass="org.intermine.bio.web.displayer.ComplexDisplayer"
+                 jspName="model/complexDisplayer.jsp"
+                 replacesFields=""
+                 placement="summary"
+                 types="Complex"/>
 
 
 	</reportdisplayers>
