@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -68,6 +67,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String PROTEIN = "MI:0326";
     private static final String SMALL_MOLECULE = "MI:0328";
     private static final String BINDING_SITE = "binding region";
+    private static final String DIRECT_BINDING = "direct binding";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
     private static final String EBI = "intact";
@@ -205,9 +205,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
     private void processInteractions(Complex interactionEvidence,
             DetailHolder detail, Item complex) throws ObjectStoreException {
-
         for (ModelledParticipant modelledParticipant : interactionEvidence.getParticipants()) {
-
             Item interactor = createItem("Interactor");
 
             // annotations
@@ -223,7 +221,6 @@ public class PsiComplexesConverter extends BioFileConverter
             if (refId == null) {
                 return;
             }
-
             interactor.setReference("participant", refId);
 
             // interactions and regions
@@ -232,9 +229,8 @@ public class PsiComplexesConverter extends BioFileConverter
                 for (Feature linkedFeature : linkedFeatures) {
                     CvTerm term = linkedFeature.getType();
                     String type = term.getShortName();
-
                     // only create interactions if we have binding information
-                    if (BINDING_SITE.equals(type)) {
+                    if (BINDING_SITE.equals(type) || DIRECT_BINDING.equals(type)) {
                         String binderRefId = processProtein(linkedFeature.getParticipant()
                                 .getInteractor());
 
@@ -252,12 +248,10 @@ public class PsiComplexesConverter extends BioFileConverter
                         detailItem.setCollection("allInteractors", detail.getAllInteractors());
 
                         processRegions(linkedFeature.getRanges(), detailItem, refId, binderRefId);
-
                         store(detailItem);
                     }
                 }
             }
-
 
             // parse stoich
             processStoichiometry(modelledParticipant, interactor);
@@ -283,16 +277,13 @@ public class PsiComplexesConverter extends BioFileConverter
             Position endPosition = range.getEnd();
             Long start = startPosition.getStart();
             Long end = endPosition.getStart();
-            if (start + end == 0) {
-                continue;
-            }
             location.setAttribute("start", String.valueOf(start));
             location.setAttribute("end", String.valueOf(end));
             location.setReference("locatedOn", locatedOn);
             location.setReference("feature", feature);
             store(location);
             Item region = createItem("InteractionRegion");
-            region.setReference("location", location);
+            region.addToCollection("locations", location);
             region.setReference("interaction", detail);
             store(region);
         }
@@ -383,8 +374,6 @@ public class PsiComplexesConverter extends BioFileConverter
         }
         return refId;
     }
-
-
 
     private String getChebiName(String identifier) {
         try {
@@ -498,7 +487,7 @@ public class PsiComplexesConverter extends BioFileConverter
         protected String relationshipType;
         protected List<String> allInteractors;
 
-        public DetailHolder() {
+        protected DetailHolder() {
             allInteractors = new ArrayList<String>();
         }
 

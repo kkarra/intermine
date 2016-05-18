@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2015 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,8 +60,6 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    protected IdResolver rslv;
-
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -88,6 +86,8 @@ public class OmimConverter extends BioDirectoryConverter
         //rslv = IdResolverService.getHumanIdResolver();
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE, NCBI_ID_TXT_FILE};
+       // String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
+
         Set<String> missingFiles = new HashSet<String>();
         for (String requiredFile : requiredFiles) {
             if (!files.containsKey(requiredFile)) {
@@ -280,6 +280,13 @@ public class OmimConverter extends BioDirectoryConverter
             //String geneItemId = getGeneItemId(geneSymbol);
             String geneItemId = genes.get(geneSymbol);
        
+            /*--kk - this bit came from 1.6.6 - chk String symbolStr = bits[1];
+            String[] symbols = symbolStr.split(",");
+            // main HGNC symbols is first, others are synonyms
+            String symbolFromFile = symbols[0].trim();
+
+            String geneItemId = getGeneItemId(symbolFromFile);*/
+
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
@@ -328,6 +335,7 @@ public class OmimConverter extends BioDirectoryConverter
         }
         return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
     }*/
+
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
