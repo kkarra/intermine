@@ -161,7 +161,7 @@
 <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
 <reference name="gene" referenced-type="Gene"/>
 <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
-<reference name="location" referenced-type="Location"/>
+<reference name="locations" referenced-type="Location"/>
 </class>
 
 <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/> 
