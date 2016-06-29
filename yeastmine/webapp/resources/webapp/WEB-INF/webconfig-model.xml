@@ -18,13 +18,7 @@
       <fieldconfig fieldExpr="goAnnotation" label="Complex GO Annotation"/>
 	  <fieldconfig fieldExpr="publications" label="Complex Publications"/>
 	  <fieldconfig fieldExpr="allInteractors" label="Complex Participant"/>
-	  <fieldconfig fieldExpr="publications.pubMedId" label="Complex Publications > PubMed ID"/>
-	 <fieldconfig fieldExpr="allInteractors.type" label="Complex Participant Type"/>
-	 <fieldconfig fieldExpr="allInteractors.stoichiometry" label="Complex Participant > Stoichiometry"/>
-	<fieldconfig fieldExpr="allInteractors.biologicalRole" label="Complex Participant > Biological Role"/>
-	<fieldconfig fieldExpr="allInteractors.participant.primaryIdentifier" label="Complex Participant > Primary DBID"/>
-	<fieldconfig fieldExpr="allInteractors.participant.secondaryIdentifier" label="Complex Participant > Secondary Identifier"/>
-	<fieldconfig fieldExpr="allInteractors.participant.symbol" label="Complex Participant > Standard Name"/>  
+	   
     </fields>
   </class>
  
