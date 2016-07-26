@@ -1,0 +1,4 @@
+<project name="protein-half-life-tasks" default="default" basedir=".">
+  <description>build protein-half-life tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
