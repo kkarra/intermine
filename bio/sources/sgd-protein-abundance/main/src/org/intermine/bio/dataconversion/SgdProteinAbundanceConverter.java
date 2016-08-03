@@ -112,8 +112,9 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 			String error = line[7].trim();
 			String localization = line[8].trim();
 			String pmid = line[9].trim();
+			String units = line[10].trim();
 
-			newProduct(protein, gfptagged, gfpvisualized, tapvisualized, newabundance, error, localization, pmid);
+			newProduct(protein, gfptagged, gfpvisualized, tapvisualized, newabundance, error, localization, pmid, units);
 
 		}
 
@@ -132,11 +133,11 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 	 * @throws Exception
 	 */
 	private void newProduct(String proteinId, String gfptagged, String gfpvisualized, String tapvisualized, String abundance,
-			String error, String localization, String pmid)
+			String error, String localization, String pmid, String units)
 					throws ObjectStoreException, Exception {		
 
 		Item protein = getProteinItem(proteinId);		
-		Item pmods = getProteinAbundance(gfptagged, gfpvisualized,tapvisualized, abundance, error, localization, pmid);
+		Item pmods = getProteinAbundance(gfptagged, gfpvisualized,tapvisualized, abundance, error, localization, pmid, units);
 		protein.addToCollection("proteinAbundance", pmods.getIdentifier());
 
 	}
@@ -169,7 +170,7 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 	 * @return
 	 */
 	private Item getProteinAbundance(String gfptagged, String gfpvisualized, String tapvisualized, String abundance,
-			String error, String localization, String pmid) throws ObjectStoreException {
+			String error, String localization, String pmid, String units) throws ObjectStoreException {
 
 		Item item = createItem("ProteinAbundance");
 
@@ -177,6 +178,7 @@ public class SgdProteinAbundanceConverter extends BioFileConverter
 		if(StringUtils.isNotEmpty(gfpvisualized)){  item.setAttribute("gfpVisualized", gfpvisualized);}
 		if(StringUtils.isNotEmpty(tapvisualized)){  item.setAttribute("tapVisualized", tapvisualized);}
 		if(StringUtils.isNotEmpty(abundance)){ item.setAttribute("abundance", abundance);}
+		if(StringUtils.isNotEmpty(units)){ item.setAttribute("units", units);}
 		if(StringUtils.isNotEmpty(error)){  item.setAttribute("error", error);}
 		
 		item.setAttribute("source", "SGD");

@@ -13,6 +13,7 @@
 	<attribute name="gfpVisualized" type="java.lang.String"/>
 	<attribute name="tapVisualized" type="java.lang.String"/>
 	<attribute name="abundance" type="java.lang.Float"/>
+	<attribute name="units" type="java.lang.String"/>
 	<attribute name="error" type="java.lang.String"/>
 	<attribute name="source" type="java.lang.String"/>
 	<reference name="publication" referenced-type="Publication"/>
