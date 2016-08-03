@@ -9,8 +9,8 @@
 
 <class name="ProteinHalfLife" extends="BioEntity" is-interface="true">
 	<attribute name="experiment" type="java.lang.String"/>
-	<attribute name="valueInHours" type="java.lang.Float"/>
-	<attribute name="valueInMinutes" type="java.lang.Float"/>
+	<attribute name="value" type="java.lang.Float"/>
+	<attribute name="units" type="java.lang.String"/>
 	<attribute name="source" type="java.lang.String"/>
 	<reference name="publication" referenced-type="Publication"/>
 	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinHalfLife"/>

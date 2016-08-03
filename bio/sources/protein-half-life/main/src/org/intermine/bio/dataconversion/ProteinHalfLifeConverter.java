@@ -96,11 +96,13 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 
 			String experiment = line[0].trim();
 			String protein =  line[1].trim();     
-			String valueMinutes =  line[2].trim(); 
+			String valueMinutes =  line[2].trim();
+			String stringMinutes =  line[3].trim(); 
 			String valueHours = line[4].trim();
+			String stringHours = line[5].trim();
 			String pmid = line[6].trim();
 
-			newProduct(experiment, protein, valueHours, valueMinutes, pmid);
+			newProduct(experiment, protein, valueHours, stringHours, valueMinutes, stringMinutes, pmid);
 
 		}
 
@@ -118,12 +120,16 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 	 * @throws ObjectStoreException
 	 * @throws Exception
 	 */
-	private void newProduct(String experiment, String proteinId, String valueHours, String valueMins, String pmid)
+	private void newProduct(String experiment, String proteinId, String valueHours, String stringHours, String valueMins, String stringMinutes, String pmid)
 					throws ObjectStoreException, Exception {		
 
 		Item protein = getProteinItem(proteinId);		
-		Item pmods = getProteinHalfLife(experiment, valueHours, valueMins, pmid);
+		
+		Item pmods = getProteinHalfLife(experiment, valueHours, stringHours, pmid);
 		protein.addToCollection("proteinHalfLife", pmods.getIdentifier());
+		
+		Item pmods2 = getProteinHalfLife(experiment, valueMins, stringMinutes, pmid);
+		protein.addToCollection("proteinHalfLife", pmods2.getIdentifier());
 
 	}
 	/**
@@ -154,13 +160,13 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 	 * @param pmid
 	 * @return
 	 */
-	private Item getProteinHalfLife(String experiment, String valueHours, String valueMins, String pmid) throws ObjectStoreException {
+	private Item getProteinHalfLife(String experiment, String value, String units, String pmid) throws ObjectStoreException {
 
 		Item item = createItem("ProteinHalfLife");
 
 		if(StringUtils.isNotEmpty(experiment)){  item.setAttribute("experiment", experiment);}
-		if(StringUtils.isNotEmpty(valueHours)){  item.setAttribute("valueInHours", valueHours);}
-		if(StringUtils.isNotEmpty(valueMins)){  item.setAttribute("valueInMinutes", valueMins);}
+		if(StringUtils.isNotEmpty(value)){  item.setAttribute("value", value);}
+		if(StringUtils.isNotEmpty(units)){  item.setAttribute("units", units);}
 
 		
 		item.setAttribute("source", "SGD");
