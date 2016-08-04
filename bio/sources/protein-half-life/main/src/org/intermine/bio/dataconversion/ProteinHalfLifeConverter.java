@@ -95,14 +95,16 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 			}
 
 			String experiment = line[0].trim();
-			String protein =  line[1].trim();     
-			String valueMinutes =  line[2].trim();
-			String stringMinutes =  line[3].trim(); 
-			String valueHours = line[4].trim();
-			String stringHours = line[5].trim();
-			String pmid = line[6].trim();
+			String protein =  line[1].trim();  
+			String value = line[2].trim();
+			String units = line[3].trim();
+			//String valueMinutes =  line[2].trim();
+			//String stringMinutes =  line[3].trim(); 
+			//String valueHours = line[4].trim();
+			//String stringHours = line[5].trim();
+			String pmid = line[4].trim();
 
-			newProduct(experiment, protein, valueHours, stringHours, valueMinutes, stringMinutes, pmid);
+			newProduct(experiment, protein, value, units, pmid);
 
 		}
 
@@ -120,16 +122,17 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 	 * @throws ObjectStoreException
 	 * @throws Exception
 	 */
-	private void newProduct(String experiment, String proteinId, String valueHours, String stringHours, String valueMins, String stringMinutes, String pmid)
+	private void newProduct(String experiment, String proteinId, String value, String units, String pmid)
 					throws ObjectStoreException, Exception {		
 
 		Item protein = getProteinItem(proteinId);		
 		
-		Item pmods = getProteinHalfLife(experiment, valueHours, stringHours, pmid);
-		protein.addToCollection("proteinHalfLife", pmods.getIdentifier());
+		Item pmods = getProteinHalfLife(experiment, value, units, pmid);
+		//protein.setReference("proteinHalfLife", pmods.getIdentifier());
+		 protein.addToCollection("proteinHalfLife", pmods.getIdentifier());
 		
-		Item pmods2 = getProteinHalfLife(experiment, valueMins, stringMinutes, pmid);
-		protein.addToCollection("proteinHalfLife", pmods2.getIdentifier());
+		//Item pmods2 = getProteinHalfLife(experiment, valueMins, stringMinutes, pmid);
+		//protein.addToCollection("proteinHalfLife", pmods2.getIdentifier());
 
 	}
 	/**
