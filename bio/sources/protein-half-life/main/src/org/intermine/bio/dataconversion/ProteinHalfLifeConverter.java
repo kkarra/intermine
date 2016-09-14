@@ -89,7 +89,7 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 
 			String[] line = (String[]) tsvIter.next();
 
-			if (line.length < 6) {
+			if (line.length < 5) {
 				LOG.error("Couldn't process line. Expected 6 cols, but was " + line.length);
 				continue;
 			}
@@ -128,9 +128,8 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 		Item protein = getProteinItem(proteinId);		
 		
 		Item pmods = getProteinHalfLife(experiment, value, units, pmid);
-		//protein.setReference("proteinHalfLife", pmods.getIdentifier());
 		 protein.addToCollection("proteinHalfLife", pmods.getIdentifier());
-		
+
 		//Item pmods2 = getProteinHalfLife(experiment, valueMins, stringMinutes, pmid);
 		//protein.addToCollection("proteinHalfLife", pmods2.getIdentifier());
 
