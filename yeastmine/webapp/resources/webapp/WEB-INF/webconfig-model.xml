@@ -91,10 +91,10 @@
 			<fieldconfig fieldExpr="organism.shortName"/>
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="name"></fieldconfig>
-            <!--<fieldconfig fieldExpr="chromosome.identifier" label="Gene > Chromosome Identifier"></fieldconfig>-->
-            <fieldconfig fieldExpr="chromosomeLocation.end" label="Gene > End Location"></fieldconfig>
+            <fieldconfig fieldExpr="chromosome.identifier" label="Gene > Chromosome Identifier"></fieldconfig>
+            <!--<fieldconfig fieldExpr="chromosomeLocation.end" label="Gene > End Location"></fieldconfig>
             <fieldconfig fieldExpr="chromosomeLocation.start" label="Gene > Start Location"></fieldconfig>
-            <fieldconfig fieldExpr="chromosomeLocation.strand" label="Gene > Chromosome Strand"></fieldconfig> 
+            <fieldconfig fieldExpr="chromosomeLocation.strand" label="Gene > Chromosome Strand"></fieldconfig>-->
 		</fields>
        <bagdisplayers>
            <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
