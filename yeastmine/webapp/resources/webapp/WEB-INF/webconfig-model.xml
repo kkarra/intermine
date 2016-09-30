@@ -91,8 +91,8 @@
 			<fieldconfig fieldExpr="organism.shortName"/>
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="name"></fieldconfig>
-            <fieldconfig fieldExpr="chromosome.identifier" label="Gene > Chromosome Identifier"></fieldconfig>
-            <!--<fieldconfig fieldExpr="chromosomeLocation.end" label="Gene > End Location"></fieldconfig>
+            <!--<fieldconfig fieldExpr="chromosome.primaryIdentifier" label="Gene > Chromosome Identifier"></fieldconfig>
+            <fieldconfig fieldExpr="chromosomeLocation.end" label="Gene > End Location"></fieldconfig>
             <fieldconfig fieldExpr="chromosomeLocation.start" label="Gene > Start Location"></fieldconfig>
             <fieldconfig fieldExpr="chromosomeLocation.strand" label="Gene > Chromosome Strand"></fieldconfig>-->
 		</fields>
@@ -190,12 +190,12 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" label="Transcript > Primary DBID"></fieldconfig>
       <fieldconfig fieldExpr="gene.secondaryIdentifier" label="Gene" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosome.identifier" label="Transcript > Chromosome Identifier"></fieldconfig>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" label="Transcript > Chromosome Identifier"></fieldconfig>
       <fieldconfig fieldExpr="chromosomeLocation.end" label="Transcript > End Location"></fieldconfig>
       <fieldconfig fieldExpr="chromosomeLocation.start" label="Transcript > Start Location"></fieldconfig>
       <fieldconfig fieldExpr="chromosomeLocation.strand" label="Transcript > Chromosome Strand"></fieldconfig> 
-      <fieldconfig fieldExpr="threeprimedataset" label="Transcript > Three Prime Data Set"></fieldconfig>    
-      <fieldconfig fieldExpr="fiveprimedataset" label="Transcript > Five Prime Data Set"></fieldconfig>  
+      <!--<fieldconfig fieldExpr="threeprimedataset" label="Transcript > Three Prime Data Set"></fieldconfig>    
+      <fieldconfig fieldExpr="fiveprimedataset" label="Transcript > Five Prime Data Set"></fieldconfig> --> 
     </fields>
   </class>
   
