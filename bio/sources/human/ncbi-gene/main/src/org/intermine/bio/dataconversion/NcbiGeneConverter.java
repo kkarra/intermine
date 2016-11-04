@@ -141,7 +141,7 @@ public class NcbiGeneConverter extends BioFileConverter
         //gene.setAttribute("ncbiGeneNumber", record.entrez);
         
         // geneType - kk
-        gene.setAttribute("featureType", record.geneType); 
+        //gene.setAttribute("featureType", record.geneType); 
 
         // name
         if (record.officialName != null) {

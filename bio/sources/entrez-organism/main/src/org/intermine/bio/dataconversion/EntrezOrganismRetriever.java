@@ -50,7 +50,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class EntrezOrganismRetriever extends Task
 {
     protected static final Logger LOG = Logger.getLogger(EntrezOrganismRetriever.class);
-    // see http://eutils.ncbi.nlm.nih.gov/entrez/query/static/esummary_help.html for details
+    // see https://eutils.ncbi.nlm.nih.gov/entrez/query/static/esummary_help.html for details
     protected static final String ESUMMARY_URL =
         "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy&retmode=xml&id=";
     // number of summaries to retrieve per request
