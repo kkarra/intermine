@@ -117,10 +117,17 @@ public class SgdProteinInfoConverter extends BioFileConverter
 		} catch (Exception e) {
 			throw new BuildException("cannot parse file: " + getCurrentFile(), e);
 		}
+		
+		int count = 0;
 
 		while (tsvIter.hasNext()) {
 
 			String[] line = (String[]) tsvIter.next();
+			
+			if(count == 0){
+				count++;
+				continue;
+			}
 
 			if (line.length < 39) {
 				System.out.println("Couldn't process line. Expected 39 cols, but was " + line.length);
