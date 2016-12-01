@@ -168,8 +168,9 @@ public class PrecomputeTemplatesTask extends Task
     protected void precomputeTemplates() {
         List<ApiTemplate> toSummarise = new ArrayList<ApiTemplate>();
         List<ParallelPrecomputer.Job> jobs = new ArrayList<ParallelPrecomputer.Job>();
-        for (Map.Entry<String, ApiTemplate> entry : getPrecomputeTemplateQueries().entrySet()) {       	
-            ApiTemplate template = entry.getValue();              
+        for (Map.Entry<String, ApiTemplate> entry : getPrecomputeTemplateQueries().entrySet()) {
+            ApiTemplate template = entry.getValue();
+
             // check if we should ignore this template (maybe it won't precompute)
             if (ignoreNames.contains(template.getName().toLowerCase())) {
                 LOG.warn("template was in ignore list: " + template.getName());
@@ -204,8 +205,6 @@ public class PrecomputeTemplatesTask extends Task
                     continue;
                 }
             }
-            
-            LOG.info("template being processed: " + template.getName());
 
             toSummarise.add(template);
 

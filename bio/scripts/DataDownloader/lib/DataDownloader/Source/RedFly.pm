@@ -11,7 +11,7 @@ use constant {
         "Transcriptional CRMs and TFBSs from RedFly",
     SOURCE_LINK => 
         "http://redfly.ccr.buffalo.edu",
-    SOURCE_DIR => "flymine/redfly",
+    SOURCE_DIR => "redfly",
     METADATA_URL => "http://redfly.ccr.buffalo.edu/index.php",
 };
 

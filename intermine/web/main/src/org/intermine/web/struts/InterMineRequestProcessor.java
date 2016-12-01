@@ -65,7 +65,6 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 "/experiment", "/features", "/loadQuery", "/loadTemplate", "/customQuery",
                 "/importQueries", "/bag", "/keywordSearchResults");
 
-
     /**
      * This is called during the processing of every controller.
      *

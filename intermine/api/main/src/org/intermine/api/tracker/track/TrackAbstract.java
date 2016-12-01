@@ -31,7 +31,6 @@ public abstract class TrackAbstract implements Track
 
     @Override
     public void store(Connection con) {
-
         String sql = "";
         PreparedStatement stm = null;
         StringBuffer valuesBuffer = new StringBuffer();
@@ -47,7 +46,6 @@ public abstract class TrackAbstract implements Track
             Object value = null;
             for (int index = 0; index < valuesSize; ) {
                 value = values[index];
-
                 if (value instanceof Integer) {
                     stm.setInt(++index, (Integer) value);
                 } else if (value instanceof Timestamp) {

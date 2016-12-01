@@ -580,7 +580,7 @@ public final class DatabaseUtil
                 tablenames.add(tablename);
             }
             if ("VIEW".equals(res.getString(4))) {
-            	LOG.info("Dropping view " + tablename);
+                LOG.info("Dropping view " + tablename);
                 con.createStatement().execute("DROP VIEW " + tablename);
             }
         }
