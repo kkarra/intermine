@@ -266,13 +266,14 @@ public class SgdConverter extends BioDBConverter {
 
 				// ~~~ synonyms ~~~
 				getSynonym(refId, "symbol", symbol);
-				if (symbol != null) {
+				/*if (symbol != null) {
 					if (!symbol.equalsIgnoreCase(secondaryIdentifier)) {
 						getSynonym(refId, "identifier", secondaryIdentifier);// RPM1
 						// problem
 					}
-				}
-				getSynonym(refId, "identifier", primaryIdentifier);
+				}*/
+				//getSynonym(refId, "identifier", primaryIdentifier); //ssf1 and YFL013W-A  behaving differently synonym vs duplicate hit 1/12/17
+				getSynonym(refId, "identifier", secondaryIdentifier);
 			}
 		}
 		System.out.println("size of genes:  " + genes.size());
