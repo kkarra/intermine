@@ -206,6 +206,7 @@ public class GoConverter extends BioFileConverter
             }
             String goId = array[4];
             String qualifier = array[3];
+            String pub = array[5];
             String strEvidence = array[6];
             String withText = array[7];
             String annotationExtension = null;
@@ -213,9 +214,9 @@ public class GoConverter extends BioFileConverter
             if (array.length >= 16) {
                annotType = array[15]; //kk
             }
-            //if (array.length >= 16) {
-            	//annotationExtension = array[15];
-            //}
+            if (array.length >= 17) {
+            	annotationExtension = array[16];
+            }
 
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence, annotType, withText);
@@ -231,7 +232,7 @@ public class GoConverter extends BioFileConverter
             }
 
             // create unique key for go annotation
-            GoTermToGene key = new GoTermToGene(productId, goId, qualifier, withText);
+            GoTermToGene key = new GoTermToGene(productId, goId, qualifier, withText, annotationExtension, pub);
 
             String dataSourceCode = array[14]; // e.g. GDB, where uniprot collect the data from
             String dataSource = array[0]; // e.g. UniProtKB, where the goa file comes from
@@ -263,7 +264,7 @@ public class GoConverter extends BioFileConverter
                     allEvidenceForAnnotation = new LinkedHashSet<Evidence>();
                     allEvidenceForAnnotation.add(evidence);
                     goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
-                    Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
+                    Integer storedAnnotationId =  createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, qualifier, dataSource, dataSourceCode,
                             annotationExtension);
                     evidence.setStoredAnnotationId(storedAnnotationId);
@@ -878,6 +879,8 @@ public class GoConverter extends BioFileConverter
         private String goId;
         private String qualifier;
         private String withText;
+        private String annotationExtension;
+        private String pub;
 
         /**
          * Constructor
@@ -886,11 +889,13 @@ public class GoConverter extends BioFileConverter
          * @param goId      GO term id
          * @param qualifier qualifier
          */
-        GoTermToGene(String productId, String goId, String qualifier, String withText) {
+        GoTermToGene(String productId, String goId, String qualifier, String withText, String annotationExtension, String pub) {
             this.productId = productId;
             this.goId = goId;
             this.qualifier = qualifier;
             this.withText = withText;
+            this.annotationExtension = annotationExtension;
+            this.pub = pub;
         }
 
         /**
@@ -898,14 +903,24 @@ public class GoConverter extends BioFileConverter
          */
         @Override
         public boolean equals(Object o) {
-            if (o instanceof GoTermToGene) {
-                GoTermToGene go = (GoTermToGene) o;
-                return productId.equals(go.productId)
-                        && goId.equals(go.goId)
-                        && qualifier.equals(go.qualifier)
-                        && withText.equals(go.withText);
-            }
-            return false;
+        	if (o instanceof GoTermToGene) {
+        		GoTermToGene go = (GoTermToGene) o;
+        		if(annotationExtension == null) {       			
+        			return productId.equals(go.productId)
+        					&& goId.equals(go.goId)
+        					&& qualifier.equals(go.qualifier)
+        					&& withText.equals(go.withText)
+        					&& pub.equals(go.pub);
+        		}else{
+        			return productId.equals(go.productId)
+        					&& goId.equals(go.goId)
+        					&& qualifier.equals(go.qualifier)
+        					&& withText.equals(go.withText)
+        					&& pub.equals(go.pub)
+        					&& annotationExtension.equals(go.annotationExtension);
+        		}
+        	}
+        	return false;
         }
 
         /**
@@ -913,10 +928,22 @@ public class GoConverter extends BioFileConverter
          */
         @Override
         public int hashCode() {
-            return ((3 * productId.hashCode())
-                    + (5 * goId.hashCode())
-                    + (7 * qualifier.hashCode())
-                    + (11 * withText.hashCode()));
+
+        	if(annotationExtension == null) {
+
+        		return ((3 * productId.hashCode())
+        				+ (5 * goId.hashCode())
+        				+ (7 * qualifier.hashCode())
+        				+ (11 * withText.hashCode())
+        				+ (13 * pub.hashCode()));
+        	}else{
+        		return ((3 * productId.hashCode())
+        				+ (5 * goId.hashCode())
+        				+ (7 * qualifier.hashCode())
+        				+ (11 * withText.hashCode())
+        				+ (13 * pub.hashCode())
+        				+ (15 * annotationExtension.hashCode()));
+        	}
         }
 
         /**
@@ -934,6 +961,7 @@ public class GoConverter extends BioFileConverter
             toStringBuff.append(qualifier);
             toStringBuff.append(" withText:");
             toStringBuff.append(withText);
+            toStringBuff.append(annotationExtension);
             return toStringBuff.toString();
         }
     }
