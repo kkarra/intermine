@@ -1,0 +1,39 @@
+kalpana-thunder:intermine kkarra$ git pull upstream master
+From github.com:intermine/intermine
+ * branch            master     -> FETCH_HEAD
+   e5ad896..ecbb0fb  master     -> upstream/master
+Removing intermine/webapp/main/resources/webapp/renamableElement.jsp.new
+Auto-merging intermine/webapp/main/resources/webapp/keywordSearchResults.jsp
+Auto-merging intermine/webapp/main/resources/webapp/WEB-INF/global.web.properties
+CONFLICT (content): Merge conflict in intermine/webapp/main/resources/webapp/WEB-INF/global.web.properties
+Auto-merging intermine/webapp/main/resources/webapp/WEB-INF/classes/InterMineWebApp.properties
+Auto-merging intermine/web/main/src/org/intermine/web/struts/BeginAction.java
+Auto-merging intermine/objectstore/main/src/org/intermine/objectstore/intermine/ObjectStoreInterMineImpl.java
+Removing bio/webapp/src/org/intermine/bio/webservice/GAFQueryServlet.java
+Removing bio/webapp/src/org/intermine/bio/webservice/GAFQueryService.java
+Auto-merging bio/webapp/src/org/intermine/bio/web/logic/GenomicRegionSearchUtil.java
+Removing bio/webapp/src/org/intermine/bio/web/export/GAFExporter.java
+Auto-merging bio/tools/main/src/org/intermine/bio/web/export/BEDUtil.java
+Auto-merging bio/sources/treefam/main/src/org/intermine/bio/dataconversion/TreefamConverter.java
+Removing bio/sources/retired/biopax/.settings/org.eclipse.ltk.core.refactoring.prefs
+Removing bio/sources/psi/.settings/org.eclipse.jdt.ui.prefs
+Auto-merging bio/sources/psi-complexes/main/src/org/intermine/bio/dataconversion/PsiComplexesConverter.java
+Auto-merging bio/sources/orthodb/main/src/org/intermine/bio/dataconversion/OrthodbConverter.java
+Removing bio/sources/orthodb/.settings/de.loskutov.anyedit.AnyEditTools.prefs
+Auto-merging bio/sources/human/omim/main/src/org/intermine/bio/dataconversion/OmimConverter.java
+Auto-merging bio/sources/human/ncbi-gene/main/src/org/intermine/bio/dataconversion/NcbiGeneConverter.java
+Auto-merging bio/sources/homologene/main/src/org/intermine/bio/dataconversion/HomologeneConverter.java
+Auto-merging bio/sources/go-annotation/main/src/org/intermine/bio/dataconversion/GoConverter.java
+Auto-merging bio/sources/ensembl/ensembl-compara/main/src/org/intermine/bio/dataconversion/EnsemblComparaConverter.java
+Auto-merging bio/sources/eco/resources/eco_keys.properties
+CONFLICT (add/add): Merge conflict in bio/sources/eco/resources/eco_keys.properties
+Auto-merging bio/sources/eco/project.properties
+CONFLICT (add/add): Merge conflict in bio/sources/eco/project.properties
+Auto-merging bio/sources/eco/eco_additions.xml
+CONFLICT (add/add): Merge conflict in bio/sources/eco/eco_additions.xml
+Removing bio/sources/biogrid/.settings/org.eclipse.jdt.ui.prefs
+Auto-merging bio/postprocess/main/src/org/intermine/bio/postprocess/TransferSequences.java
+Auto-merging bio/postprocess/main/src/org/intermine/bio/postprocess/IntergenicRegionUtil.java
+Auto-merging bio/postprocess/main/src/org/intermine/bio/postprocess/CreateFlankingRegions.java
+Auto-merging bio/core/main/src/org/intermine/bio/dataconversion/IdResolverService.java
+Automatic merge failed; fix conflicts and then commit the result.
