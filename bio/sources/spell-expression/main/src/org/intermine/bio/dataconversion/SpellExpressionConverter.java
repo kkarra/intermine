@@ -37,6 +37,7 @@ public class SpellExpressionConverter extends BioDBConverter {
 	private static final SpellExpressionProcessor PROCESSOR = new SpellExpressionProcessor();
 	private Map<String, Item> genes = new HashMap();
 	private Map<String, Item> datasets = new HashMap();
+	//private Map<String, String> uniqconds = new HashMap()
 	private Map<String, Item> conditions = new HashMap();
 	private Map<String, Item> tags = new HashMap();
 	private ArrayList<String> filenames = new ArrayList();
@@ -70,19 +71,12 @@ public class SpellExpressionConverter extends BioDBConverter {
 	 * {@inheritDoc}
 	 */
 	public void process() throws Exception {
-
-		// a database has been initialised from properties starting with
-		// db.spell-expression
 		Connection connection = getDatabase().getConnection();
-		
 		processDataSetFiles(connection); //get all dataset file names
-		
 		processDataSets(connection); //process each file
-		
 		storeDataSets();
 		//storeDataSetTags();
 		storeGenes();
-
 	}
 	
 	/**
@@ -101,15 +95,12 @@ public class SpellExpressionConverter extends BioDBConverter {
 			filenames.add(fileName);			
 		}
 	}
-
-	
 	/**
 	 * 
 	 * @param connection
 	 * @throws SQLException
 	 * @throws ObjectStoreException
 	 */
-
 	private void processDataSets(Connection connection) throws SQLException,
 	ObjectStoreException {
 		
@@ -117,15 +108,13 @@ public class SpellExpressionConverter extends BioDBConverter {
 		
 		
     Iterator it = filenames.iterator();
-    while(it.hasNext() && count < 10) { //&& count < 10
-    	
+    while(it.hasNext()) { //&& count < 10
     	count++; 
-
     	String filename = (String) it.next();
     	System.out.println("Processing DataSet No. ..."+ count + "   " +filename);
     	
 		ResultSet res = PROCESSOR.getDataSets(connection, filename);
-
+		conditions = new HashMap();  //reset conditions for each dataset
 		while (res.next()) {
 			String pubmedID = res.getString("pubmedID");
 			String fileName = res.getString("filename");
@@ -153,18 +142,15 @@ public class SpellExpressionConverter extends BioDBConverter {
 			Item dataset = getDataSet(pubmedID, fileName, geoID, platformID,
 					channelCount, datasetName, description, numCond, numGenes,
 					author, allAuthors, title, journal, pubYear, tags);		
-
+			System.out.println("gene: "+geneName + "    condDesc: "+ condDesc + " data_table: " + dataTable);
+			
 			// add score to gene - using the condition and dataset info
 			getConditionScore(dataset, condDesc, dataTable, geneName);
 
-		}
-				
-		
+		}	
     }//while files
     
-    
 	}
-
 	/**
 	 * 
 	 * @param geneName
@@ -184,117 +170,6 @@ public class SpellExpressionConverter extends BioDBConverter {
 		}
 
 		return item;
-	}
-
-	/**
-	 * 
-	 * @throws ObjectStoreException
-	 */
-
-	private void storeGenes() throws ObjectStoreException {
-		for (Item gene : genes.values()) {
-			try {
-				store(gene);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-		}
-	}
-	
-
-	/**
-	 * 
-	 * @throws ObjectStoreException
-	 */
-
-	private void storeDataSets() throws ObjectStoreException {
-		for (Item dataset : datasets.values()) {
-			try {
-				store(dataset);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-		}
-	}
-	
-
-	/**
-	 * 
-	 * @throws ObjectStoreException
-	 */
-
-	private void storeDataSetTags() throws ObjectStoreException {
-		for (Item datasettag : tags.values()) {
-			try {
-				store(datasettag);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param dataSet
-	 * @param condDesc
-	 * @param dataTable
-	 * @param geneName
-	 * @throws ObjectStoreException
-	 */
-	private void getConditionScore(Item dataSet, String condDesc,
-			String dataTable, String geneName) throws ObjectStoreException {
-
-		Item gene = genes.get(geneName);
-		String newconds = condDesc.replaceAll("~", "|");
-	 
-		String[] expconditions = newconds.split("\\|");
-		String[] scores = dataTable.split(",");
-       
-		
-		for (int i = 0; i < scores.length; i++) {
-
-			String cond = expconditions[i];
-			String condscore = scores[i];
-			//if(condscore.equalsIgnoreCase("NA")){
-				//condscore = "-50.00";
-			//}
-			
-			Item dcond = conditions.get(cond);
-			if (dcond == null) {
-				
-				 dcond = createItem("ExpressionCondition");
-				 dcond.setAttribute("conditionname", cond);
-				 dcond.setAttribute("ordernumber", String.valueOf(i));
-				 dcond.setReference("expressiondataset",dataSet.getIdentifier());
-				try {
-					store(dcond);
-				} catch (ObjectStoreException e) {
-					throw new ObjectStoreException(e);
-				}
-				conditions.put(cond, dcond);
-			}
-			
-			dataSet.addToCollection("expressionconditions", dcond.getIdentifier());
-			
-			// tie up the score with gene
-			Item score = createItem("ExpressionScore");
-			if(!condscore.equals("NA")) {
-				score.setAttribute("score", condscore);
-			}
-			//score.setReference("spelldataset", dataSet.getIdentifier());
-			score.setReference("expressioncondition", dcond.getIdentifier());
-			
-			try {
-				store(score);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-			
-			gene.addToCollection("expressionScores", score.getIdentifier());
-
-		}
-
 	}
 
 	/**
@@ -329,6 +204,7 @@ public class SpellExpressionConverter extends BioDBConverter {
 		if (item == null) {
 
 			item = createItem("ExpressionDataSet");
+			
 			item.setAttribute("pubmedID", pubmedID);
 			item.setAttribute("fileName", fileName);
 			item.setAttribute("geoID", geoID);
@@ -385,13 +261,116 @@ public class SpellExpressionConverter extends BioDBConverter {
 			         item.addToCollection("expressiondatasettags", dtag.getIdentifier());
 				
 			}
-													
+			System.out.println("pubmed: "+pubmedID + "    geoID: "+ geoID + " datasetName: " + datasetName);								
 			datasets.put(fileName, item);
 		}
 
 		return item;
 	}
+	/**
+	 * 
+	 * @param dataSet
+	 * @param condDesc
+	 * @param dataTable
+	 * @param geneName
+	 * @throws ObjectStoreException
+	 */
+	private void getConditionScore(Item dataSet, String condDesc,
+			String dataTable, String geneName) throws ObjectStoreException {
 
+		Item gene = genes.get(geneName);
+		String newconds = condDesc.replaceAll("~", "|");
+	 
+		String[] expconditions = newconds.split("\\|");
+		String[] scores = dataTable.split(",");
+       
+		
+		for (int i = 0; i < scores.length; i++) {
+
+			String cond = expconditions[i];
+			String condscore = scores[i];
+			System.out.println("cond:" + cond + "   score:"+ condscore);
+			
+			Item dcond = conditions.get(cond);
+			if (dcond == null) {
+				
+				 dcond = createItem("ExpressionCondition");
+				 dcond.setAttribute("conditionname", cond);
+				 dcond.setAttribute("ordernumber", String.valueOf(i));
+				 dcond.setReference("expressiondataset",dataSet.getIdentifier());
+				try {
+					store(dcond);
+				} catch (ObjectStoreException e) {
+					throw new ObjectStoreException(e);
+				}
+				conditions.put(cond, dcond);
+			}
+			
+			dataSet.addToCollection("expressionconditions", dcond.getIdentifier());
+			
+			// tie up the score with gene
+			Item score = createItem("ExpressionScore");
+			if(!condscore.equals("NA")) {
+				score.setAttribute("score", condscore);
+			}
+			score.setReference("expressioncondition", dcond.getIdentifier());
+			
+			try {
+				store(score);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+			
+			gene.addToCollection("expressionScores", score.getIdentifier());
+
+		}
+
+	}
+	/**
+	 * 
+	 * @throws ObjectStoreException
+	 */
+
+	private void storeGenes() throws ObjectStoreException {
+		for (Item gene : genes.values()) {
+			try {
+				store(gene);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @throws ObjectStoreException
+	 */
+
+	private void storeDataSets() throws ObjectStoreException {
+		for (Item dataset : datasets.values()) {
+			try {
+				store(dataset);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @throws ObjectStoreException
+	 */
+
+	private void storeDataSetTags() throws ObjectStoreException {
+		for (Item datasettag : tags.values()) {
+			try {
+				store(datasettag);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

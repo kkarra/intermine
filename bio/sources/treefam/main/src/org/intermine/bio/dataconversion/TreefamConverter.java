@@ -351,8 +351,13 @@ public class TreefamConverter extends BioFileConverter
      */
     public class GeneHolder
     {
+<<<<<<< HEAD
 
         protected String identifier, symbol, taxonId, identifierType;
+=======
+        protected String identifier, symbol, taxonId, identifierType, resolvedIdentifier;
+        protected String whichColumn;
+>>>>>>> intermine/dev
 
         /**
          * @param identifier gene identifier, eg FBgn

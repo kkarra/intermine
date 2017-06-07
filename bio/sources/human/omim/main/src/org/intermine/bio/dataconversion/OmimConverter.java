@@ -25,7 +25,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+<<<<<<< HEAD
 
+=======
+import java.io.BufferedReader;
+import org.apache.commons.lang.StringUtils;
+>>>>>>> intermine/dev
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -99,10 +104,15 @@ public class OmimConverter extends BioDirectoryConverter
             throw new RuntimeException("Not all required files for the OMIM sources were found in: "
                     + dataDir.getAbsolutePath() + ", was missing " + missingFiles);
         }
+<<<<<<< HEAD
 
         processNcbiIdFile(new FileReader(files.get(NCBI_ID_TXT_FILE)));  //first parse mim2gene (ncbiId and symbol secured)
         processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
+=======
+        // don't change the processing order. or else!
+>>>>>>> intermine/dev
         processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
+        processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
         processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
     }
 
@@ -212,6 +222,7 @@ public class OmimConverter extends BioDirectoryConverter
  * @throws ObjectStoreException
  */
     private void processMorbidMapFile(Reader reader) throws IOException, ObjectStoreException {
+<<<<<<< HEAD
         Iterator<String[]> lineIter = FormattedTextParser.parseDelimitedReader(reader, '|');
 
         int lineCount = 0;
@@ -304,10 +315,50 @@ public class OmimConverter extends BioDirectoryConverter
                         sb.append("|");
                     }
                     sb.append(bit);
+=======
+        BufferedReader br = new BufferedReader(reader);
+        String line = null;
+        // find the OMIM ID. OMIM identifiers are 6 digits
+        Pattern matchMajorDiseaseNumber = Pattern.compile("(\\d{6})");
+        final String delim = "\\(3\\)";
+        while ((line = br.readLine()) != null) {
+            Matcher diseaseMatcher = matchMajorDiseaseNumber.matcher(line);
+            String mimNumber = null;
+            if (diseaseMatcher.find()) {
+                mimNumber = diseaseMatcher.group(1);
+            }
+            if (mimNumber == null || mimNumber.isEmpty()) {
+                LOG.info("Not processing " + line + ", no OMIM ID");
+                continue;
+            }
+            // only get diseases from already created map. don't create any new diseases
+            Item disease = diseases.get(mimNumber);
+            if (disease == null) {
+                // disease will be NULL if mimNumber belongs to a gene. OMIM assigns genes and
+                // phenotypes MIM numbers and does not distinguish the two in this file. We are
+                // relying on our diseases map to be populated by the processOmimTxtFile() method
+                continue;
+            }
+            String symbols = null;
+            String[] firstBits = line.split(delim);
+            if (firstBits.length != 2) {
+                // throw exception here?
+                continue;
+            }
+            symbols = firstBits[1].trim();
+            // remove the trailing columns
+            String[] bits = symbols.split("(\\t)|(\\s\\s)");
+            String chompedSymbols = bits[0];
+            for (String geneSymbol : chompedSymbols.split(",")) {
+                String geneRefId = getGene(geneSymbol.trim());
+                if (geneRefId != null) {
+                    disease.addToCollection("genes", geneRefId);
+>>>>>>> intermine/dev
                 }
                 sb.append(System.getProperty("line.separator"));
                 fw.write(sb.toString());
             }
+<<<<<<< HEAD
 
         }
         fw.flush();
@@ -321,6 +372,9 @@ public class OmimConverter extends BioDirectoryConverter
         LOG.info(mapTypesMessage);
         LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size()
                 + " unique diseases from " + lineCount + " line file.");
+=======
+        }
+>>>>>>> intermine/dev
     }
 
    /* private String resolveGene(String mimId) {
@@ -393,12 +447,21 @@ public class OmimConverter extends BioDirectoryConverter
         return pubId;
     }
 
+<<<<<<< HEAD
     private String getGeneItemId(String omimId, String primaryIdentifier, String geneSymbol) throws ObjectStoreException {
         String geneItemId = null;
         // String entrezGeneNumber = resolveGene(symbol);
         if (geneSymbol != null) {
             geneItemId = genes.get(geneSymbol);
             if (geneItemId == null) {
+=======
+    private String getGene(String geneSymbol) throws ObjectStoreException {
+        String refId = null;
+        String entrezGeneNumber = resolveGene(geneSymbol.trim());
+        if (StringUtils.isNotEmpty(entrezGeneNumber)) {
+            refId = genes.get(entrezGeneNumber);
+            if (refId == null) {
+>>>>>>> intermine/dev
                 Item gene = createItem("Gene");
                 gene.setAttribute("primaryIdentifier", primaryIdentifier);
                 gene.setAttribute("symbol", geneSymbol);

@@ -23,7 +23,7 @@ public class SpellExpressionProcessor {
 		String query = "select pubmedID, filename, geoID, platformID, channelCount, d.name, description, num_conds, "
 				+ "num_genes, author, all_authors, title, journal, pub_year, cond_descs, tags, g.name, data_table "
 				+ " from datasets d, exprs e, genes g "
-				+ " where d.id = e.dsetID and g.id = e.geneID and filename = '"+filename+"'"; //and g.name = 'YDL031W' "; // 
+				+ " where d.id = e.dsetID and g.id = e.geneID and filename = '"+filename+"'";
 
 		LOG.info("executing: " + query);
 		Statement stmt = connection.createStatement();
@@ -40,7 +40,7 @@ public class SpellExpressionProcessor {
 	
 	protected ResultSet getDataSetFileNames(Connection connection) throws SQLException {
 
-		String query = "select filename from datasets where filename != 'GSE12822_setA_family.pcl' "; //= 'GSE8613_setA_family.pcl' "; //
+		String query = "select filename from datasets where filename != 'GSE12822_setA_family.pcl' ";
 		LOG.info("executing: " + query);
 		Statement stmt = connection.createStatement();
 		ResultSet res = stmt.executeQuery(query);
