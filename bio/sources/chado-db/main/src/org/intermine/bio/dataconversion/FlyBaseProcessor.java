@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2016 FlyMine
+ * Copyright (C) 2002-2017 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1062,6 +1062,10 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
+        if (chrFeatureData == null) {
+            // chromosome might be empty if we ignored it earlier, e.g. golden path region
+            return;
+        }
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
                                                subjectFeatureData.getItemIdentifier(),
@@ -1153,6 +1157,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             int start = fmin + 1;
             int end = fmax;
 
+            // make sure both are relevant features. e.g. we do not load golden paths
+            // but they have insertions. See #1052
             FeatureData subFeatureData = getFeatureMap().get(new Integer(subId));
             if (subFeatureData != null) {
                 // this is a hack - we should make sure that we only query for features that are in
