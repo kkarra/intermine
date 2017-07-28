@@ -11,6 +11,7 @@
 <class name="ProteinModificationSite" extends="BioEntity" is-interface="true">
 	<attribute name="modificationType" type="java.lang.String"/>
 	<attribute name="modificationSite" type="java.lang.String"/>
+	<collection name="modifier" referenced-type="Gene"/>
 	<reference name="publication" referenced-type="Publication"/>
 	<attribute name="source" type="java.lang.String"/>
 	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinModificationSites"/>

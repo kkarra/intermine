@@ -19,6 +19,8 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import java.util.Map;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ public class SgdProteinModsConverter extends BioFileConverter
 	private static final String DATA_SOURCE_NAME = "SGD";
 	private final Map<String, Item> proteinIdMap = new HashMap<String, Item>();
 	private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
+    private final Map<String, Item> geneIdMap = new HashMap<String, Item>();
+    private static final String TAXON_ID = "4932";
 	/**
 	 * Constructor
 	 * @param writer the ItemWriter used to handle the resultant items
@@ -55,6 +59,7 @@ public class SgdProteinModsConverter extends BioFileConverter
 	public void process(Reader reader) throws Exception {
 		processDomainDataFile(reader); 
 		storeProteins();
+		storeGenes();
 	}
 
 
@@ -94,11 +99,12 @@ public class SgdProteinModsConverter extends BioFileConverter
 			String protein =  line[0].trim();     
 			String modSite = line[1].trim();
 			String modType =  line[3].trim();
+			String modifier = line[4].trim(); //can be multiple with | separation
 			String source =  line[5].trim(); 
 			String pmid = line[6].trim();
 
 		     System.out.println(protein + " " + modSite + " " + modType);
-			newProduct(protein, modSite, modType, source, pmid);
+			newProduct(protein, modSite, modType, modifier, source, pmid);
 
 		}
 
@@ -116,11 +122,11 @@ public class SgdProteinModsConverter extends BioFileConverter
 	 * @throws ObjectStoreException
 	 * @throws Exception
 	 */
-	private void newProduct(String proteinId, String modSite, String modType, String source, String pmid)
+	private void newProduct(String proteinId, String modSite, String modType, String modifier, String source, String pmid)
 			throws ObjectStoreException, Exception {		
 
 		Item protein = getProteinItem(proteinId);		
-		Item pmods = getProteinMod(modSite, modType, source, pmid);
+		Item pmods = getProteinMod(modSite, modType, modifier, source, pmid);
 		protein.addToCollection("proteinModificationSites", pmods.getIdentifier());
 
 	}
@@ -152,14 +158,28 @@ public class SgdProteinModsConverter extends BioFileConverter
 	 * @param pmid
 	 * @return
 	 */
-	private Item getProteinMod(String modSite, String modType, String source, String pmid) throws ObjectStoreException {
+	private Item getProteinMod(String modSite, String modType, String modifier, String source, String pmid) throws ObjectStoreException {
 
 		Item item = createItem("ProteinModificationSite");
 
 		item.setAttribute("modificationType", modType);
 		item.setAttribute("modificationSite", modSite);
 		item.setAttribute("source", source);
-		
+
+		if (!StringUtils.isEmpty(modifier)) {
+			if(modifier.contains("|")){
+				String[] mods = modifier.split("\\|");
+				for (int i = 0; i < mods.length; i++) {
+					String geneId = getGene(mods[i]);
+					item.addToCollection("modifier", geneId);
+					System.out.println("modifier:  "+ mods[i] + "geneid" + geneId);
+				}
+			}else{
+				String geneId = getGene(modifier);
+				item.addToCollection("modifier", geneId);
+			}
+		}
+	
 		Item publication = pubmedIdMap.get(pmid);
 
 		if(publication == null) {
@@ -182,6 +202,29 @@ public class SgdProteinModsConverter extends BioFileConverter
 
 		return item;
 	}
+	
+	/**
+	 * 
+	 * @param geneId
+	 * @param taxonId
+	 * @return
+	 * @throws ObjectStoreException
+	 */
+    private String getGene(String geneId)
+            throws ObjectStoreException {
+
+            Item gene = geneIdMap.get(geneId);
+            
+            if (gene == null) {
+                gene = createItem("Gene");
+                gene.setAttribute("symbol", geneId);
+                gene.setReference("organism", getOrganism(TAXON_ID));
+                geneIdMap.put(geneId, gene);
+                //refId = gene.getIdentifier();
+                //store(gene);
+            }
+            return gene.getIdentifier();
+        }
 	/**
 	 * 
 	 * @throws Exception
@@ -196,6 +239,19 @@ public class SgdProteinModsConverter extends BioFileConverter
 		}
 
 	}
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	private void storeGenes() throws Exception{
+		for (Item gene : geneIdMap.values()) {
+			try {
+				store(gene);
+			} catch (ObjectStoreException e) {
+				throw new Exception(e);
+			}
+		}
 
+	}
 
 }
