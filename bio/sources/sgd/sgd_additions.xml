@@ -184,6 +184,12 @@
 
 <class name="MatrixAttachmentSite" extends="SequenceFeature" is-interface="true"> </class>
 
+<class name="GeneGroup" extends="SequenceFeature" is-interface="true"> </class>
+
+<class name="SilentMatingTypeCassetteArray" extends="SequenceFeature" is-interface="true"> </class>
+
+<class name="MatingTypeRegion" extends="SequenceFeature" is-interface="true"> </class>
+
  <class name="BlockedReadingFrame" extends="Gene" is-interface="true">
   <collection name="CDSs" referenced-type="CDS" reverse-reference="blockedreadingframe"/>
   </class>
