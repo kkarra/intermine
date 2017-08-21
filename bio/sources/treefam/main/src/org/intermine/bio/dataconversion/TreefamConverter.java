@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2017 FlyMine
+ * Copyright (C) 2002-2016 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -351,13 +351,8 @@ public class TreefamConverter extends BioFileConverter
      */
     public class GeneHolder
     {
-<<<<<<< HEAD
 
         protected String identifier, symbol, taxonId, identifierType;
-=======
-        protected String identifier, symbol, taxonId, identifierType, resolvedIdentifier;
-        protected String whichColumn;
->>>>>>> intermine/dev
 
         /**
          * @param identifier gene identifier, eg FBgn
