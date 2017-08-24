@@ -381,6 +381,9 @@
 
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier"></fieldconfig>
+			<fieldconfig fieldExpr="secondaryIdentifier"></fieldconfig>
+			<fieldconfig fieldExpr="symbol"></fieldconfig>
+			<fieldconfig fieldExpr="name"></fieldconfig>
 		</fields>
 	</class>
 
