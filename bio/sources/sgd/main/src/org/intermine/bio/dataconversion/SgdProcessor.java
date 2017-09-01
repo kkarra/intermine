@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 public class SgdProcessor
 {
     private static final Logger LOG = Logger.getLogger(SgdProcessor.class);  
-    private static final String SCHEMA_OWNER = "bud.";
+    private static final String SCHEMA_OWNER = "nex.";
     
     /**
      * Return the results of running a query for genes
@@ -35,13 +35,22 @@ public class SgdProcessor
     protected ResultSet getChromosomalFeatureResults(Connection connection)
         throws SQLException {
     
-    		String query = "SELECT g.feature_no, g.feature_name, g.dbxref_id, g.gene_name, "
+    		/*String query = "SELECT g.feature_no, g.feature_name, g.dbxref_id, g.gene_name, "
              + " f.name_description, g.feature_type, f.headline, f.description, f.qualifier, f.feat_attribute, g.status "
              + " FROM " + SCHEMA_OWNER + "feature g "
              + " left outer join "+ SCHEMA_OWNER + "feat_annotation f on g.feature_no = f.feature_no"
              + " where g.feature_type in (select col_value from "+ SCHEMA_OWNER+"web_metadata "
              + " where application_name = 'Chromosomal Feature Search' "
-             + " and col_name = 'FEATURE_TYPE')";
+             + " and col_name = 'FEATURE_TYPE')";*/
+    	String query = "select l.dbentity_id, l.systematic_name, d.sgdid, l.gene_name, l.name_description, s.display_name,  l.headline, l.description, l.qualifier, d.dbentity_status"
+    			+ " from nex.locusdbentity l, nex.contig c, nex.dnasequenceannotation a, nex.so s, nex.dbentity d "
+    			+ " where C.format_name  like 'Chromosome_%' "
+    			+ " and C.contig_id = A.contig_id "
+    			+ " and A.dbentity_id = L.dbentity_id "
+    			+ " and S.so_id = A.so_id "
+    			+ " and a.taxonomy_id = 274901 "
+    			+ " and a.dna_type = 'GENOMIC' "
+    			+ " and L.dbentity_id = D.dbentity_id";
     	
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -156,7 +165,7 @@ public class SgdProcessor
      */
     protected ResultSet getChromosomeSequenceResults(Connection connection)
     throws SQLException {
-    String query =  "SELECT g.feature_no, g.feature_name, g.feature_type, s.residues, s.seq_length "
+    /*String query =  "SELECT g.feature_no, g.feature_name, g.feature_type, s.residues, s.seq_length "
         + "FROM "+ SCHEMA_OWNER + "feature g, "+ SCHEMA_OWNER + "seq s  " 
         + "WHERE s.seq_no in (select distinct rootseq_no from "+ SCHEMA_OWNER + "feat_location l, "+ SCHEMA_OWNER + "seq s, " 
         + SCHEMA_OWNER + "release r," + SCHEMA_OWNER + "seq_rel sl "       
@@ -167,7 +176,12 @@ public class SgdProcessor
         + "AND r.sequence_release = (select max(sequence_release) from bud.release) "
         + "AND s.is_current = 'Y') " 
         + "AND g.feature_type in ('plasmid','chromosome') "
-        + "AND g.feature_no = s.feature_no";
+        + "AND g.feature_no = s.feature_no";*/
+      
+      String query =  "SELECT c.contig_id, c.format_name, s.display_name, c.residues, length(residues) "
+                + "FROM "+ SCHEMA_OWNER + "contig c, "+ SCHEMA_OWNER + "so s  " 
+                + "WHERE s.so_id = c.so_id "
+                + "AND s.display_name in ('chromosome', 'plasmid') ";
         
     LOG.info("executing: " + query);
     Statement stmt = connection.createStatement();
@@ -361,13 +375,27 @@ public class SgdProcessor
     protected ResultSet getAliases(Connection connection)
         throws SQLException {
         
-        String query = "SELECT f.feature_no as gene_feature_no, alias_name, alias_type "
+        /*String query = "SELECT f.feature_no as gene_feature_no, alias_name, alias_type "
         + "FROM "+ SCHEMA_OWNER + "alias a, "+ SCHEMA_OWNER + "feat_alias fa,"+ SCHEMA_OWNER + "feature f "
         + " WHERE f.feature_type in (select col_value from "+ SCHEMA_OWNER+"web_metadata "
         + " WHERE application_name = 'Chromosomal Feature Search' "
         + " AND col_name = 'FEATURE_TYPE') "
         + "AND fa.alias_no = a.alias_no "
-        + "AND fa.feature_no = f.feature_no order by f.feature_no asc";
+        + "AND fa.feature_no = f.feature_no order by f.feature_no asc";*/
+        
+        String query = "select  l.dbentity_id, la.display_name, alias_type "
+        + "from nex.locusdbentity l, nex.locus_alias la, nex.contig c, nex.dnasequenceannotation a, nex.so s, nex.dbentity d "
+        + "where l.dbentity_id = a.dbentity_id "
+        + "and l.dbentity_id = la.locus_id "
+        + "and c.contig_id = a.contig_id "
+        + "and c.so_id = s.so_id "
+        + "and s.display_name = 'chromosome' "
+        + "and a.dna_type = 'GENOMIC' "
+        + "and a.taxonomy_id = 274901 "
+        + "and d.dbentity_id = l.dbentity_id "
+        + "and d.dbentity_status = 'Active' "
+        + "and alias_type in ('Uniform', 'Non-uniform', 'Retired name', 'NCBI protein name')";
+
       
         LOG.info("executing: " + query);        
         Statement stmt = connection.createStatement();
@@ -408,7 +436,7 @@ public class SgdProcessor
     protected ResultSet getCrossReferences(Connection connection)
     throws SQLException {
 
-    	String query = "select f.feature_no, dbx.dbxref_id,  dbx.source, dbx.dbxref_type"
+    	/*String query = "select f.feature_no, dbx.dbxref_id,  dbx.source, dbx.dbxref_type"
     		+ " FROM bud.feature f, bud.dbxref dbx, bud.dbxref_feat df, bud.dbxref_url du, bud.url u"
     		+ " where f.feature_no = df.feature_no AND df.dbxref_no = dbx.dbxref_no AND dbx.dbxref_no = du.dbxref_no AND du.url_no = u.url_no"
     		+ " AND f.feature_type in (select col_value from bud.web_metadata "
@@ -416,7 +444,20 @@ public class SgdProcessor
     		+ " AND col_name = 'FEATURE_TYPE') "
     		+ " and dbx.source != 'SGD'"  //in ('EBI', 'GenBank/EMBL/DDBJ', 'IUBMB', 'NCBI', 'TCDB', 'RNAcentral') "
     		+ " group by f.feature_no, dbx.dbxref_id,  dbx.source, dbx.dbxref_type"
-    		+ " order by f.feature_no asc";
+    		+ " order by f.feature_no asc";*/
+    	
+        String query = "select  l.dbentity_id, la.display_name, alias_type "
+        + "from nex.locusdbentity l, nex.locus_alias la, nex.contig c, nex.dnasequenceannotation a, nex.so s, nex.dbentity d "
+        + "where l.dbentity_id = a.dbentity_id "
+        + "and l.dbentity_id = la.locus_id "
+        + "and c.contig_id = a.contig_id "
+        + "and c.so_id = s.so_id "
+        + "and s.display_name = 'chromosome' "
+        + "and a.dna_type = 'GENOMIC' "
+        + "and a.taxonomy_id = 274901 "
+        + "and d.dbentity_id = l.dbentity_id "
+        + "and d.dbentity_status = 'Active' "
+        + "and alias_type NOT in ('Uniform', 'Non-uniform', 'Retired name', 'NCBI protein name')";
 
     	LOG.info("executing: " + query);        
     	Statement stmt = connection.createStatement();
@@ -461,14 +502,20 @@ public class SgdProcessor
     protected ResultSet getPathways(Connection connection)
     throws SQLException {
 
-    	String query = "select f.feature_no, dbx.dbxref_id, dbxref_name "
+    	/*String query = "select f.feature_no, dbx.dbxref_id, dbxref_name "
     		+ " FROM bud.feature f, bud.dbxref dbx, bud.dbxref_feat df, bud.dbxref_url du, bud.url u"
     		+ " where f.feature_no = df.feature_no AND df.dbxref_no = dbx.dbxref_no AND dbx.dbxref_no = du.dbxref_no AND du.url_no = u.url_no"
     		+ " AND f.feature_type in (select col_value from bud.web_metadata "
     		+ " WHERE application_name = 'Chromosomal Feature Search' "
     		+ " AND col_name = 'FEATURE_TYPE') "
     		+ " and dbx.source = 'MetaCyc' "
-    		+ " order by f.feature_no asc";
+    		+ " order by f.feature_no asc";*/
+    	String query = "select distinct db.dbentity_id, biocyc_id, db2.display_name "
+    			+ " from nex.dbentity db, nex.pathwaydbentity pdf, nex.pathwayannotation pa, nex.dbentity db2 "
+    			+ " where db.dbentity_id = pa.dbentity_id "
+    			+ " and pa.pathway_id = pdf.dbentity_id "
+    			+ " and pdf.dbentity_id = db2.dbentity_id " 
+    			+ " order by 1";
 
     	LOG.info("executing: " + query);        
     	Statement stmt = connection.createStatement();
