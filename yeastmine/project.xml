@@ -21,6 +21,10 @@
       <property name="gff3.dataSetTitle" value="Preliminary Transcripts"/>
       <property name="src.data.dir" location="/data/intermine/gff"/>
      </source> 
+     
+     <source name="sgd-gff-utr" type="sgd-gff-utr">
+        <property name="src.data.dir" location="/data/intermine/gff-utr"/>
+      </source>
 
     <source name="eco" type="eco">
       <property name="src.data.file" location="/data/intermine/eco/eco.obo"/>
