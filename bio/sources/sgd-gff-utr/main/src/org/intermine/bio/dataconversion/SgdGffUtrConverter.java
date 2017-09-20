@@ -211,7 +211,7 @@ public class SgdGffUtrConverter extends BioFileConverter
 			throws ObjectStoreException {
 		Item transcript = transcripts.get(transcriptId);
 		if (transcript == null) {
-			transcript = createItem("Transcript");
+			transcript = createItem("MRNA");
 			transcripts.put(transcriptId, transcript);
 			transcript.setAttribute("primaryIdentifier", transcriptId);
 		}
