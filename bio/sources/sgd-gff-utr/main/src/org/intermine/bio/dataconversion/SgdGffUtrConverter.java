@@ -35,14 +35,22 @@ public class SgdGffUtrConverter extends BioFileConverter
 	private final Map<String, Item> transcripts = new HashMap<String, Item>();
 	private Map<String, String> chromosomes = new HashMap();
 	private static final String TAXON_ID = "4932";
+	private Item organism;
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public SgdGffUtrConverter(ItemWriter writer, Model model) {
+    public SgdGffUtrConverter(ItemWriter writer, Model model) throws ObjectStoreException{
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+		organism = createItem("Organism");
+		organism.setAttribute("taxonId", TAXON_ID);
+		organism.setAttribute("genus", "Saccharomyces");
+		organism.setAttribute("species", "cerevisiae");
+		organism.setAttribute("name", "Saccharomyces cerevisiae");
+		organism.setAttribute("shortName", "S. cerevisiae");
+		store(organism);
     }
 
     /**
@@ -116,14 +124,18 @@ public class SgdGffUtrConverter extends BioFileConverter
 		//add a three-prime-utr
 		Item threeutr = createItem("ThreePrimeUTR");
 		threeutr.setAttribute("primaryIdentifier", transcriptId+"-3prime-utr");
-		String threePrimeLocationRefId = getLocation(threeutr, chromosomeId, geneEnd, transcriptEnd, strand);
+		Integer geneend = Integer.valueOf(geneEnd) + 1;
+		String threePrimeLocationRefId = getLocation(threeutr, chromosomeId, geneend.toString(), transcriptEnd, strand);
+		threeutr.setReference("chromosome", chromosomeId);
 		threeutr.setReference("chromosomeLocation", threePrimeLocationRefId);
 		store(threeutr);
 		
 		//add a five-prime-utr
 		Item fiveutr = createItem("FivePrimeUTR");
 		fiveutr.setAttribute("primaryIdentifier", transcriptId+"-5prime-utr");
-		String fivePrimeLocationRefId = getLocation(fiveutr, chromosomeId, transcriptStart, geneStart, strand);
+		Integer start = Integer.valueOf(geneStart) - 1;
+		String fivePrimeLocationRefId = getLocation(fiveutr, chromosomeId, transcriptStart, start.toString(), strand);
+		fiveutr.setReference("chromosome", chromosomeId);
 		fiveutr.setReference("chromosomeLocation", fivePrimeLocationRefId);
 		store(fiveutr);
 		
@@ -143,7 +155,7 @@ public class SgdGffUtrConverter extends BioFileConverter
 		if (refId == null) {
 			Item item = createItem("Chromosome");
 			item.setAttribute("primaryIdentifier", identifier);
-			//item.setReference("organism", organism);
+			item.setReference("organism", organism);
 			refId = item.getIdentifier();
 			chromosomes.put(identifier, refId);
 			try {

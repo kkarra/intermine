@@ -95,7 +95,7 @@ public class TransferSequences
         throws Exception {
         long startTime = System.currentTimeMillis();
 
-       /* ObjectStore os = osw.getObjectStore();
+        ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         QueryClass qcChr = new QueryClass(Chromosome.class);
         q.addFrom(qcChr);
@@ -114,43 +114,7 @@ public class TransferSequences
         }
 
         LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took "
-                + (System.currentTimeMillis() - startTime) + " ms.");*/
-        
-        
-        ObjectStore os = osw.getObjectStore();
-        Query q = new Query();
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        q.addFrom(qcChr);
-        q.addToSelect(qcChr);
-        QueryObjectReference seqRef = new QueryObjectReference(qcChr, "sequence");
-        QueryClass qcLoc = new QueryClass(Location.class);
-        q.addFrom(qcLoc);
-        QueryObjectReference locChromRef = new QueryObjectReference(qcLoc,"locatedOn");
-        QueryObjectReference locFeatRef = new QueryObjectReference(qcLoc,"feature");
-        QueryClass qcFeat = new QueryClass(SequenceFeature.class);
-        q.addFrom(qcFeat);
-        QueryObjectReference featSeqRef = new QueryObjectReference(qcFeat, "sequence");
-
-        ConstraintSet cSet = new ConstraintSet(ConstraintOp.AND);
-        cSet.addConstraint(new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL));
-        cSet.addConstraint(new ContainsConstraint(featSeqRef, ConstraintOp.IS_NULL));
-        cSet.addConstraint(new ContainsConstraint(locChromRef,ConstraintOp.CONTAINS,qcChr));
-        cSet.addConstraint(new ContainsConstraint(locFeatRef,ConstraintOp.CONTAINS,qcFeat));
-        q.setConstraint(cSet);
-        q.setDistinct(true);
-
-        SingletonResults res = os.executeSingleton(q);
-        Iterator<?> chrIter = res.iterator();
-
-        Set<Chromosome> chromosomes = new HashSet<Chromosome>();
-        while (chrIter.hasNext()) {
-            Chromosome chr = (Chromosome) chrIter.next();
-            chromosomes.add(chr);
-        }
-
-        LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took "
                 + (System.currentTimeMillis() - startTime) + " ms.");
-
 
         for (Chromosome chr : chromosomes) {
             String organism = "";
@@ -231,16 +195,12 @@ public class TransferSequences
                 if (PostProcessUtil.isInstance(model, feature, "SNP")) {
                     continue;
                 }
-                
-                if (PostProcessUtil.isInstance(model, feature, "NotInSystematicSequenceOfS288C")){
-                	continue;
-                }
 
                 // if we set here the transcripts, using start and end locations,
                 // we won't be using the transferToTranscripts method (collating the exons)
-                if (PostProcessUtil.isInstance(model, feature, "Transcript")) {
-                    continue;
-                }
+                //if (PostProcessUtil.isInstance(model, feature, "Transcript")) {
+                    //continue;
+                //}
 
                 /**
                  * In human intermine, SNP is not a sequence alteration, which I think is wrong
@@ -259,10 +219,8 @@ public class TransferSequences
                 }
 
                 if (feature instanceof Gene) {
-                	
                     Gene gene = (Gene) feature;
-                    
-                    if (gene.getLength() != null  && (gene.getLength() == 1 || gene.getLength().intValue() > 2000000)) {
+                    if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
                         LOG.warn("gene too long in transferToSequenceFeatures() ignoring: "
                                   + gene);
                         continue;
