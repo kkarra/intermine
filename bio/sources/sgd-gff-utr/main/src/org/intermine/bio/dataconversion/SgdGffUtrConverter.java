@@ -121,24 +121,41 @@ public class SgdGffUtrConverter extends BioFileConverter
 		
 		String chromosomeId = getChromosome(chromosome);
 		
-		//add a three-prime-utr
-		Item threeutr = createItem("ThreePrimeUTR");
-		threeutr.setAttribute("primaryIdentifier", transcriptId+"-3prime-utr");
-		Integer geneend = Integer.valueOf(geneEnd) + 1;
-		String threePrimeLocationRefId = getLocation(threeutr, chromosomeId, geneend.toString(), transcriptEnd, strand);
-		threeutr.setReference("chromosome", chromosomeId);
-		threeutr.setReference("chromosomeLocation", threePrimeLocationRefId);
-		store(threeutr);
-		
 		//add a five-prime-utr
-		Item fiveutr = createItem("FivePrimeUTR");
-		fiveutr.setAttribute("primaryIdentifier", transcriptId+"-5prime-utr");
+		Item fiveutr = null;
+		String label = "";
+		if(strand.equals("-1")){
+			fiveutr = createItem("ThreePrimeUTR");
+			label = transcriptId+"-3prime-utr";
+		}else{
+			fiveutr = createItem("FivePrimeUTR");
+			label = transcriptId+"-5prime-utr";
+		}
+		fiveutr.setAttribute("primaryIdentifier", label);
 		Integer start = Integer.valueOf(geneStart) - 1;
 		String fivePrimeLocationRefId = getLocation(fiveutr, chromosomeId, transcriptStart, start.toString(), strand);
 		fiveutr.setReference("chromosome", chromosomeId);
 		fiveutr.setReference("chromosomeLocation", fivePrimeLocationRefId);
 		store(fiveutr);
 		
+		//add a three-prime-utr
+		Item threeutr = null;
+		String label2 = "";
+		if(strand.equals("-1")){
+			threeutr = createItem("FivePrimeUTR");
+			label2 = transcriptId+"-5prime-utr";
+
+		}else{
+			threeutr = createItem("ThreePrimeUTR");
+			label2 = transcriptId+"-3prime-utr";
+		}
+		threeutr.setAttribute("primaryIdentifier", label2);
+		Integer geneend = Integer.valueOf(geneEnd) + 1;
+		String threePrimeLocationRefId = getLocation(threeutr, chromosomeId, geneend.toString(), transcriptEnd, strand);
+		threeutr.setReference("chromosome", chromosomeId);
+		threeutr.setReference("chromosomeLocation", threePrimeLocationRefId);
+		store(threeutr);
+	
 		transcript.addToCollection("UTRs", fiveutr);
 		transcript.addToCollection("UTRs", threeutr);
 		
