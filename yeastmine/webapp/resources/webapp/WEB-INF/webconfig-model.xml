@@ -199,6 +199,17 @@
     </fields>
   </class>
   
+    <class className="org.intermine.model.bio.UTR">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier" label="UTR > Primary DBID"></fieldconfig>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" label="Transcript > Chromosome Identifier"></fieldconfig>
+      <fieldconfig fieldExpr="chromosomeLocation.end" label="UTR > End Location"></fieldconfig>
+      <fieldconfig fieldExpr="chromosomeLocation.start" label="UTR > Start Location"></fieldconfig>
+      <fieldconfig fieldExpr="chromosomeLocation.strand" label="UTR > Chromosome Strand"></fieldconfig> 
+    </fields>
+  </class>
+  
+  
 	<class className="org.intermine.model.bio.OntologyRelation">
 
 		<fields>
@@ -690,6 +701,18 @@
 			views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name" />
 
 
+		<!-- <enrichmentwidgetdisplayer id="protein_domain_enrichment"
+			title="Protein Domain Enrichment"
+			description="Protein domains enriched for genes in this list - data from InterPro"
+			label="Domains" filterLabel="DataSet"
+			startClass="Gene"
+			startClassDisplay="secondaryIdentifier" enrich="proteins.proteinDomains.name"
+			enrichIdentifier="proteins.proteinDomains.name"
+			constraints="organism.taxonId=[list], primaryIdentifier != null"
+			typeClass="Gene"
+			views="secondaryIdentifier, symbol, organism.name, proteins.proteinDomains.name" /> -->
+			
+			
 		<bagtabledisplayer id="interactions" title="Interactions"
 			pathStrings="Gene.interactions.participant2"
 			description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
@@ -700,17 +723,25 @@
 	                                interactions.details.role1,
 	                                interactions.participant2.primaryIdentifier,
 	                                interactions.participant2.symbol,
-                                   interactions.details.experiment.name" />
+                                   interactions.details.experiment.name" />                               
                                    
-                                   
-        <!-- <bagtabledisplayer id="phenotypes" title="Phenotypes"
+        <!--<bagtabledisplayer id="phenotypes" title="Phenotypes"
 			pathStrings="Gene.phenotypes.observable"
 			description="Genes (from the list or not) that have same observable as genes in this list."
 			displayFields="secondaryIdentifier, name" exportField="primaryIdentifier"
 			typeClass="Gene" columnTitle="Observable"
 			views="secondaryIdentifier, symbol, organism.shortName,
                           phenotypes.experimentType, phenotypes.mutantType,
-                          phenotypes.observable, phenotypes.qualifier" /> -->
+                          phenotypes.observable, phenotypes.qualifier" />                                         
+          
+       <bagtabledisplayer id="domains" title="Protein Domains" pathStrings="Gene.proteins.proteinDomains.name"
+                         description="Counts of genes in list with domains."
+                         displayFields="name"
+                         exportField="primaryIdentifier"
+                         typeClass="Gene"
+                         columnTitle="Genes"
+                         views="secondaryIdentifier, symbol, organism.shortName,
+                                proteins.proteinDomains.name"/>-->
                                   
 		 <bagtabledisplayer id="orthologues" title="Orthologues"
 			pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
