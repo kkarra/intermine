@@ -64,7 +64,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -102,39 +102,36 @@ public class SgdConverter extends BioDBConverter {
 		// a database has been initialized from properties starting with db.sgd
 		Connection connection = getDatabase().getConnection();
 
-		processChromosomeSequences(connection);  //ok with aws postgres
+		processChromosomeSequences(connection);
 		processGenes(connection);
-		processAliases(connection);
-		
-		processPathways(connection);
-		storePathways();
-		
-		processCrossReferences(connection);
-		/*processGeneLocations(connection);
-		processChrLocations(connection);
-		processGeneChildrenLocations(connection);
-		processProteins(connection);*/			
-		//processAllPubs(connection);             //get all publications and their topics loaded								
-		//processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics		
-		//processParalogs(connection);
+		processGeneLocations(connection);
+		processGeneChildrenLocations(connection);	
 
-		if(!TEST_LOCAL) {
+		if(!TEST_LOCAL) {	
+			
+			processAliases(connection);
+			processCrossReferences(connection);
+			//processChrLocations(connection); <-- this seems to be NPM and NISS specific
+			processProteins(connection);	
+			processAllPubs(connection);             //get all publications and their topics loaded								
+			processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
+			processParalogs(connection);
+			processPathways(connection);
+			
+			processPhysicalInteractions(connection);
+			processGeneticInteractions(connection);
+			storeInteractionTypes();
+			storeInteractionExperiments();
+			storeInteractions();
 			
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
 			storePhenotypes();
-
-			//processPathways(connection);
-			//storePathways();
-
-			processInteractions(connection);
-			storeInteractionTypes();
-			storeInteractionExperiments();
-			storeInteractions();
 		}
 		storePublications();
 		storeGenes();
 		storeProteins();
+		storePathways();
 
 	}
 
@@ -155,7 +152,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String featureNo = res.getString("dbentity_id");
 			if (genes.get(featureNo) == null) {
-				// ~~~ gene ~~~
+				//~~~ gene ~~~
 				String primaryIdentifier = res.getString("systematic_name");
 				String secondaryIdentifier = res.getString("sgdid");
 				String symbol = res.getString("gene_name");
@@ -166,8 +163,7 @@ public class SgdConverter extends BioDBConverter {
 				String qualifier = res.getString("qualifier");
 				//String feat_attribute = res.getString("feat_attribute");
 				String status = res.getString("dbentity_status");
-				
-                System.out.println("feature type is.." + feature_type);
+
 				Item item = null;
 				if (feature_type.equalsIgnoreCase("ORF")) {
 					item = createItem("ORF");
@@ -234,8 +230,6 @@ public class SgdConverter extends BioDBConverter {
 				// set for all types, so you can use LSF to query for these
 				// different type of objects in a template.
 				item.setAttribute("featureType", feature_type);
-
-				item.setAttribute("featureType", feature_type);
 				item.setAttribute("primaryIdentifier", primaryIdentifier);
 				if (StringUtils.isNotEmpty(name)) {
 					item.setAttribute("name", name);
@@ -278,13 +272,6 @@ public class SgdConverter extends BioDBConverter {
 
 				// ~~~ synonyms ~~~
 				getSynonym(refId, "symbol", symbol);
-				/*if (symbol != null) {
-					if (!symbol.equalsIgnoreCase(secondaryIdentifier)) {
-						getSynonym(refId, "identifier", secondaryIdentifier);// RPM1
-						// problem
-					}
-				}*/
-				//getSynonym(refId, "identifier", primaryIdentifier); //ssf1 and YFL013W-A  behaving differently synonym vs duplicate hit 1/12/17
 				getSynonym(refId, "identifier", secondaryIdentifier);
 			}
 		}
@@ -308,9 +295,9 @@ public class SgdConverter extends BioDBConverter {
 
 		while (res.next()) {
 
-			String parentFeatureNo = res.getString("parent_feature_no");
-			String childFeatureNo = res.getString("child_feature_no");
-			String refNo = res.getString("reference_no");		
+			String parentFeatureNo = res.getString("parent_id");
+			String childFeatureNo = res.getString("child_id");
+			String refNo = res.getString("reference_id");		
 			String source="";
 			if(refNo.equalsIgnoreCase("50997")){ //hack for PMID 16169922
 				source= "YGOB";
@@ -409,24 +396,17 @@ public class SgdConverter extends BioDBConverter {
 			throws SQLException, ObjectStoreException {
 
 		ResultSet res = PROCESSOR.getPathways(connection); // ordered by featureNo
-
 		System.out.println("Processing Pathways...");
-
-		while (res.next()) {
-
+		while (res.next()) {			
 			String geneFeatureNo = res.getString("dbentity_id");
 			String dbxref_name = res.getString("biocyc_id"); //pathway name
 			String dbxref_id = res.getString("display_name"); //pathway identifier i.e. short name
 			Item item = genes.get(geneFeatureNo);
-
 			if (item != null) {
 				getPathway(item.getIdentifier(), dbxref_id, dbxref_name);
 			}
 		}
-
 	}
-
-
 	/**
 	 * 
 	 * @param connection
@@ -437,15 +417,12 @@ public class SgdConverter extends BioDBConverter {
 			throws SQLException, ObjectStoreException {
 
 		ResultSet res = PROCESSOR.getCrossReferences(connection); // ordered by featureNo
-
 		System.out.println("Processing DbXRefs...");
-
 		while (res.next()) {
-
-			String geneFeatureNo = res.getString("feature_no");
-			String dbx_source = res.getString("source");
-			String dbxref_id = res.getString("dbxref_id");
-			String dbxref_type = res.getString("dbxref_type");
+			String geneFeatureNo = res.getString(1);
+			String dbxref_id = res.getString(2);
+			String dbx_source = res.getString(3);
+			String dbxref_type = res.getString(4);
 
 			Item item = genes.get(geneFeatureNo);
 
@@ -454,10 +431,17 @@ public class SgdConverter extends BioDBConverter {
 				getCrossReference(item.getIdentifier(), dbxref_id, dbx_source, dbxref_type, url);
 			}
 		}
-
 	}
 
-	
+/**
+ * 
+ * @param source
+ * @param dbxref_id
+ * @param dbxref_type
+ * @return
+ * @throws SQLException
+ * @throws ObjectStoreException
+ */
 	private String getCrossRefURL(String source, String dbxref_id, String dbxref_type) throws SQLException, ObjectStoreException {
 		
 		String url = "";
@@ -497,7 +481,16 @@ public class SgdConverter extends BioDBConverter {
 		return url;
 	}
 	
-	
+/**
+ * 
+ * @param subjectId
+ * @param id
+ * @param source
+ * @param dbxref_type
+ * @param url
+ * @return
+ * @throws ObjectStoreException
+ */
 	private String getCrossReference(String subjectId, String id, String source, String dbxref_type, String url)
 			throws ObjectStoreException {
 
@@ -542,7 +535,12 @@ public class SgdConverter extends BioDBConverter {
 		return refId;
 
 	}
-
+/**
+ * 
+ * @param source
+ * @return
+ * @throws ObjectStoreException
+ */
 	private String getSourceURL(String source) throws ObjectStoreException {
 		
 		String url = "";
@@ -580,23 +578,18 @@ public class SgdConverter extends BioDBConverter {
 		return url;
 	}
 	
-	
 	/**
 	 * 
 	 * @param connection
 	 * @throws SQLException
 	 * @throws ObjectStoreException
-	 */
-	private void processUniProtCrossReference(Connection connection)
+	 *
+	private void processUniProtCrossReference(Connection connection) 
 			throws SQLException, ObjectStoreException {
 
-		ResultSet res = PROCESSOR.getUniProtCrossReference(connection); // ordered by
-		// featureNo
-
+		ResultSet res = PROCESSOR.getUniProtCrossReference(connection);
 		System.out.println("Processing DbXRefs...");
-
 		while (res.next()) {
-
 			String geneFeatureNo = res.getString("feature_no");
 			String dbx_source = res.getString("source");
 			String dbxref_id = res.getString("dbxref_id");
@@ -608,7 +601,7 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 
-	}
+	}*/
 	
 	/**
 	 * 
@@ -623,13 +616,17 @@ public class SgdConverter extends BioDBConverter {
 
 		ResultSet res = PROCESSOR.getChromosomalFeatureLocationResults(connection);
 		System.out.println("Processing GeneLocations...");
+
+    			
 		while (res.next()) {
-			String featureNo = res.getString("feature_no");
-			String geneFeatureNo = res.getString("gene_feature_no");
-			String featureType = res.getString("feature_type");
-			String seq_length = res.getString("seq_length");
-			String featureName = res.getString("identifier");
+			String featureNo = res.getString("contig_id");
+			String featureName = res.getString("format_name");
+			//String featureType = res.getString("feature_type");
+			String featureType = "chromosome"; //<_----TEMP _ REMOVE
+			String geneFeatureNo = res.getString("dbentity_id");
+			String geneFeatureName = res.getString("gene_name"); //chromosome display
 			String strand = res.getString("strand");
+			String seq_length = res.getString(9);
 
 			String newstrand = "";
 			if (strand.equals("+")) {
@@ -639,31 +636,21 @@ public class SgdConverter extends BioDBConverter {
 			} else if (strand.equals("0")) {
 				newstrand = "0";
 			}
-
-			String fixed_chromosome_no = getFixedChrName(featureName);
-
-			//if (featureName.equalsIgnoreCase("17")) {
-			//featureName = "chrMito";
-			//}else if(!featureName.equalsIgnoreCase("2-micron")){
-			//featureName = "chr"+featureName;
-			//}
-
+			//String fixed_chromosome_no = getFixedChrName(featureName);
 			Item item = genes.get(geneFeatureNo);
 
 			// ~~~ chromosome OR plasmid ~~~
 			String refId = null;
 			if (featureType.equalsIgnoreCase("plasmid")) {
-				refId = getPlasmid(fixed_chromosome_no);// featureNo,
+				refId = getPlasmid(featureName); //fixed_chromosome_no
 				item.setReference("plasmid", refId);
 			} else if (featureType.equalsIgnoreCase("chromosome")) {
-				refId = getChromosome(fixed_chromosome_no); // featureNo,
+				refId = getChromosome(featureName); //fixed_chromosome_no
 				item.setReference("chromosome", refId);
 			}
 
 			// ~~~ location ~~~
-			String locationRefId = getLocation(item, refId, res
-					.getString("min_coord"), res.getString("max_coord"),
-					newstrand); // res.getString("strand")
+			String locationRefId = getLocation(item, refId, res.getString("start_index"), res.getString("end_index"),newstrand); 
 
 			if (featureType.equalsIgnoreCase("plasmid")) {
 				item.setReference("plasmidLocation", locationRefId);
@@ -671,13 +658,13 @@ public class SgdConverter extends BioDBConverter {
 				item.setReference("chromosomeLocation", locationRefId);
 			}
 			// ~~ add sequence
-			String seqRefId = getSequence(geneFeatureNo, res
-					.getString("residues"), seq_length);
+			String seqRefId = getSequence(geneFeatureNo, res.getString("residues"), seq_length);
 			item.setReference("sequence", seqRefId);
 			item.setAttribute("length", seq_length);
 
 		}
 		res.close();
+		System.out.println("size of genes:  " + genes.size());
 	}
 
 	/**
@@ -687,7 +674,7 @@ public class SgdConverter extends BioDBConverter {
 	 * @param connection
 	 * @throws SQLException
 	 * @throws ObjectStoreException
-	 */
+	 *
 	private void processChrLocations(Connection connection)
 			throws SQLException, ObjectStoreException, Exception {
 
@@ -700,12 +687,6 @@ public class SgdConverter extends BioDBConverter {
 			String featureName = res.getString("identifier");
 
 			String fixed_chromosome_no = getFixedChrName(featureName);
-
-			//if (featureName.equalsIgnoreCase("17")) {
-			//	featureName = "chrMito";
-			//}else if(!featureName.equalsIgnoreCase("2-micron")){
-			//	featureName = "chr"+featureName;
-			//}
 
 			Item item = genes.get(geneFeatureNo);
 
@@ -721,14 +702,6 @@ public class SgdConverter extends BioDBConverter {
 
 			// ~~~ location ~~~
 			String locationRefId = getLocation(item, refId, "1", "1", "0"); // was
-			// -
-			// 0,0,n/a
-			// or
-			// should
-			// it
-			// be
-			// some
-			// number..1,1,0
 
 			if (featureType.equalsIgnoreCase("plasmid")) {
 				item.setReference("plasmidLocation", locationRefId);
@@ -738,7 +711,7 @@ public class SgdConverter extends BioDBConverter {
 
 		}
 		res.close();
-	}
+	}*/
 
 	private void processGeneChildrenLocations(Connection connection)
 			throws SQLException, ObjectStoreException, Exception {
@@ -746,20 +719,19 @@ public class SgdConverter extends BioDBConverter {
 		ResultSet res = PROCESSOR.getChildrenFeatureLocationResults(connection);
 		System.out.println("Processing GeneChildrenLocations...");
 		while (res.next()) {
-
+	    			   
 			String geneFeatureNo = res.getString("parent_id");
 			String parentFeatureType = res.getString("parent_type");
 
 			String geneChildFeatureNo = res.getString("child_id");
 			String childFeatureType = res.getString("child_type");
 
-			String chromosome_no = res.getString("feature_name"); // root chr.
-			// number
+			String chromosome_no = res.getString("format_name"); // root chr.number
 			String secondaryIdentifier = res.getString("child_identifier"); // child
-			String primaryIdentifier = res.getString("child_dbxrefid"); // SXX
+			String primaryIdentifier = res.getString("child_sgdid"); // SXX
 
-			String maxcoord = res.getString("max_coord");
-			String mincoord = res.getString("min_coord");
+			String maxcoord = res.getString("child_end_coord");
+			String mincoord = res.getString("child_start_coord");
 			String strand = res.getString("strand");
 
 			String seq = res.getString("residues");
@@ -775,13 +747,7 @@ public class SgdConverter extends BioDBConverter {
 				newstrand = "0";
 			}
 
-			String fixed_chromosome_no = getFixedChrName(chromosome_no);
-
-			//if (chromosome_no.equalsIgnoreCase("17")) {
-			//chromosome_no = "chrMito";
-			//}else if(!chromosome_no .equalsIgnoreCase("2-micron")){
-			//chromosome_no = "chr"+chromosome_no;
-			//}
+			//String fixed_chromosome_no = getFixedChrName(chromosome_no);
 
 			// figure out why duplicates in the SQL..???..
 			if (featureMap.get(geneChildFeatureNo) == null) {
@@ -792,7 +758,7 @@ public class SgdConverter extends BioDBConverter {
 
 			Item parent = genes.get(geneFeatureNo);
 
-			//System.out.println("child feature type...."+ childFeatureType);
+			System.out.println("child feature type...."+ childFeatureType);
 			// create the child Item
 			Item childItem = getChildItem(childFeatureType);
 
@@ -806,25 +772,23 @@ public class SgdConverter extends BioDBConverter {
 			if (childFeatureType.equalsIgnoreCase("intron")) {
 				childItem.addToCollection("genes", parent.getIdentifier());
 			} else {
-				String refname = getReferenceName(childFeatureType,
-						parentFeatureType);
+				String refname = getReferenceName(childFeatureType,parentFeatureType);
 				childItem.setReference(refname, parent.getIdentifier());
 			}
-
 			// ~~ add sequence
 			String seqRefId = getSequence(geneChildFeatureNo, seq, seqLen);
 			childItem.setReference("sequence", seqRefId);
 
 			// ~~~ chromosome and location ~~~
 			String refId = null;
-			if (fixed_chromosome_no.equalsIgnoreCase("2-micron")) {
-				refId = getPlasmid(fixed_chromosome_no);
+			if (chromosome_no.equalsIgnoreCase("2-micron")) {
+				refId = getPlasmid(chromosome_no);
 				childItem.setReference("plasmid", refId);
 				String locationRefId = getLocation(childItem, refId, mincoord,
 						maxcoord, newstrand);
 				childItem.setReference("plasmidLocation", locationRefId);
 			} else {
-				refId = getChromosome(fixed_chromosome_no);
+				refId = getChromosome(chromosome_no);
 				childItem.setReference("chromosome", refId);
 				String locationRefId = getLocation(childItem, refId, mincoord,
 						maxcoord, newstrand);
@@ -841,8 +805,7 @@ public class SgdConverter extends BioDBConverter {
 			// ~~~ store these last ~~~
 			String childId = childItem.getIdentifier();
 			getSynonym(childId, "identifier", primaryIdentifier);
-			// getSynonym(childId, "identifier", secondaryIdentifier); - eurie
-			// doesn't want this to be searchable
+			// getSynonym(childId, "identifier", secondaryIdentifier); - eurie doesn't want this to be searchable
 
 		}
 		res.close();
@@ -860,7 +823,9 @@ public class SgdConverter extends BioDBConverter {
 			name = "blockedreadingframe";
 		}else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("ORF")) {
 			name = "orf";
-		} else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("pseudogene")) {
+		} else if (type.equalsIgnoreCase("uORF") && ptype.equalsIgnoreCase("ORF")) {
+			name = "orf";
+		}else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("pseudogene")) {
 			name = "pseudogene";
 		} else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("transposable_element_gene")) {
 			name = "transposableelementgene";
@@ -914,18 +879,27 @@ public class SgdConverter extends BioDBConverter {
 			name = "telomere";
 		}  else if (type.equalsIgnoreCase("noncoding_exon") && ptype.equalsIgnoreCase("telomerase_RNA_gene")) {
 			name = "ncrna_gene";
+		}else if (type.equalsIgnoreCase("W_region") && ptype.equalsIgnoreCase("silent_mating_type_cassette_array")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("W_region") && ptype.equalsIgnoreCase("mating_type_region")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("X_region") && ptype.equalsIgnoreCase("silent_mating_type_cassette_array")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("X_region") && ptype.equalsIgnoreCase("mating_type_region")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("Z1_region") && ptype.equalsIgnoreCase("silent_mating_type_cassette_array")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("Z1_region") && ptype.equalsIgnoreCase("mating_type_region")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("Z2_region") && ptype.equalsIgnoreCase("silent_mating_type_cassette_array")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("Z2_region") && ptype.equalsIgnoreCase("mating_type_region")) {
+			name = "matingtyperegion";
 		}
 
 		return name;
 
 	}
-
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 * @throws Exception
-	 */
 
 	private String getCasedName(String name) throws Exception {
 
@@ -945,57 +919,20 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 
-	/**
-	 * 
-	 * @param connection
-	 * @throws SQLException
-	 * @throws ObjectStoreException
-	 * @throws Exception
-	 */
 	private void processProteins(Connection connection) throws SQLException,
 	ObjectStoreException, Exception {
 
 		ResultSet res = PROCESSOR.getProteinResults(connection);
 		System.out.println("Processing Proteins...");
 		while (res.next()) {
-
-			String featureNo = res.getString("feature_no");
-			String primaryIdentifier = res.getString("dbxref_id");
-			String secondaryIdentifier = res.getString("feature_name");
-			String symbol = res.getString("gene_name");
+			String featureNo = res.getString("dbentity_id");
+			String primaryIdentifier = res.getString("sgdid");
+			String secondaryIdentifier = res.getString("format_name");
+			String symbol = res.getString("display_name");
 			String residues = res.getString("residues");
 			String length = res.getString(6);
-			
-			/*String molwt = res.getString("molecular_weight");
-			String pi = res.getString("pi");
-			String fopScore = res.getString("fop_score");
-			String gravyScore = res.getString("gravy_score");
-			String aromaticityScore = res.getString("aromaticity_score");
-			String cys = res.getString("cys");
-			String gln = res.getString("gln");
-			String glu = res.getString("glu");
-			String gly = res.getString("gly");
-			String his = res.getString("his");
-			String ile = res.getString("ile");
-			String leu = res.getString("leu");
-			String lys = res.getString("lys");
-			String met = res.getString("met");
-			String phe = res.getString("phe");
-			String pro = res.getString("pro");
-			String ser = res.getString("ser");
-			String thr = res.getString("thr");
-			String trp = res.getString("trp");
-			String tyr = res.getString("tyr");
-			String val = res.getString("val");
-			String ala = res.getString("ala");
-			String arg = res.getString("arg");
-			String asn = res.getString("asn");
-			String asp = res.getString("asp");
-			String ntermseq = res.getString("n_term_seq");
-			String ctermseq = res.getString("c_term_seq");
-			String cai = res.getString("cai");
-			String codonBias = res.getString("codon_bias");*/
 
+			System.out.println("protein method geneDb: "+ featureNo);
 			Item item = genes.get(featureNo);
 
 			// ~~~ sequence ~~~
@@ -1009,91 +946,6 @@ public class SgdConverter extends BioDBConverter {
 				String modSymbol = getCasedName(symbol);
 				protein.setAttribute("symbol", modSymbol);
 			}
-
-			/*if (molwt != null) {
-				protein.setAttribute("molecularWeight", molwt);
-			}
-			if (pi != null) {
-				protein.setAttribute("pI", pi);
-			}
-			if (fopScore != null) {
-				protein.setAttribute("fopScore", fopScore);
-			}
-			if (gravyScore != null) {
-				protein.setAttribute("gravyScore", gravyScore);
-			}
-			if (aromaticityScore != null) {
-				protein.setAttribute("aromaticityScore", aromaticityScore);
-			}
-			if (cys != null) {
-				protein.setAttribute("cys", cys);
-			}
-			if (gln != null) {
-				protein.setAttribute("gln", gln);
-			}
-			if (glu != null) {
-				protein.setAttribute("glu", glu);
-			}
-			if (gly != null) {
-				protein.setAttribute("gly", gly);
-			}
-			if (his != null) {
-				protein.setAttribute("his", his);
-			}
-			if (ile != null) {
-				protein.setAttribute("ile", ile);
-			}
-			if (leu != null) {
-				protein.setAttribute("leu", leu);
-			}
-			if (lys != null) {
-				protein.setAttribute("lys", lys);
-			}
-			if (met != null) {
-				protein.setAttribute("met", met);
-			}
-			if (phe != null) {
-				protein.setAttribute("phe", phe);
-			}
-			if (pro != null) {
-				protein.setAttribute("pro", pro);
-			}
-			if (ser != null) {
-				protein.setAttribute("ser", ser);
-			}
-			if (thr != null) {
-				protein.setAttribute("thr", thr);
-			}
-			if (trp != null) {
-				protein.setAttribute("trp", trp);
-			}
-			if (val != null) {
-				protein.setAttribute("val", val);
-			}
-			if (ala != null) {
-				protein.setAttribute("ala", ala);
-			}
-			if (arg != null) {
-				protein.setAttribute("arg", arg);
-			}
-			if (asn != null) {
-				protein.setAttribute("asn", asn);
-			}
-			if (asp != null) {
-				protein.setAttribute("asp", asp);
-			}
-			if (ntermseq != null) {
-				protein.setAttribute("ntermseq", ntermseq);
-			}
-			if (ctermseq != null) {
-				protein.setAttribute("ctermseq", ctermseq);
-			}
-			if (cai != null) {
-				protein.setAttribute("cai", cai);
-			}
-			if (codonBias != null) {
-				protein.setAttribute("codonBias", codonBias);
-			}*/
 			
 			Item seq = createItem("Sequence");
 			seq.setAttribute("residues", residues);
@@ -1106,20 +958,12 @@ public class SgdConverter extends BioDBConverter {
 			}
 
 			protein.setReference("sequence", seq.getIdentifier());
-			protein.addToCollection("genes", item.getIdentifier());
+			if(item != null) protein.addToCollection("genes", item.getIdentifier());
 			proteins.put(featureNo, protein);
 
 		}
 
-
 	}
-
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 * @throws Exception
-	 */
 
 	private String getFixedChrName(String name) throws Exception {
 
@@ -1162,23 +1006,10 @@ public class SgdConverter extends BioDBConverter {
 		}else if(name.equalsIgnoreCase("16")){
 			newname ="chrXVI";
 		}
-
-
-
-		//else {
-		//newname = "chr"+name;
-		//}
-
 		return newname;
 
 	}
 
-	/**
-	 * 
-	 * @param childType
-	 * @return
-	 * @throws ObjectStoreException
-	 */
 	private Item getChildItem(String childType) throws ObjectStoreException {
 
 		Item item = null;
@@ -1189,8 +1020,7 @@ public class SgdConverter extends BioDBConverter {
 			item = createItem("Intron");
 		} else if (childType.equalsIgnoreCase("five_prime_UTR_intron")) {
 			item = createItem("FivePrimeUTRIntron");
-		} else if (childType
-				.equalsIgnoreCase("plus_1_translational_frameshift")) {
+		} else if (childType.equalsIgnoreCase("plus_1_translational_frameshift")) {
 			item = createItem("Plus1TranslationalFrameshift");
 		} else if (childType.equalsIgnoreCase("ARS consensus sequence")) {
 			item = createItem("ARSConsensusSequence");
@@ -1202,11 +1032,9 @@ public class SgdConverter extends BioDBConverter {
 			item = createItem("RepeatRegion");
 		} else if (childType.equalsIgnoreCase("noncoding_exon")) {
 			item = createItem("NoncodingExon");
-		} else if (childType
-				.equalsIgnoreCase("external_transcribed_spacer_region")) {
+		} else if (childType.equalsIgnoreCase("external_transcribed_spacer_region")) {
 			item = createItem("ExternalTranscribedSpacerRegion");
-		} else if (childType
-				.equalsIgnoreCase("internal_transcribed_spacer_region")) {
+		} else if (childType.equalsIgnoreCase("internal_transcribed_spacer_region")) {
 			item = createItem("InternalTranscribedSpacerRegion");
 		} else if (childType.equalsIgnoreCase("non_transcribed_region")) {
 			item = createItem("NonTranscribedRegion");
@@ -1228,42 +1056,38 @@ public class SgdConverter extends BioDBConverter {
 			item = createItem("XElement");
 		}else if (childType.equalsIgnoreCase("telomeric_repeat")) {
 			item = createItem("TelomericRepeat");
+		}else if (childType.equalsIgnoreCase("uORF")) {
+			item = createItem("uORF");
+		}else if (childType.equalsIgnoreCase("W_region")) {
+			item = createItem("W_region");
+		}
+		else if (childType.equalsIgnoreCase("X_region")) {
+			item = createItem("X_region");
+		}else if (childType.equalsIgnoreCase("Y_region")) {
+			item = createItem("Y_region");
+		}else if (childType.equalsIgnoreCase("Z1_region")) {
+			item = createItem("Z1_region");
+		}else if (childType.equalsIgnoreCase("Z2_region")) {
+			item = createItem("Z2_region");
 		}
 
 		return item;
 
 	}
-	/**
-	 * 
-	 * @param connection
-	 * @throws SQLException
-	 * @throws ObjectStoreException
-	 * @throws Exception
-	 */
-
+	
 	private void processChromosomeSequences(Connection connection)
 			throws SQLException, ObjectStoreException, Exception {
-
-		ResultSet res = PROCESSOR.getChromosomeSequenceResults(connection);
+		
 		System.out.println("Processing ChromosomeSequence...");
-		while (res.next()) {
+		ResultSet res = PROCESSOR.getChromosomeSequenceResults(connection);
 
+		while (res.next()) {
 			String featureNo = res.getString("contig_id");
 			String chromosomeNo = res.getString("format_name");
 			String feature_type = res.getString("display_name");
 			String residues = res.getString("residues");
 			String length = res.getString(5);
-		
 			//String fixed_chromosome_no = getFixedChrName(chromosomeNo);
-			//8/3/17 - not required in view of Postgres schema and data
-			//Chromosome_V
-			//Chromosome_VI
-
-			//if (chromosomeNo.equalsIgnoreCase("17")) {
-			//chromosomeNo = "chrMito";
-			//}else if(!chromosomeNo.equalsIgnoreCase("2-micron")) {
-			//chromosomeNo = "chr"+chromosomeNo;
-			//}
 
 			if (feature_type.equalsIgnoreCase("chromosome")) {
 
@@ -1305,7 +1129,7 @@ public class SgdConverter extends BioDBConverter {
 				}
 			}
 
-		}// while
+		}
 
 	}
 
@@ -1479,18 +1303,18 @@ public class SgdConverter extends BioDBConverter {
 
 		while (res.next()) {
 
-			String referenceNo = res.getString("reference_no");
-			String pubMedId = res.getString("pubmed");
+			String referenceNo = res.getString("dbentity_id");
+			String pubMedId = res.getString("pmid");
 			String title = res.getString("title");
 			String citation = res.getString("citation");
-			String topic = res.getString("literature_topic");
-			String journal = res.getString("abbreviation");
+			String topic = res.getString("topic");
+			String journal = res.getString("med_abbr");
 			String volume = res.getString("volume");
 			String pages = res.getString("page");
 			String year = res.getString("year");
 			String issue = res.getString("issue");
-			String abst = res.getString("abstract");
-			String dbxrefid = res.getString("dbxref_id");
+			String abst = res.getString("fulltext_status");
+			String dbxrefid = res.getString("sgdid");
 
 			if (firstrow) {
 				prevReferenceNo = referenceNo;
@@ -1556,27 +1380,24 @@ public class SgdConverter extends BioDBConverter {
 
 		Item gene = null;
 		boolean firstrow = true;
-
+		System.out.println("Processing Publications With Chromosomal Features...");
 		ResultSet res = PROCESSOR.getPubWithFeaturesResults(connection);
 
-		System.out
-		.println("Processing Publications With Chromosomal Features...");
-
 		while (res.next()) {
-
-			String referenceNo = res.getString("reference_no");
-			String geneFeatureNo = res.getString("gene_feature_no");
-			String pubMedId = res.getString("pubmed");
+			
+			String referenceNo = res.getString("referenceFeatureNo");
+			String geneFeatureNo = res.getString("featureNo");
+			String pubMedId = res.getString("pmid");
 			String title = res.getString("title");
 			String citation = res.getString("citation");
-			String topic = res.getString("literature_topic");
-			String journal = res.getString("abbreviation");
+			String topic = res.getString("topic");
+			String journal = res.getString("med_abbr");
 			String volume = res.getString("volume");
 			String pages = res.getString("page");
 			String year = res.getString("year");
 			String issue = res.getString("issue");
-			String dbxrefid = res.getString("dbxref_id");
-
+			String dbxrefid = res.getString("sgdid");
+			System.out.println("stuff  :" + referenceNo +  "  " + geneFeatureNo +"  "+ pubMedId);
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 
 				if (!firstrow) {
@@ -1635,25 +1456,23 @@ public class SgdConverter extends BioDBConverter {
 	private void processPubsForPhenotypes(Connection connection)
 			throws SQLException, ObjectStoreException {
 
+		System.out.println("Processing Publications associated with Pheno_annot_no....");
 		ResultSet res = PROCESSOR.getPubForPhenotype(connection);
-
-		System.out
-		.println("Processing Publications associated with Pheno_annot_no....");
-
+		
 		while (res.next()) {
 
-			String phenoAnnotNo = res.getString("pheno_annot_no");
-			String referenceNo = res.getString("reference_no");
-			String pubMedId = res.getString("pubmed");
-			String status = res.getString("status");
+			String phenoAnnotNo = res.getString("annotation_id");
+			String referenceNo = res.getString("reference_id");
+			String pubMedId = res.getString("pmid");
+			String status = res.getString("fulltext_status");
 			String title = res.getString("title");
 			String volume = res.getString("volume");
 			String pages = res.getString("page");
 			String year = res.getString("year");
 			String issue = res.getString("issue");
 			String citation = res.getString("citation");
-			String journal = res.getString("abbreviation");
-			String dbxrefid = res.getString("dbxref_id");
+			String journal = res.getString("med_abbr");
+			String dbxrefid = res.getString("sgdid");
 
 			getPubPhenotype(phenoAnnotNo, referenceNo, title, pubMedId,
 					citation, journal, volume, pages, year, issue, dbxrefid);
@@ -1701,43 +1520,44 @@ public class SgdConverter extends BioDBConverter {
 	 * @throws ObjectStoreException
 	 */
 
-	private void processInteractions(Connection connection)
+	private void processPhysicalInteractions(Connection connection)
 			throws SQLException, ObjectStoreException {
 
 		String dsId = getBioGridDataSet();
 		int count = 0;
 
-		ResultSet res = PROCESSOR.getInteractionResults(connection);
-		System.out.println("Processing Interactions...");
+		ResultSet res = PROCESSOR.getPhysicalInteractionResults(connection);
+		System.out.println("Processing Physical Interactions...");
 		while (res.next()) {
 			count++;
-			String geneFeatureName = res.getString("feature_a");
-
-			Item gene = genesName.get(geneFeatureName); //can save on look-ups here
-
-			String interactionNo = res.getString("interaction_no");
-			String referenceNo = res.getString("reference_no");
-			String interactionType = res.getString("interaction_type");
-			String experimentType = res.getString("experiment_type");
+			String geneFeatureName = res.getString("dbentity1_id");
+			System.out.println("dbentity1  "+ geneFeatureName);
+			Item gene = genes.get(geneFeatureName); //can save on look-ups here
+	    			
+			String interactionNo = res.getString("annotation_id");
+			String referenceNo = res.getString("reference_id");
+			String interactionType = "physical interactions";
+			String experimentType = res.getString("biogrid_experimental_system");
 			String annotationType = res.getString("annotation_type");
 			String modification = res.getString("modification");
 
-			String interactingGeneFeatureName = res.getString("feature_b");
-			Item interactingGene = genesName.get(interactingGeneFeatureName);
+			String interactingGeneFeatureName = res.getString("dbentity2_id");
+			System.out.println("dbentity2  "+ interactingGeneFeatureName);
+			Item interactingGene = genes.get(interactingGeneFeatureName);
 
-			String action = res.getString("action");
-			String source = res.getString("source");
-			String phenotype = res.getString("phenotype");
+			String action = res.getString("bait_hit");
+			String source = res.getString("display_name");
+			String phenotype = ""; //res.getString("phenotype");
 			String citation = res.getString("citation");
-			String pubmed = res.getString("pubmed");
+			String pubmed = res.getString("pmid");
 			String title = res.getString("title");
 			String volume = res.getString("volume");
 			String page = res.getString("page");
 			String year = res.getString("year");
 			String issue = res.getString("issue");
-			String abbreviation = res.getString("abbreviation");
+			String abbreviation = res.getString("med_abbr");
 			String firstAuthor = res.getString("first_author");
-			String dbxrefid = res.getString("dbxref_id");
+			String dbxrefid = res.getString("sgdid");
 
 			String interactionRefId = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
@@ -1748,6 +1568,59 @@ public class SgdConverter extends BioDBConverter {
 		}
 	}
 
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+
+	private void processGeneticInteractions(Connection connection)
+			throws SQLException, ObjectStoreException {
+
+		String dsId = getBioGridDataSet();
+		int count = 0;
+
+		ResultSet res = PROCESSOR.getGeneticInteractionResults(connection);
+		System.out.println("Processing Genetic Interactions...");
+		while (res.next()) {
+			count++;
+			String geneFeatureName = res.getString("dbentity1_id");
+	    			
+			Item gene = genes.get(geneFeatureName); //can save on look-ups here
+
+			String interactionNo = res.getString("annotation_id");
+			String referenceNo = res.getString("reference_id");
+			String interactionType = "genetic interactions"; //res.getString("interaction_type");
+			String experimentType = res.getString("biogrid_experimental_system");
+			String annotationType = "genetic interactions"; //res.getString("annotation_type");
+			String modification = ""; //res.getString("modification");
+
+			String interactingGeneFeatureName = res.getString("dbentity2_id");
+			Item interactingGene = genes.get(interactingGeneFeatureName);
+
+			String action = res.getString("bait_hit");
+			String source = res.getString("source");
+			String phenotype = res.getString("phenotype");
+			String citation = res.getString("citation");
+			String pubmed = res.getString("pmid");
+			String title = res.getString("title");
+			String volume = res.getString("volume");
+			String page = res.getString("page");
+			String year = res.getString("year");
+			String issue = res.getString("issue");
+			String abbreviation = res.getString("med_abbr");
+			String firstAuthor = res.getString("first_author");
+			String dbxrefid = res.getString("sgdid");
+
+			String interactionRefId = getInteraction(interactionNo,
+					referenceNo, interactionType, experimentType,
+					annotationType, modification, interactingGene, action, source,
+					phenotype, citation, gene, pubmed, title, volume, page,
+					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+
+		}
+	}
 
 	private void processPhenotypes(Connection connection) throws SQLException,
 	ObjectStoreException {
@@ -1765,36 +1638,40 @@ public class SgdConverter extends BioDBConverter {
 
 		Item gene = null;
 		boolean firstrow = true;
-
-		ResultSet res = PROCESSOR.getPhenotypeResults(connection);
+		
 		System.out.println("Processing Phenotypes...");
+		ResultSet res = PROCESSOR.getPhenotypeResults(connection);
+
 		while (res.next()) {
 
 			// use these to switch from feature to next && annotation to next
-			String geneFeatureNo = res.getString("feature_no");
-			String phenotypeAnnotNo = res.getString("pheno_annotation_no");
+			String geneFeatureNo = res.getString("dbentity_id");
+			String phenotypeAnnotNo = res.getString("annotation_id");
 			
 			// set once
 			String experimentType = res.getString("experiment_type");
 			String experimentComment = res.getString("experiment_comment");
 			String mutantType = res.getString("mutant_type");
-			String qualifier = res.getString("qualifier");
-			if (qualifier == null)
-				qualifier = "none";
-			String db_observable = res.getString("observable");
+			String qualifier_observable = res.getString("phenotype");
+			String reporter = res.getString("reporter");
+			String allele = res.getString("allele");
+			String strain_background = res.getString("strain_name");
+			
+			String t[] = qualifier_observable.split(":");
+			String qualifier = t[0].trim();
+			String observable = t[1].trim();
 
 			// .. Process - Separate word into parts, change case, put together.
-			String firstLetter = db_observable.substring(0, 1); // Get first
-			// letter
-			String remainder = db_observable.substring(1); // Get remainder of
-			// word.
-			String observable = firstLetter.toUpperCase() + remainder; // .toLowerCase();
+			//String firstLetter = db_observable.substring(0, 1); // Get first letter
+			//String remainder = db_observable.substring(1); // Get remainder of word.
+			//String observable = firstLetter.toUpperCase() + remainder; // .toLowerCase();
 
 			// add attributes of certain key types
-			String key = res.getString("property_type");
-			String value = res.getString("property_value");
-			String desc = res.getString("property_description");
-			String feature_type = res.getString("feature_type");
+			String key = res.getString("condition_class");
+			String value = res.getString("condition_name");
+			String desc = res.getString("condition_value");
+			
+			String feature_type = ""; //res.getString("feature_type");  <-- fix when NPM is addressed
 
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 
@@ -1821,17 +1698,21 @@ public class SgdConverter extends BioDBConverter {
 			}
 
 			if (key != null && value != null) {
-				if (key.equalsIgnoreCase("Allele")) {
+				/*if (key.equalsIgnoreCase("Allele")) {
 					if (desc != null) {
 						value = value + " (" + desc + ")";
 					}
 					hm.put("allele", value);
-				} else if (key.equalsIgnoreCase("strain_background")) {
+				} else
+					
+				if (key.equalsIgnoreCase("strain_background")) {
 					if (desc != null) {
 						value = value + " (" + desc + ")";
 					}
 					hm.put("strainBackground", value);
-				} else if (key.equalsIgnoreCase("Chemical_pending")) {
+				} else*/
+				
+				 if (key.equalsIgnoreCase("chemical") || key.equalsIgnoreCase("assay") || key.equalsIgnoreCase("radiation")) {
 
 					if (desc != null) {
 						value = value + " (" + desc + ")";
@@ -1845,7 +1726,7 @@ public class SgdConverter extends BioDBConverter {
 					}
 					hm.put("chemical", newval);
 
-				} else if (key.equalsIgnoreCase("chebi_ontology")) {
+				 /*} else if (key.equalsIgnoreCase("chebi_ontology")) {
 					if (desc != null) {
 						value = value + " (" + desc + ")";
 					}
@@ -1856,8 +1737,8 @@ public class SgdConverter extends BioDBConverter {
 					} else {
 						newval = value;
 					}
-					hm.put("chemical", newval);
-				} else if (key.equalsIgnoreCase("Condition")) {
+					hm.put("chemical", newval);*/
+				} else if (key.equalsIgnoreCase("treatment") || key.equalsIgnoreCase("media") || key.equalsIgnoreCase("phase") || key.equalsIgnoreCase("temperature")) {
 
 					if (desc != null) {
 						value = value + " (" + desc + ")";
@@ -1872,7 +1753,8 @@ public class SgdConverter extends BioDBConverter {
 
 					hm.put("condition", newcond);
 
-				} else if (key.equalsIgnoreCase("Details")) {
+				} 
+				/*else if (key.equalsIgnoreCase("Details")) {
 
 					if (desc != null) {
 						value = value + " (" + desc + ")";
@@ -1901,7 +1783,7 @@ public class SgdConverter extends BioDBConverter {
 					}
 					hm.put("reporter", newrep);
 
-				}
+				}*/
 			}
 
 			prevGeneFeatureNo = geneFeatureNo;
@@ -1923,24 +1805,6 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 
-	// private void addCollection(String collectionName) {
-	// for (Map.Entry<String, List<String>> entry : featureMap.entrySet()) {
-	// String featureNo = entry.getKey();
-	// List<String> pubRefIds = entry.getValue();
-	// Item gene = genes.get(featureNo);
-	// if (gene != null) {
-	// gene.setCollection(collectionName, pubRefIds);
-	// }
-	// }
-	// featureMap = new HashMap();
-	// }
-	//        
-	// private void addFeature(String featureNo, String refId) {
-	// if (featureMap.get(featureNo) == null) {
-	// featureMap.put(featureNo, new ArrayList());
-	// }
-	// featureMap.get(featureNo).add(refId);
-	// }
 
 	private String getLocation(Item subject, String chromosomeRefId,
 			String startCoord, String stopCoord, String strand)
@@ -1994,8 +1858,7 @@ public class SgdConverter extends BioDBConverter {
 		Integer b = new Integer(end);
 
 		// if the coordinates are on the crick strand, they need to be reversed
-		// or they
-		// result in a negative number
+		// or they result in a negative number
 		if (a.compareTo(b) > 0) {
 			a = new Integer(end);
 			b = new Integer(start);
@@ -2218,8 +2081,8 @@ public class SgdConverter extends BioDBConverter {
 		detail.setAttribute("type", interactionType);		
 		detail.setAttribute("annotationType", annotationType);
 		//detail.setAttribute("experimentType", experimentType); --6/23
-		if (modification != null) detail.setAttribute("modification", modification);
-		if (phenotype != null) detail.setAttribute("phenotype", phenotype);
+		if (StringUtils.isNotEmpty(modification)) detail.setAttribute("modification", modification);
+		if (StringUtils.isNotEmpty(phenotype)) detail.setAttribute("phenotype", phenotype);
 		detail.setAttribute("role1", action);
 		detail.addToCollection("allInteractors", interactingGene.getIdentifier());
 		//detail.addToCollection("interactingGenes", interactingGene.getIdentifier());
@@ -2378,8 +2241,7 @@ public class SgdConverter extends BioDBConverter {
 			Iterator iter = hm.iterator();
 			while (iter.hasNext()) {
 				String value = (String) iter.next();
-				item.addToCollection("literatureTopics",
-						getLiteratureTopic(value));
+				item.addToCollection("literatureTopics",getLiteratureTopic(value));
 			}
 			publications.put(referenceNo, item);
 		}

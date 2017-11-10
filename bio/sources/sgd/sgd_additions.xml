@@ -220,10 +220,43 @@
 
  <class name="ORF" extends="ProteinCodingGene" is-interface="true">
   <collection name="CDSs" referenced-type="CDS" reverse-reference="orf"/>
+    <collection name="uORFs" referenced-type="uORF" reverse-reference="orf"/>
   <collection name="plus1translationalframeshifts" referenced-type="Plus1TranslationalFrameshift" reverse-reference="orf"/>
   <collection name="fiveprimeutrintrons" referenced-type="FivePrimeUTRIntron" reverse-reference="orf"/>
   <collection name="inteinencodingregions" referenced-type="InteinEncodingRegion" reverse-reference="orf"/>
  </class>
+ 
+<class name="uORF" extends="SequenceFeature" is-interface="true">
+	<reference name="orf" referenced-type="ORF" reverse-reference="uORFs"/>
+</class>
+
+<class name="W_region" extends="SequenceFeature" is-interface="true">
+	<reference name="matingtyperegion" referenced-type="MatingTypeRegion" reverse-reference="W_regions"/>
+</class>
+
+<class name="X_region" extends="SequenceFeature" is-interface="true">
+	<reference name="matingtyperegion" referenced-type="MatingTypeRegion" reverse-reference="X_regions"/>
+</class>
+
+<class name="Y_region" extends="SequenceFeature" is-interface="true">
+	<reference name="matingtyperegion" referenced-type="MatingTypeRegion" reverse-reference="Y_regions"/>
+</class>
+
+<class name="Z1_region" extends="SequenceFeature" is-interface="true">
+	<reference name="matingtyperegion" referenced-type="MatingTypeRegion" reverse-reference="Z1_regions"/>
+</class>
+
+<class name="Z2_region" extends="SequenceFeature" is-interface="true">
+	<reference name="matingtyperegion" referenced-type="MatingTypeRegion" reverse-reference="Z2_regions"/>
+</class>
+
+<class name="MatingTypeRegion" extends="SequenceFeature" is-interface="true">
+	<reference name="W_regions" referenced-type="W_region" reverse-reference="matingtyperegion"/>
+	<reference name="X_regions" referenced-type="X_region" reverse-reference="matingtyperegion"/>
+	<reference name="Y_regions" referenced-type="Y_region" reverse-reference="matingtyperegion"/>
+	<reference name="Z1_regions" referenced-type="Z1_region" reverse-reference="matingtyperegion"/>
+	<reference name="Z2_regions" referenced-type="Z2_region" reverse-reference="matingtyperegion"/>
+</class>
 
  <class name="Phenotype" is-interface="true">
   <attribute name="experimentType" type="java.lang.String"/>
