@@ -909,7 +909,6 @@ public class SgdConverter extends BioDBConverter {
 			String residues = res.getString("residues");
 			String length = res.getString(6);
 
-			System.out.println("protein method geneDb: "+ featureNo);
 			Item item = genes.get(featureNo);
 
 			// ~~~ sequence ~~~
@@ -1066,7 +1065,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String fixed_chromosome_no = getFixedChrName(chromosomeNo);
 
-			System.out.println("chr   :"+ chromosomeNo + " fixed:  "+ fixed_chromosome_no);
+			//("chr   :"+ chromosomeNo + " fixed:  "+ fixed_chromosome_no);
 			
 			if (feature_type.equalsIgnoreCase("chromosome")) {
 
@@ -1376,7 +1375,7 @@ public class SgdConverter extends BioDBConverter {
 			String year = res.getString("year");
 			String issue = res.getString("issue");
 			String dbxrefid = res.getString("sgdid");
-			System.out.println("stuff  :" + referenceNo +  "  " + geneFeatureNo +"  "+ pubMedId);
+			//("stuff  :" + referenceNo +  "  " + geneFeatureNo +"  "+ pubMedId);
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 
 				if (!firstrow) {
@@ -1510,7 +1509,7 @@ public class SgdConverter extends BioDBConverter {
 		while (res.next()) {
 			count++;
 			String geneFeatureName = res.getString("dbentity1_id");
-			System.out.println("dbentity1  "+ geneFeatureName);
+			//System.out.println("dbentity1  "+ geneFeatureName);
 			Item gene = genes.get(geneFeatureName); //can save on look-ups here
 	    			
 			String interactionNo = res.getString("annotation_id");
@@ -1521,7 +1520,7 @@ public class SgdConverter extends BioDBConverter {
 			String modification = res.getString("modification");
 
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
-			System.out.println("dbentity2  "+ interactingGeneFeatureName);
+			//System.out.println("dbentity2  "+ interactingGeneFeatureName);
 			Item interactingGene = genes.get(interactingGeneFeatureName);
 
 			String action = res.getString("bait_hit");

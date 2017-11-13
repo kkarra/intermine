@@ -368,12 +368,12 @@ public class SgdProcessor
     	
     	String query = "select annotation_id, dbentity1_id, dbentity2_id, biogrid_experimental_system, bait_hit, s.display_name, annotation_type, psi.display_name as modification,"
     			+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substr(rdb.citation, 0, 20) as first_author, db.sgdid"
-    			+ " from nex.physinteractionannotation pa, nex.psimod psi, nex.source s, nex.referencedbentity rdb, nex.journal j, nex.dbentity db"
-    			+ " where pa.psimod_id = psi.psimod_id"
-    			+ " and s.source_id = pa.source_id"
-    			+ " and pa.reference_id = rdb.dbentity_id"
-    			+ " and rdb.journal_id = j.journal_id"
-    			+ " and db.dbentity_id = rdb.dbentity_id";
+    			+ " from nex.physinteractionannotation pa"
+    			+ " left join nex.psimod psi on pa.psimod_id = psi.psimod_id" 
+    			+ " inner join nex.source s on s.source_id = pa.source_id"
+    			+ " inner join  nex.referencedbentity rdb on pa.reference_id = rdb.dbentity_id"
+    			+ " left join nex.journal j on rdb.journal_id = j.journal_id"
+    			+ " inner join nex.dbentity db on  db.dbentity_id = rdb.dbentity_id";
         
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -398,12 +398,12 @@ public class SgdProcessor
     	
     	String query = "select annotation_id, dbentity1_id, dbentity2_id, biogrid_experimental_system, p.display_name as phenotype, bait_hit, s.display_name as source, annotation_type,"
     			+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substr(rdb.citation, 0, 20) as first_author, db.sgdid"
-    			+ " from nex.geninteractionannotation ga, nex.phenotype p , nex.source s, nex.referencedbentity rdb, nex.journal j, nex.dbentity db"
-    			+ " where ga.phenotype_id = p.phenotype_id"
-    			+ " and s.source_id = ga.source_id"
-    			+ " and ga.reference_id = rdb.dbentity_id"
-    			+ " and rdb.journal_id = j.journal_id"
-    			+ " and db.dbentity_id = rdb.dbentity_id";
+    			+ " from nex.geninteractionannotation ga"
+    			+ " left join nex.phenotype p on p.phenotype_id = ga.phenotype_id"
+    			+ " inner join nex.source s on s.source_id = ga.source_id"
+    			+ " inner join nex.referencedbentity rdb on rdb.dbentity_id = ga.reference_id"
+    			+ " left join nex.journal j on rdb.journal_id = j.journal_id"
+    			+ " inner join nex.dbentity db on  db.dbentity_id = rdb.dbentity_id";
         
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
