@@ -42,9 +42,12 @@ public class SgdProcessor
              + " where g.feature_type in (select col_value from "+ SCHEMA_OWNER+"web_metadata "
              + " where application_name = 'Chromosomal Feature Search' "
              + " and col_name = 'FEATURE_TYPE')";*/
-    	String query = "select l.dbentity_id, l.systematic_name, d.sgdid, l.gene_name, l.name_description, s.display_name,  l.headline, l.description, l.qualifier, d.dbentity_status"
+    	//  
+    	
+    	String query = "select l.dbentity_id, l.systematic_name, d.sgdid, l.gene_name, l.name_description, s.display_name as feature_type,  l.headline,"
+    			+ " l.description, l.qualifier, d.dbentity_status"
     			+ " from nex.locusdbentity l, nex.contig c, nex.dnasequenceannotation a, nex.so s, nex.dbentity d "
-    			+ " where C.format_name  like 'Chromosome_%' "
+    			+ " where C.format_name  like 'Chromosome_%'"
     			+ " and C.contig_id = A.contig_id "
     			+ " and A.dbentity_id = L.dbentity_id "
     			+ " and S.so_id = A.so_id "
@@ -85,12 +88,12 @@ public class SgdProcessor
              + " AND l.is_current = 'Y' and s.seq_type = 'genomic' and s.is_current = 'Y'"
              +  " AND  r.sequence_release = (select max(sequence_release) from bud.release)";*/
     	
-    	String query = "select c.contig_id, c.format_name, l.dbentity_id, l.gene_name, a.strand, a.end_index, a.start_index, a.residues, length(a.residues) "
+    	String query = "select c.contig_id, c.format_name, s.display_name as feature_type, l.dbentity_id, l.gene_name, a.strand, a.end_index, a.start_index, a.residues, length(a.residues) "
     			+ " from nex.locusdbentity l, nex.contig c, nex.dnasequenceannotation a, nex.so s "
     			+ " where C.format_name like 'Chromosome_%' " 
     			+ " and C.contig_id = A.contig_id "
     			+ " and A.dbentity_id = L.dbentity_id "
-    			+ " and S.so_id = A.so_id "
+    			+ " and S.so_id = c.so_id "
     			+ " and a.taxonomy_id = 274901 "			 
     			+ " and a.dna_type = 'GENOMIC'";
     
@@ -163,7 +166,7 @@ public class SgdProcessor
     			   + " a2.contig_end_index as child_end_coord, a2.contig_start_index as child_start_coord, "
     			   + " a.strand, c.format_name , a2.residues, length(a2.residues) as seq_length, d.dbentity_status as parent_status, d2.dbentity_status as child_status "
     			   + " from   nex.contig c, nex.dnasequenceannotation a, nex.dnasubsequence a2, nex.dbentity d, nex.dbentity d2, nex.locusdbentity ld, nex.so s, nex.taxonomy t "
-    			   + " where  c.display_name like 'Chromosome%' "
+    			   + " where  c.display_name like 'Chromosome%'"
     			   + " and    c.contig_id = a.contig_id "
     			   + " and    a.annotation_id = a2.annotation_id "
     			   + " and    a.dbentity_id = d.dbentity_id "
@@ -474,7 +477,7 @@ public class SgdProcessor
         + "and l.dbentity_id = la.locus_id "
         + "and c.contig_id = a.contig_id "
         + "and c.so_id = s.so_id "
-        + "and s.display_name = 'chromosome' "
+        + "and s.display_name in ('chromosome', 'plasmid')"
         + "and a.dna_type = 'GENOMIC' "
         + "and a.taxonomy_id = 274901 "
         + "and d.dbentity_id = l.dbentity_id "
@@ -542,7 +545,7 @@ public class SgdProcessor
         + "and c.contig_id = a.contig_id "
         + "and c.so_id = s.so_id "
         + "and so.source_id = la.source_id "
-        + "and s.display_name = 'chromosome' "
+        + "and s.display_name in ('chromosome', 'plasmid') "
         + "and a.dna_type = 'GENOMIC' "
         + "and a.taxonomy_id = 274901 "
         + "and d.dbentity_id = l.dbentity_id "
