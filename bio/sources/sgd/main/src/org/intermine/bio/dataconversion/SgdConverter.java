@@ -104,32 +104,36 @@ public class SgdConverter extends BioDBConverter {
 
 		processChromosomeSequences(connection);
 		processGenes(connection);
-		processGeneLocations(connection);
-		processGeneChildrenLocations(connection);	
 		processAliases(connection);
 		processCrossReferences(connection);
+		processGeneLocations(connection);
 		//processChrLocations(connection); <-- this seems to be NPM and NISS specific
+		processGeneChildrenLocations(connection);	
 		processProteins(connection);	
 		processAllPubs(connection);             //get all publications and their topics loaded								
 		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
 		processParalogs(connection);
-		processPathways(connection);
 
-		if(!TEST_LOCAL) {	
+		if(!TEST_LOCAL) {
+			
+			processPhenotypes(connection);
+			processPubsForPhenotypes(connection);
+			storePhenotypes();
+				
+			processPathways(connection);
+			storePathways();
+			
 			processPhysicalInteractions(connection);
 			processGeneticInteractions(connection);
 			storeInteractionTypes();
 			storeInteractionExperiments();
 			storeInteractions();
-			
-			processPhenotypes(connection);
-			processPubsForPhenotypes(connection);
-			storePhenotypes();
+		
 		}
 		storePublications();
 		storeGenes();
 		storeProteins();
-		storePathways();
+
 
 	}
 
@@ -702,13 +706,13 @@ public class SgdConverter extends BioDBConverter {
 		while (res.next()) {
 	    			   
 			String geneFeatureNo = res.getString("parent_id");
-			String parentFeatureType = res.getString("parent_type");
+			String parentFeatureType = res.getString("parent_type").trim();
 
 			String geneChildFeatureNo = res.getString("child_id");
-			String childFeatureType = res.getString("child_type");
+			String childFeatureType = res.getString("child_type").trim();
 
 			String chromosome_no = res.getString("format_name"); // root chr.number
-			String secondaryIdentifier = res.getString("child_identifier"); // child
+			String secondaryIdentifier = res.getString("child_identifier"); // child identifier is wrong -- fix it 11/13
 			String primaryIdentifier = res.getString("child_sgdid"); // SXX
 
 			String maxcoord = res.getString("child_end_coord");
@@ -1509,7 +1513,6 @@ public class SgdConverter extends BioDBConverter {
 		while (res.next()) {
 			count++;
 			String geneFeatureName = res.getString("dbentity1_id");
-			//System.out.println("dbentity1  "+ geneFeatureName);
 			Item gene = genes.get(geneFeatureName); //can save on look-ups here
 	    			
 			String interactionNo = res.getString("annotation_id");
@@ -1520,7 +1523,6 @@ public class SgdConverter extends BioDBConverter {
 			String modification = res.getString("modification");
 
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
-			//System.out.println("dbentity2  "+ interactingGeneFeatureName);
 			Item interactingGene = genes.get(interactingGeneFeatureName);
 
 			String action = res.getString("bait_hit");
