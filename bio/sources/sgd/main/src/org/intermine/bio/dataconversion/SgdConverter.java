@@ -64,7 +64,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = false;
+	private static final boolean TEST_LOCAL = true;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -711,8 +711,8 @@ public class SgdConverter extends BioDBConverter {
 			String geneChildFeatureNo = res.getString("child_id");
 			String childFeatureType = res.getString("child_type").trim();
 
-			String chromosome_no = res.getString("format_name"); // root chr.number
-			String secondaryIdentifier = res.getString("child_identifier"); // child identifier is wrong -- fix it 11/13
+			String chromosome_no = res.getString("format_name"); //root chr.number
+			//String secondaryIdentifier = res.getString("child_identifier"); //child identifier is wrong -- fix it 11/13
 			String primaryIdentifier = res.getString("child_sgdid"); // SXX
 
 			String maxcoord = res.getString("child_end_coord");
@@ -735,11 +735,11 @@ public class SgdConverter extends BioDBConverter {
 			String fixed_chromosome_no = getFixedChrName(chromosome_no);
 
 			// figure out why duplicates in the SQL..???..
-			if (featureMap.get(geneChildFeatureNo) == null) {
+			/*if (featureMap.get(geneChildFeatureNo) == null) {
 				featureMap.put(geneChildFeatureNo, geneFeatureNo);
 			} else {
 				continue;
-			}
+			}*/
 
 			Item parent = genes.get(geneFeatureNo);
 			System.out.println("parent: "+ parentFeatureType + " child: "+ childFeatureType);
@@ -755,6 +755,7 @@ public class SgdConverter extends BioDBConverter {
 				childItem.addToCollection("genes", parent.getIdentifier());
 			} else {
 				String refname = getReferenceName(childFeatureType,parentFeatureType);
+				System.out.println("refname "+refname+ "    " +parent.getIdentifier());
 				childItem.setReference(refname, parent.getIdentifier());
 			}
 			// ~~ add sequence
@@ -766,14 +767,12 @@ public class SgdConverter extends BioDBConverter {
 			if (chromosome_no.equalsIgnoreCase("2-micron")) {
 				refId = getPlasmid(fixed_chromosome_no);
 				childItem.setReference("plasmid", refId);
-				String locationRefId = getLocation(childItem, refId, mincoord,
-						maxcoord, newstrand);
+				String locationRefId = getLocation(childItem, refId, mincoord, maxcoord, newstrand);
 				childItem.setReference("plasmidLocation", locationRefId);
 			} else {
 				refId = getChromosome(fixed_chromosome_no);
 				childItem.setReference("chromosome", refId);
-				String locationRefId = getLocation(childItem, refId, mincoord,
-						maxcoord, newstrand);
+				String locationRefId = getLocation(childItem, refId, mincoord, maxcoord, newstrand);
 				childItem.setReference("chromosomeLocation", locationRefId);
 			}
 
@@ -852,7 +851,9 @@ public class SgdConverter extends BioDBConverter {
 			name = "transposableelementgene";
 		} else if (type.equalsIgnoreCase("telomeric_repeat") && ptype.equalsIgnoreCase("telomere")) {
 			name = "telomere";
-		}  else if (type.equalsIgnoreCase("X_element") && ptype.equalsIgnoreCase("telomere")) {
+		}  else if (type.equalsIgnoreCase("telomeric_repeat") && ptype.equalsIgnoreCase("ORF")) {
+			name = "orf";
+		} else if (type.equalsIgnoreCase("X_element") && ptype.equalsIgnoreCase("telomere")) {
 			name = "telomere";
 		} else if (type.equalsIgnoreCase("X_element_combinatorial_repeat") && ptype.equalsIgnoreCase("telomere")) {
 			name = "telomere";
@@ -864,7 +865,11 @@ public class SgdConverter extends BioDBConverter {
 			name = "matingtyperegion";
 		}else if (type.equalsIgnoreCase("W_region") && ptype.equalsIgnoreCase("mating_type_region")) {
 			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("Y_region") && ptype.equalsIgnoreCase("mating_type_region")) {
+			name = "matingtyperegion";
 		}else if (type.equalsIgnoreCase("X_region") && ptype.equalsIgnoreCase("silent_mating_type_cassette_array")) {
+			name = "matingtyperegion";
+		}else if (type.equalsIgnoreCase("Y_region") && ptype.equalsIgnoreCase("silent_mating_type_cassette_array")) {
 			name = "matingtyperegion";
 		}else if (type.equalsIgnoreCase("X_region") && ptype.equalsIgnoreCase("mating_type_region")) {
 			name = "matingtyperegion";
@@ -1068,11 +1073,8 @@ public class SgdConverter extends BioDBConverter {
 			String length = res.getString(5);
 
 			String fixed_chromosome_no = getFixedChrName(chromosomeNo);
-
-			//("chr   :"+ chromosomeNo + " fixed:  "+ fixed_chromosome_no);
 			
 			if (feature_type.equalsIgnoreCase("chromosome")) {
-
 				Item chr = createItem("Chromosome");
 				chr.setAttribute("primaryIdentifier", fixed_chromosome_no);
 				chr.setReference("organism", organism);
@@ -1327,7 +1329,6 @@ public class SgdConverter extends BioDBConverter {
 			prevDbxRef = dbxrefid;
 
 		}
-
 		// process the very last reference group
 		getPub(prevReferenceNo, prevTitle, prevPubMedId, prevCitation, hm,
 				prevJournal, prevVolume, prevPages, prevYear, prevIssue,
@@ -1379,7 +1380,7 @@ public class SgdConverter extends BioDBConverter {
 			String year = res.getString("year");
 			String issue = res.getString("issue");
 			String dbxrefid = res.getString("sgdid");
-			//("stuff  :" + referenceNo +  "  " + geneFeatureNo +"  "+ pubMedId);
+
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 
 				if (!firstrow) {
@@ -1513,7 +1514,7 @@ public class SgdConverter extends BioDBConverter {
 		while (res.next()) {
 			count++;
 			String geneFeatureName = res.getString("dbentity1_id");
-			Item gene = genes.get(geneFeatureName); //can save on look-ups here
+			Item gene = genes.get(geneFeatureName);
 	    			
 			String interactionNo = res.getString("annotation_id");
 			String referenceNo = res.getString("reference_id");
@@ -1525,7 +1526,15 @@ public class SgdConverter extends BioDBConverter {
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
 			Item interactingGene = genes.get(interactingGeneFeatureName);
 
+			//seen act1 interacting with act1 - check later
+			if(geneFeatureName.equals(interactingGeneFeatureName)) {
+				continue;
+			}
+			
 			String action = res.getString("bait_hit");
+			String[] a = action.split("-");
+			String role1 = a[0];
+			String role2 = a[1];
 			String source = res.getString("display_name");
 			String phenotype = ""; //res.getString("phenotype");
 			String citation = res.getString("citation");
@@ -1541,8 +1550,15 @@ public class SgdConverter extends BioDBConverter {
 
 			String interactionRefId = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
-					annotationType, modification, interactingGene, action, source,
+					annotationType, modification, interactingGene, role1, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
+					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+			
+			//store the reverse relationship so that template changes do not have to be made
+			String interactionRefId2 = getInteraction(interactionNo,
+					referenceNo, interactionType, experimentType,
+					annotationType, modification, gene, role2, source,
+					phenotype, citation, interactingGene, pubmed, title, volume, page,
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
 
 		}
@@ -1580,7 +1596,15 @@ public class SgdConverter extends BioDBConverter {
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
 			Item interactingGene = genes.get(interactingGeneFeatureName);
 
+			//seen act1 interacting with act1 - check later
+			if(geneFeatureName.equals(interactingGeneFeatureName)) {
+				continue;
+			}
+			
 			String action = res.getString("bait_hit");
+			String[] a = action.split("-");
+			String role1 = a[0];
+			String role2 = a[1];
 			String source = res.getString("source");
 			String phenotype = res.getString("phenotype");
 			String citation = res.getString("citation");
@@ -1596,8 +1620,15 @@ public class SgdConverter extends BioDBConverter {
 
 			String interactionRefId = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
-					annotationType, modification, interactingGene, action, source,
+					annotationType, modification, interactingGene, role1, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
+					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+			
+			//store the reverse relationship so that template changes do not have to be made; act1 in gene.X or participant.X
+			String interactionRefId2 = getInteraction(interactionNo,
+					referenceNo, interactionType, experimentType,
+					annotationType, modification, gene, role2, source,
+					phenotype, citation, interactingGene, pubmed, title, volume, page,
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
 
 		}
@@ -1942,7 +1973,7 @@ public class SgdConverter extends BioDBConverter {
 		if (refId == null) {
 			Item syn = createItem("Synonym");
 			syn.setReference("subject", subjectId);
-			// syn.setAttribute("type", type);
+			//syn.setAttribute("type", type);
 			syn.setAttribute("value", value);
 			refId = syn.getIdentifier();
 			// synonyms.get(key);
@@ -2061,17 +2092,15 @@ public class SgdConverter extends BioDBConverter {
 
 		detail.setAttribute("type", interactionType);		
 		detail.setAttribute("annotationType", annotationType);
-		//detail.setAttribute("experimentType", experimentType); --6/23
 		if (StringUtils.isNotEmpty(modification)) detail.setAttribute("modification", modification);
 		if (StringUtils.isNotEmpty(phenotype)) detail.setAttribute("phenotype", phenotype);
 		detail.setAttribute("role1", action);
 		detail.addToCollection("allInteractors", interactingGene.getIdentifier());
-		//detail.addToCollection("interactingGenes", interactingGene.getIdentifier());
 		detail.addToCollection("dataSets", dsetIdentifier);		
 
 		String shortType = interactionType.substring(0, interactionType.indexOf(' ')); 
 		detail.setAttribute("relationshipType", shortType); //interactionType
-		String unqName = firstAuthor+"-"+pubMedId+"-"+experimentType;  //1/21/6
+		String unqName = firstAuthor+"-"+pubMedId+"-"+experimentType;  
 
 		//add publication as experiment type
 		Item storedExperimentType = experimenttype.get(unqName);		
@@ -2154,8 +2183,6 @@ public class SgdConverter extends BioDBConverter {
 			interaction = createItem("Interaction");
 			interaction.setReference("participant1", refId); //gene1
 			interaction.setReference("participant2", gene2RefId); //gene2
-			//interactionsnew.put(key, interaction);
-			//store(interaction);
 		}
 		return interaction;
 	}
@@ -2348,8 +2375,7 @@ public class SgdConverter extends BioDBConverter {
 			Iterator iter = hm.iterator();
 			while (iter.hasNext()) {
 				String value = (String) iter.next();
-				pubAnnot.addToCollection("literatureTopics",
-						getLiteratureTopic(value));
+				pubAnnot.addToCollection("literatureTopics", getLiteratureTopic(value));
 			}
 
 			//item.addToCollection("genes", gene.getIdentifier());

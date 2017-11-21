@@ -26,6 +26,25 @@
   <collection name="interactions" referenced-type="Interaction" reverse-reference="participant1"/>
  </class>
  
+  <class name="CDS" extends="SequenceFeature" is-interface="true">
+  <reference name="orf" referenced-type="ORF" reverse-reference="CDSs"/>
+  <reference name="pseudogene" referenced-type="Pseudogene" reverse-reference="CDSs"/>
+  <reference name="blockedreadingframe" referenced-type="BlockedReadingFrame" reverse-reference="CDSs"/>
+  <reference name="transposableelementgene" referenced-type="TransposableElementGene" reverse-reference="CDSs"/>
+  <reference name="plasmid" referenced-type="Plasmid" reverse-reference="CDSs"/>
+  <reference name="plasmidLocation" referenced-type="Location"/>
+  <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
+ </class>
+ 
+  <class name="ORF" extends="ProteinCodingGene" is-interface="true">
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="orf"/>
+  <collection name="telomericRepeats" referenced-type="TelomericRepeat" reverse-reference="orf"/>
+  <collection name="uORFs" referenced-type="uORF" reverse-reference="orf"/>
+  <collection name="plus1translationalframeshifts" referenced-type="Plus1TranslationalFrameshift" reverse-reference="orf"/>
+  <collection name="fiveprimeutrintrons" referenced-type="FivePrimeUTRIntron" reverse-reference="orf"/>
+  <collection name="inteinencodingregions" referenced-type="InteinEncodingRegion" reverse-reference="orf"/>
+ </class>
+ 
  <class name="Centromere" extends="BiologicalRegion" is-interface="true">
  <reference name="centromereDNAElementIs" referenced-type="CentromereDNAElementI" reverse-reference="centromere"/>
  <reference name="centromereDNAElementIIs" referenced-type="CentromereDNAElementII" reverse-reference="centromere"/>
@@ -40,16 +59,7 @@
 <class name="CentromereDNAElementIII" extends="SequenceFeature" is-interface="true">
 	<reference name="centromere" referenced-type="Centromere" reverse-reference="centromereDNAElementIIIs"/>
 </class>
-
- <class name="CDS" extends="SequenceFeature" is-interface="true">
-  <reference name="orf" referenced-type="ORF" reverse-reference="CDSs"/>
-  <reference name="pseudogene" referenced-type="Pseudogene" reverse-reference="CDSs"/>
-  <reference name="blockedreadingframe" referenced-type="BlockedReadingFrame" reverse-reference="CDSs"/>
-  <reference name="transposableelementgene" referenced-type="TransposableElementGene" reverse-reference="CDSs"/>
-  <reference name="plasmid" referenced-type="Plasmid" reverse-reference="CDSs"/>
-  <reference name="plasmidLocation" referenced-type="Location"/>
-  <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
- </class>
+ 
  <class name="CrossReference" is-interface="true">
         <attribute name="dbxreftype" type="java.lang.String"/>
         <attribute name="url" type="java.lang.String"/>
@@ -83,12 +93,6 @@
  <class name="Insertion" extends="SequenceFeature" is-interface="true">
   <reference name="xelementcombinatorialrepeat" referenced-type="XElementCombinatorialRepeat" reverse-reference="insertions"/>
  </class>
-
- <!-- <class name="Interaction" is-interface="true">
-<reference name="gene1" referenced-type="Gene" reverse-reference="interactions"/>
-<reference name="gene2" referenced-type="Gene"/>
-<collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
-</class> -->
 
  <class name="Interaction" is-interface="true">
       <reference name="participant1" referenced-type="BioEntity" reverse-reference="interactions" />
@@ -218,13 +222,9 @@
   <collection name="phenotypes" referenced-type="Phenotype" reverse-reference="notphysicallymapped"/>
  </class>
 
- <class name="ORF" extends="ProteinCodingGene" is-interface="true">
-  <collection name="CDSs" referenced-type="CDS" reverse-reference="orf"/>
-    <collection name="uORFs" referenced-type="uORF" reverse-reference="orf"/>
-  <collection name="plus1translationalframeshifts" referenced-type="Plus1TranslationalFrameshift" reverse-reference="orf"/>
-  <collection name="fiveprimeutrintrons" referenced-type="FivePrimeUTRIntron" reverse-reference="orf"/>
-  <collection name="inteinencodingregions" referenced-type="InteinEncodingRegion" reverse-reference="orf"/>
- </class>
+ <class name="TelomericRepeat" extends="Telomere" is-interface="true">
+  <reference name="orf" referenced-type="ORF" reverse-reference="telomericRepeats"/>
+  </class>
  
 <class name="uORF" extends="SequenceFeature" is-interface="true">
 	<reference name="orf" referenced-type="ORF" reverse-reference="uORFs"/>
@@ -337,9 +337,6 @@
   <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="featAttribute" type="java.lang.String"/>
  </class>
-
- <class name="TelomericRepeat" extends="Telomere" is-interface="true"> </class>
-
 
  <class name="TransposableElementGene" extends="ProteinCodingGene" is-interface="true">
   <collection name="CDSs" referenced-type="CDS" reverse-reference="transposableelementgene"/>

@@ -268,20 +268,21 @@ public class SgdProcessor
                 + " where application_name = 'Chromosomal Feature Search' "
                 + " and col_name = 'FEATURE_TYPE')"
                 +" ORDER by f.feature_no, r.reference_no";*/
-    	String query = "select db.dbentity_id as featureNo, r.dbentity_id as referenceFeatureNo, r.pmid, r.fulltext_status, "
-    			+ " r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid "
-    			+ " from nex.dbentity db, nex.referencedbentity r,  nex.locus_reference lr, nex.journal j, nex.literatureannotation la, nex.contig c, nex.dnasequenceannotation a, nex.so s"
-    			+ " where  C.format_name  like 'Chromosome_%'"
-    			+ " and C.contig_id = A.contig_id"
-    			+ " and A.dbentity_id = db.dbentity_id"
-    			+ " and S.so_id = A.so_id"
-    			+ " and a.taxonomy_id = 274901"
-    			+ " and a.dna_type = 'GENOMIC'"
-    			+ " and db.dbentity_id = lr.locus_id"
-    			+ " and lr.reference_id  = r.dbentity_id"
-    			+ " and j.journal_id = r.journal_id "
-    			+ " and la.reference_id = r.dbentity_id"
-    			+ " group by db.dbentity_id, r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid";
+    	String query = "select ldb.dbentity_id as featureNo, r.dbentity_id as referenceFeatureNo, r.pmid, r.fulltext_status, r.title, r.volume,"
+    				+ " r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid"
+    				+ " from nex.locus_reference lr"
+    				+ " inner join nex.referencedbentity r on lr.reference_id = r.dbentity_id"
+    				+ " inner join nex.locusdbentity ldb on lr.locus_id  = ldb.dbentity_id"
+    				+ " inner join nex.dbentity db on ldb.dbentity_id = db.dbentity_id"
+    				+ " inner join nex.dnasequenceannotation a on a.dbentity_id = db.dbentity_id"
+    				+ " inner join nex.contig c on c.contig_id = a.contig_id"
+    				+ " left join nex.journal j on j.journal_id = r.journal_id"
+    				+ " left join nex.literatureannotation la on la.reference_id = r.dbentity_id"
+    				+ " and a.taxonomy_id = 274901"
+    				+ " and c.format_name = 'Chromosome_%'"
+    				+ " and a.dna_type = 'GENOMIC'"
+    				+ " group by ldb.dbentity_id, r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid"
+    				+ " order by ldb.dbentity_id, r.dbentity_id";
                 
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -304,15 +305,15 @@ public class SgdProcessor
                 + " AND j.journal_no  (+) =   r.journal_no"
                 + " AND a.reference_no (+) = r.reference_no"
                 +" ORDER by r.reference_no";*/
-    	//Need to add back in literature topics and abstracts - query returning tons of dupliates - figure out solution
-    	
+ 
         String query = "select r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, rd.text, db.sgdid "
-        		+ " from nex.dbentity db, nex.referencedbentity r, nex.journal j, nex.referencedocument rd,  nex.literatureannotation la "
-        		+ " where db.dbentity_id = r.dbentity_id "
-        		+ " and j.journal_id = r.journal_id "
-        		+ " and r.dbentity_id = rd.reference_id "
-        		+ " and la.reference_id = r.dbentity_id "
-        		+ " and rd.document_type = 'Abstract'";
+        		+ " from nex.dbentity db"
+        		+ " inner join nex.referencedbentity r on db.dbentity_id = r.dbentity_id"
+        		+ " left join nex.journal j on j.journal_id = r.journal_id"
+        		+ " left join nex.referencedocument rd on  r.dbentity_id = rd.reference_id"
+        		+ " left join nex.literatureannotation la on la.reference_id = r.dbentity_id"
+        		+ " and rd.document_type = 'Abstract'"
+        		+ " order by r.dbentity_id";
                 
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -367,7 +368,7 @@ public class SgdProcessor
             + " WHERE i.pubmed = r.pubmed and r.journal_no = j.journal_no ORDER by feature_a";*/
     	
     	String query = "select annotation_id, dbentity1_id, dbentity2_id, biogrid_experimental_system, bait_hit, s.display_name, annotation_type, psi.display_name as modification,"
-    			+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substr(rdb.citation, 0, 20) as first_author, db.sgdid"
+    			+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substring(citation, 0, position( ')' in citation)+1) as first_author, db.sgdid"
     			+ " from nex.physinteractionannotation pa"
     			+ " left join nex.psimod psi on pa.psimod_id = psi.psimod_id" 
     			+ " inner join nex.source s on s.source_id = pa.source_id"
@@ -397,7 +398,7 @@ public class SgdProcessor
             + " WHERE i.pubmed = r.pubmed and r.journal_no = j.journal_no ORDER by feature_a";*/
     	
     	String query = "select annotation_id, dbentity1_id, dbentity2_id, biogrid_experimental_system, p.display_name as phenotype, bait_hit, s.display_name as source, annotation_type,"
-    			+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substr(rdb.citation, 0, 20) as first_author, db.sgdid"
+    			+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substring(citation, 0, position( ')' in citation)+1) as first_author, db.sgdid"
     			+ " from nex.geninteractionannotation ga"
     			+ " left join nex.phenotype p on p.phenotype_id = ga.phenotype_id"
     			+ " inner join nex.source s on s.source_id = ga.source_id"
