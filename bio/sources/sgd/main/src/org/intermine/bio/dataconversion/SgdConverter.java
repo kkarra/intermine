@@ -129,7 +129,7 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractions();
 			
 			processPhenotypes(connection);
-			//processPubsForPhenotypes(connection);
+			processPubsForPhenotypes(connection);
 			storePhenotypeAnnotations();
 		
 		}
@@ -716,7 +716,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String chromosome_no = res.getString("format_name"); //root chr.number
 			//String secondaryIdentifier = res.getString("child_identifier"); //child identifier is wrong -- fix it 11/13
-			String primaryIdentifier = res.getString("child_sgdid"); // SXX
+			String primaryIdentifier = res.getString("child_sgdid")+"_child"; // SXX
 
 			String maxcoord = res.getString("child_end_coord");
 			String mincoord = res.getString("child_start_coord");
@@ -1478,7 +1478,7 @@ public class SgdConverter extends BioDBConverter {
 
 		System.out.println("Processing Publications associated with Pheno_annot_no....");
 		ResultSet res = PROCESSOR.getPubForPhenotype(connection);
-		
+				
 		while (res.next()) {
 
 			String phenoAnnotNo = res.getString("annotation_id");
@@ -2215,7 +2215,7 @@ public class SgdConverter extends BioDBConverter {
 			String volume, String pages, String year, String issue, String dbxrefid)
 					throws ObjectStoreException {
 
-		Item storedPheno = phenotypes.get(phenoAnnotNo);
+		Item storedPheno = phenotypeannots.get(phenoAnnotNo);
 
 		if (storedPheno != null) {
 
