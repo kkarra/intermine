@@ -60,6 +60,8 @@ public class SgdConverter extends BioDBConverter {
 	private Map<String, Item> interactiondetectionmethods = new HashMap();
 	private Map<String, Item> pathways = new HashMap();
 	private Map<String, Item> phenotypes = new HashMap();
+	private Map<String, Item> phenotypeannots = new HashMap();
+	private Map<String, Item> phenotypeconds = new HashMap();
 	private Map<String, String> datasources = new HashMap();
 	private static final String TAXON_ID = "4932";
 	private Item organism;
@@ -108,17 +110,14 @@ public class SgdConverter extends BioDBConverter {
 		processCrossReferences(connection);
 		processGeneLocations(connection);
 		//processChrLocations(connection); <-- this seems to be NPM and NISS specific
+		
 		processGeneChildrenLocations(connection);	
 		processProteins(connection);	
 		processAllPubs(connection);             //get all publications and their topics loaded								
 		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
 		processParalogs(connection);
-
-		if(!TEST_LOCAL) {
-			
-			processPhenotypes(connection);
-			processPubsForPhenotypes(connection);
-			storePhenotypes();
+				
+	    if(!TEST_LOCAL) {
 				
 			processPathways(connection);
 			storePathways();
@@ -128,6 +127,10 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractionTypes();
 			storeInteractionExperiments();
 			storeInteractions();
+			
+			processPhenotypes(connection);
+			//processPubsForPhenotypes(connection);
+			storePhenotypeAnnotations();
 		
 		}
 		storePublications();
@@ -1253,6 +1256,29 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
+	
+
+	private void storePhenotypeAnnotations() throws ObjectStoreException {
+		for (Item pheno : phenotypeannots.values()) {
+			try {
+				store(pheno);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+	
+
+	private void storePhenotypeConditions() throws ObjectStoreException {
+		for (Item pheno : phenotypeconds.values()) {
+			try {
+				store(pheno);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
+	
 
 	/**
 	 * 
@@ -1384,13 +1410,19 @@ public class SgdConverter extends BioDBConverter {
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 
 				if (!firstrow) {
+					
+					gene = genes.get(geneFeatureNo);
+					
+					if(gene != null) {
+					
 					getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
 							prevCitation, hm, gene, prevJournal, prevVolume,
 							prevPages, prevYear, prevIssue, prevDbxRef);
 					hm.clear();
 					prevReferenceNo = referenceNo;
+					}
 				}
-				gene = genes.get(geneFeatureNo);
+				
 			}
 
 			if (firstrow) {
@@ -1399,10 +1431,13 @@ public class SgdConverter extends BioDBConverter {
 			}
 
 			if (!referenceNo.equalsIgnoreCase(prevReferenceNo)) {
+				
+				if(gene != null) {
 				getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
 						prevCitation, hm, gene, prevJournal, prevVolume,
 						prevPages, prevYear, prevIssue, prevDbxRef);
 				hm.clear();
+				}
 			}
 
 			if (topic != null) {
@@ -1424,9 +1459,11 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 		// process the very last reference group
+		if(gene != null) {
 		getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId, prevCitation, hm,
 				gene, prevJournal, prevVolume, prevPages, prevYear, prevIssue, prevDbxRef);
 		hm.clear();
+		}
 
 	}
 
@@ -1637,187 +1674,141 @@ public class SgdConverter extends BioDBConverter {
 	private void processPhenotypes(Connection connection) throws SQLException,
 	ObjectStoreException {
 
-		String prevGeneFeatureNo = "";
-		String prevGeneFeatureType = "";
-		String prevPhenotypeAnnotNo = "";
-		String prevExperimentType = "";
-		String prevExperimentComment = "";
-		String prevMutantType = "";
-		String prevQualifier = "";
-		String prevObservable = "";
-
-		HashMap<String, String> hm = new HashMap<String, String>();
-
+		String prevGeneFeatureNo = "0"; //dbentity_id
+		String prevPhenotypeAnnotNo = "0"; //annotation_id
+		String prevGroupNo = "0"; //group_id	
+		//String prevCondName = "";
+		//String prevCondValue = "";	
 		Item gene = null;
-		boolean firstrow = true;
+		Item phenoannot = null;
+		Item pheno = null;
 		
 		System.out.println("Processing Phenotypes...");
 		ResultSet res = PROCESSOR.getPhenotypeResults(connection);
 
 		while (res.next()) {
 
-			// use these to switch from feature to next && annotation to next
+			// use these to switch from feature to next && annotation to next && condition to next
 			String geneFeatureNo = res.getString("dbentity_id");
 			String phenotypeAnnotNo = res.getString("annotation_id");
+			String groupNo = res.getString("group_id");
 			
-			// set once
-			String experimentType = res.getString("experiment_type");
-			String experimentComment = res.getString("experiment_comment");
-			String mutantType = res.getString("mutant_type");
+			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
+				gene = genes.get(geneFeatureNo);
+			}
+			
+			//phenotype info
 			String qualifier_observable = res.getString("phenotype");
+			pheno = phenotypes.get(qualifier_observable);
+			if(pheno == null){
+				pheno = getPhenotype(qualifier_observable);
+			}
+			
+			//phenotype annotation
+			String experimentType = res.getString("experiment");
+			String experimentComment = res.getString("experiment_comment");
+			String alleleComment = res.getString("allele_comment");
+			String reporterComment = res.getString("reporter_comment");
+			String mutantType = res.getString("mutant");
 			String reporter = res.getString("reporter");
 			String allele = res.getString("allele");
+			String assay = res.getString("assay");
 			String strain_background = res.getString("strain_name");
+			String details = res.getString("details");
+			String pmid = res.getString("pmid");
+			String feature_type = ""; //res.getString("feature_type");  <-- fix when NPM is addressed
 			
-			String t[] = qualifier_observable.split(":");
-			String qualifier = t[0].trim();
-			String observable = t[1].trim();
-
-			// .. Process - Separate word into parts, change case, put together.
-			//String firstLetter = db_observable.substring(0, 1); // Get first letter
-			//String remainder = db_observable.substring(1); // Get remainder of word.
-			//String observable = firstLetter.toUpperCase() + remainder; // .toLowerCase();
-
-			// add attributes of certain key types
+			//phenotype condition
 			String key = res.getString("condition_class");
 			String value = res.getString("condition_name");
 			String desc = res.getString("condition_value");
+			String unit = res.getString("condition_unit");
+			Item phenocond = null; 
 			
-			String feature_type = ""; //res.getString("feature_type");  <-- fix when NPM is addressed
-
-			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
-
-				if (!firstrow) {
-					getPhenotype(prevPhenotypeAnnotNo, prevQualifier,
-							prevObservable, prevExperimentType, prevExperimentComment,  prevMutantType,
-							hm, gene, prevGeneFeatureType);
-					hm.clear();
-					prevPhenotypeAnnotNo = phenotypeAnnotNo;
-				}
-				gene = genes.get(geneFeatureNo);
-			}
-
-			if (firstrow) {
-				prevPhenotypeAnnotNo = phenotypeAnnotNo;
-				firstrow = false;
-			}
-
 			if (!phenotypeAnnotNo.equalsIgnoreCase(prevPhenotypeAnnotNo)) {
-				getPhenotype(prevPhenotypeAnnotNo, prevQualifier,
-						prevObservable, prevExperimentType, prevExperimentComment, prevMutantType, hm,
-						gene, prevGeneFeatureType);
-				hm.clear();
+				phenoannot = getPhenotypeAnnotation(phenotypeAnnotNo, experimentType, experimentComment, alleleComment,
+						reporterComment, mutantType, reporter, allele, assay, strain_background, details, gene, feature_type);	
+			}else{
+				phenoannot = phenotypeannots.get(phenotypeAnnotNo);	
 			}
 
-			if (key != null && value != null) {
-				/*if (key.equalsIgnoreCase("Allele")) {
-					if (desc != null) {
-						value = value + " (" + desc + ")";
-					}
-					hm.put("allele", value);
-				} else
-					
-				if (key.equalsIgnoreCase("strain_background")) {
-					if (desc != null) {
-						value = value + " (" + desc + ")";
-					}
-					hm.put("strainBackground", value);
-				} else*/
-				
-				 if (key.equalsIgnoreCase("chemical") || key.equalsIgnoreCase("assay") || key.equalsIgnoreCase("radiation")) {
-
-					if (desc != null) {
-						value = value + " (" + desc + ")";
-					}
-					String storedval = (String) hm.get("chemical");
-					String newval = "";
-					if (storedval != null) {
-						newval = storedval + ";" + value;
-					} else {
-						newval = value;
-					}
-					hm.put("chemical", newval);
-
-				 /*} else if (key.equalsIgnoreCase("chebi_ontology")) {
-					if (desc != null) {
-						value = value + " (" + desc + ")";
-					}
-					String storedval = (String) hm.get("chemical");
-					String newval = "";
-					if (storedval != null) {
-						newval = storedval + ";" + value;
-					} else {
-						newval = value;
-					}
-					hm.put("chemical", newval);*/
-				} else if (key.equalsIgnoreCase("treatment") || key.equalsIgnoreCase("media") || key.equalsIgnoreCase("phase") || key.equalsIgnoreCase("temperature")) {
-
-					if (desc != null) {
-						value = value + " (" + desc + ")";
-					}
-					String storedcond = (String) hm.get("condition");
-					String newcond = "";
-					if (storedcond != null) {
-						newcond = storedcond + ";" + value;
-					} else {
-						newcond = value;
-					}
-
-					hm.put("condition", newcond);
-
-				} 
-				/*else if (key.equalsIgnoreCase("Details")) {
-
-					if (desc != null) {
-						value = value + " (" + desc + ")";
-					}
-					String storeddet = (String) hm.get("details");
-					String newdet = "";
-					if (storeddet != null) {
-						newdet = storeddet + ";" + value;
-					} else {
-						newdet = value;
-					}
-
-					hm.put("details", newdet);
-
-				} else if (key.equalsIgnoreCase("Reporter")) {
-
-					if (desc != null) {
-						value = value + " (" + desc + ")";
-					}
-					String storedrep = (String) hm.get("reporter");
-					String newrep = "";
-					if (storedrep != null) {
-						newrep = storedrep + ";" + value;
-					} else {
-						newrep = value;
-					}
-					hm.put("reporter", newrep);
-
-				}*/
-			}
-
+			phenocond = getPhenotypeCondition(key, value, desc, unit);
+			
+			phenoannot.addToCollection("phenotypeAnnotConds", phenocond.getIdentifier());
+			phenoannot.addToCollection("phenotypes", pheno.getIdentifier());
+			
+			if (feature_type.equalsIgnoreCase("not physically mapped")) {
+				phenoannot.addToCollection("notphysicallymapped", gene.getIdentifier());
+			} else {
+				phenoannot.addToCollection("genes", gene.getIdentifier());
+			}			
 			prevGeneFeatureNo = geneFeatureNo;
-			prevGeneFeatureType = feature_type;
 			prevPhenotypeAnnotNo = phenotypeAnnotNo;
-			prevExperimentType = experimentType;
-			prevExperimentComment = experimentComment;			
-			prevMutantType = mutantType;
-			prevQualifier = qualifier;
-			prevObservable = observable;
-
+			prevGroupNo = groupNo;
+			//prevCondName = value;
+			//prevCondValue = desc;
 		}
-
-		// process the very last phenotype group
-		getPhenotype(prevPhenotypeAnnotNo, prevQualifier, prevObservable,
-				prevExperimentType, prevExperimentComment, prevMutantType, hm, gene,
-				prevGeneFeatureType);
-		hm.clear();
 
 	}
 
+	private Item getPhenotype(String phenotype) throws ObjectStoreException {
+		Item pheno = phenotypes.get("phenotype");
+		if(pheno == null) {
+			String t[] = phenotype.split(":");
+			String qualifier = t[0].trim();
+			String observable = t[1].trim();
+			pheno = createItem("Phenotype");
+			pheno.setAttribute("qualifier", qualifier);
+			pheno.setAttribute("observable", observable);
+			phenotypes.put(phenotype, pheno);
+          try {
+				store(pheno);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+		return pheno;
+	}
+		
+	private Item getPhenotypeCondition(String condClass, String condName, String condValue, String condUnit) throws ObjectStoreException {
+		
+		Item phenocond = createItem("PhenotypeAnnotationCond");
+		
+		if (condClass != null && StringUtils.isNotEmpty(condClass)) phenocond.setAttribute("className", condClass);
+		if (condName != null && StringUtils.isNotEmpty(condName)) phenocond.setAttribute("name", condName);
+		if (condValue != null && StringUtils.isNotEmpty(condValue)) phenocond.setAttribute("value", condValue);
+		if (condUnit != null && StringUtils.isNotEmpty(condUnit)) phenocond.setAttribute("unit", condUnit);
 
+		try {
+			store(phenocond);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}
+		return phenocond;
+		
+	}
+	
+	private Item getPhenotypeAnnotation(String phenotypeAnnotNo, String experimentType, String experimentComment, String alleleComment, String reporterComment,
+			String mutantType, String reporter, String allele, String assay, String strain_background, String details, Item gene, String feature_type) throws ObjectStoreException {
+		
+		Item phenoannot = createItem("PhenotypeAnnotation");
+		
+		if (experimentType != null && StringUtils.isNotEmpty(experimentType)) phenoannot.setAttribute("experimentType", experimentType);
+		if (experimentComment != null && StringUtils.isNotEmpty(experimentComment)) phenoannot.setAttribute("experimentComment", experimentComment);
+		if (mutantType != null && StringUtils.isNotEmpty(mutantType)) phenoannot.setAttribute("mutantType", mutantType);		
+		if (alleleComment != null && StringUtils.isNotEmpty(alleleComment)) phenoannot.setAttribute("alleleComment", alleleComment);
+		if (reporterComment != null && StringUtils.isNotEmpty(reporterComment)) phenoannot.setAttribute("reporterComment", reporterComment);
+		if (reporter != null && StringUtils.isNotEmpty(reporter)) phenoannot.setAttribute("reporter", reporter);
+		if (allele != null && StringUtils.isNotEmpty(allele)) phenoannot.setAttribute("allele", allele);
+		if (assay != null && StringUtils.isNotEmpty(assay)) phenoannot.setAttribute("assay", assay);
+		if (strain_background != null && StringUtils.isNotEmpty(strain_background)) phenoannot.setAttribute("strainBackground", strain_background);
+		if (details != null && StringUtils.isNotEmpty(details)) phenoannot.setAttribute("details", details);
+	
+		phenotypeannots.put(phenotypeAnnotNo, phenoannot);
+		return phenoannot;
+
+	}
+	
 	private String getLocation(Item subject, String chromosomeRefId,
 			String startCoord, String stopCoord, String strand)
 					throws ObjectStoreException {
@@ -1918,7 +1909,6 @@ public class SgdConverter extends BioDBConverter {
 
 		return item.getIdentifier();
 
-
 	}
 	private String getPlasmid(String identifier) throws ObjectStoreException { // String
 		// id,
@@ -2006,49 +1996,6 @@ public class SgdConverter extends BioDBConverter {
 
 		String refId = crf.getIdentifier();
 		return refId;
-
-	}
-
-
-	private void getPhenotype(String prevPhenotypeAnnotNo,
-			String prevQualifier, String prevObservable,
-			String prevExperimentType, String prevExperimentComment, String prevMutantType, HashMap hm,
-			Item gene, String feature_type) throws ObjectStoreException {
-
-		Item pheno = createItem("Phenotype");
-		pheno.setAttribute("qualifier", prevQualifier);
-
-		if (prevObservable != null && StringUtils.isNotEmpty(prevObservable)) {
-			pheno.setAttribute("observable", prevObservable);
-		}
-		if (prevExperimentType != null
-				&& StringUtils.isNotEmpty(prevExperimentType)) {
-			pheno.setAttribute("experimentType", prevExperimentType);
-		}
-		if (prevExperimentComment != null
-				&& StringUtils.isNotEmpty(prevExperimentComment)) {
-			pheno.setAttribute("experimentComment", prevExperimentComment);
-		}
-		if (prevMutantType != null && StringUtils.isNotEmpty(prevMutantType)) {
-			pheno.setAttribute("mutantType", prevMutantType);
-		}
-
-		for (Iterator iter = hm.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String key = (String) entry.getKey();
-			String value = (String) entry.getValue();
-			pheno.setAttribute(key, value);
-		}
-
-		if (feature_type.equalsIgnoreCase("not physically mapped")) {
-			pheno.addToCollection("notphysicallymapped", gene.getIdentifier());
-		} else {
-			pheno.addToCollection("genes", gene.getIdentifier());
-		}
-
-		phenotypes.put(prevPhenotypeAnnotNo, pheno);
-
-		hm.clear();
 
 	}
 

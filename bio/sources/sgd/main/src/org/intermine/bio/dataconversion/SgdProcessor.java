@@ -274,13 +274,8 @@ public class SgdProcessor
     				+ " inner join nex.referencedbentity r on lr.reference_id = r.dbentity_id"
     				+ " inner join nex.locusdbentity ldb on lr.locus_id  = ldb.dbentity_id"
     				+ " inner join nex.dbentity db on ldb.dbentity_id = db.dbentity_id"
-    				+ " inner join nex.dnasequenceannotation a on a.dbentity_id = db.dbentity_id"
-    				+ " inner join nex.contig c on c.contig_id = a.contig_id"
+    				+ " left join nex.literatureannotation la on la.reference_id = lr.reference_id"
     				+ " left join nex.journal j on j.journal_id = r.journal_id"
-    				+ " left join nex.literatureannotation la on la.reference_id = r.dbentity_id"
-    				+ " and a.taxonomy_id = 274901"
-    				+ " and c.format_name = 'Chromosome_%'"
-    				+ " and a.dna_type = 'GENOMIC'"
     				+ " group by ldb.dbentity_id, r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid"
     				+ " order by ldb.dbentity_id, r.dbentity_id";
                 
@@ -437,16 +432,21 @@ public class SgdProcessor
         
         + " ORDER BY me.feature_no, pheno_annotations.pheno_annotation_no";*/
     	
-    	String query = "select db.dbentity_id, pa.annotation_id, a.display_name as allele, r.display_name as reporter, a1.display_name as mutant_type, "
-    			+ " a2.display_name as experiment_type, p.display_name as phenotype, p.description, condition_class, condition_name, condition_value,condition_unit, strain_name, details, experiment_comment"
-    			+ " from nex.phenotypeannotation pa, nex.phenotype p, nex.phenotypeannotation_cond pac, nex.dbentity db, nex.allele a, nex.reporter r, nex.apo a1, nex.apo a2"
-    			+ " where pa.phenotype_id = p.phenotype_id"   			 
-    			+ " and pa.annotation_id = pac.annotation_id"
-    			+ " and db.dbentity_id = pa.dbentity_id"
-    			+ " and a.allele_id = pa.allele_id"
-    			+ " and r.reporter_id = pa.reporter_id"
-    			+" and pa.mutant_id = a1.apo_id"
-    			+ " and pa.experiment_id = a2.apo_id";
+    	String query = "select db.dbentity_id, pa.annotation_id, pac.group_id, p.display_name as phenotype, pa.strain_name, pa.details,"
+    			+	" pa.experiment_comment, pa.allele_comment, pa.reporter_comment, condition_class, condition_name, condition_value, condition_unit,"
+    			+ " a1.display_name as experiment, a2.display_name as mutant, al.display_name as allele, rp.display_name as reporter, o.display_name as assay, rdb.pmid"
+    			+ " from nex.phenotypeannotation pa"
+    			+ " inner join nex.dbentity db on  db.dbentity_id = pa.dbentity_id"
+    			+ " inner join nex.phenotype p on pa.phenotype_id = p.phenotype_id"
+    			+ " inner join nex.phenotypeannotation_cond pac on pac.annotation_id = pa.annotation_id"
+    			+ " inner join nex.referencedbentity rdb on pa.reference_id = rdb.dbentity_id"
+    			+ "	left join nex.apo a1 on pa.experiment_id = a1.apo_id"
+    			+ " left join nex.apo a2 on pa.mutant_id = a2.apo_id"
+    			+ " left join nex.allele al on al.allele_id = pa.allele_id"
+    			+ " left join nex.reporter rp on rp.reporter_id = pa.reporter_id"
+    			+ " left join nex.obi o on pa.assay_id = o.obi_id"
+    			+ " order by  db.dbentity_id, pa.annotation_id, group_id";
+		//+ " where db.dbentity_id = 1266452"
 
       
         LOG.info("executing: " + query);        
