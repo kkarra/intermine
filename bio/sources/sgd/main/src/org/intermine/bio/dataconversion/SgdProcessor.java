@@ -62,6 +62,29 @@ public class SgdProcessor
     }
    
     
+    
+    
+    /**
+     * Return the results of running a query for NISS 
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getNISS(Connection connection)
+        throws SQLException {
+   
+    	String query = "select l.dbentity_id, l.systematic_name, d.sgdid, l.gene_name, l.name_description, l.headline,"
+    			+ " l.description, l.qualifier, d.dbentity_status"
+    			+ " from nex.locusdbentity l, nex.dbentity d"
+    			+ " where not_in_s288c = true"
+    			+ " and L.dbentity_id = D.dbentity_id";
+    	
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+    
     /**
      * Return the results of running a query for genes and chromosomes
      * @param connection the connection
@@ -270,11 +293,10 @@ public class SgdProcessor
                 +" ORDER by f.feature_no, r.reference_no";*/
     	String query = "select ldb.dbentity_id as featureNo, r.dbentity_id as referenceFeatureNo, r.pmid, r.fulltext_status, r.title, r.volume,"
     				+ " r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid"
-    				+ " from nex.locus_reference lr"
-    				+ " inner join nex.referencedbentity r on lr.reference_id = r.dbentity_id"
-    				+ " inner join nex.locusdbentity ldb on lr.locus_id  = ldb.dbentity_id"
+    				+ " from nex.literatureannotation la"
+    				+ " inner join nex.referencedbentity r on la.reference_id = r.dbentity_id"
+    				+ " inner join nex.locusdbentity ldb on la.dbentity_id  = ldb.dbentity_id"
     				+ " inner join nex.dbentity db on ldb.dbentity_id = db.dbentity_id"
-    				+ " left join nex.literatureannotation la on la.reference_id = lr.reference_id"
     				+ " left join nex.journal j on j.journal_id = r.journal_id"
     				+ " group by ldb.dbentity_id, r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid"
     				+ " order by ldb.dbentity_id, r.dbentity_id";

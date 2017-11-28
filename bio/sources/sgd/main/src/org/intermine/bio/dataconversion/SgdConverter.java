@@ -106,6 +106,7 @@ public class SgdConverter extends BioDBConverter {
 
 		processChromosomeSequences(connection);
 		processGenes(connection);
+		processNISS(connection);
 		processAliases(connection);
 		processCrossReferences(connection);
 		processGeneLocations(connection);
@@ -117,7 +118,7 @@ public class SgdConverter extends BioDBConverter {
 		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
 		processParalogs(connection);
 				
-	    if(!TEST_LOCAL) {
+	    if(TEST_LOCAL) {
 				
 			processPathways(connection);
 			storePathways();
@@ -266,7 +267,67 @@ public class SgdConverter extends BioDBConverter {
 		System.out.println("size of genes:  " + genes.size());
 	}
 	
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
 
+	private void processNISS(Connection connection) throws SQLException,
+	ObjectStoreException {
+
+		System.out.println("Processing NISS 55 features...");
+		ResultSet res = PROCESSOR.getNISS(connection);
+		
+		while (res.next()) {
+
+			String featureNo = res.getString("dbentity_id");
+			if (genes.get(featureNo) == null) {
+				//~~~ gene ~~~
+				String primaryIdentifier = res.getString("sgdid");
+				String secondaryIdentifier = res.getString("systematic_name");
+				String symbol = res.getString("gene_name");
+				String name = res.getString("name_description");
+				String headline = res.getString("headline");
+				String description = res.getString("description");
+				String qualifier = res.getString("qualifier");
+				String status = res.getString("dbentity_status");
+
+				Item item = createItem("NotInSystematicSequenceOfS288C");
+		
+				// set for all types, so you can use LSF to query for these
+				// different type of objects in a template.
+				item.setAttribute("featureType", "not in systematic sequence of S288C");
+				item.setAttribute("primaryIdentifier", primaryIdentifier);
+				if (StringUtils.isNotEmpty(name)) item.setAttribute("name", name);
+				item.setAttribute("secondaryIdentifier", secondaryIdentifier);
+				item.setReference("organism", organism);
+				if (StringUtils.isNotEmpty(symbol)) item.setAttribute("symbol", symbol);				
+				if (StringUtils.isNotEmpty(description)) item.setAttribute("description", description);
+				if (StringUtils.isNotEmpty(headline)) item.setAttribute("briefDescription", headline);				
+				if (qualifier != null) {
+					if (StringUtils.isNotEmpty(qualifier)) {
+						item.setAttribute("qualifier", qualifier);
+					}
+				}
+
+				if (status != null) {
+					if (StringUtils.isNotEmpty(status)) {
+						item.setAttribute("status", status);
+					}
+				}
+				String refId = item.getIdentifier();
+				genes.put(featureNo, item);
+				genesName.put(secondaryIdentifier, item);
+
+				// ~~~ synonyms ~~~
+				getSynonym(refId, "symbol", symbol);
+				getSynonym(refId, "identifier", secondaryIdentifier);
+			}
+		}
+	}
+	
 	/**
 	 * 
 	 * @param connection
@@ -1564,9 +1625,9 @@ public class SgdConverter extends BioDBConverter {
 			Item interactingGene = genes.get(interactingGeneFeatureName);
 
 			//seen act1 interacting with act1 - check later
-			if(geneFeatureName.equals(interactingGeneFeatureName)) {
-				continue;
-			}
+			//if(geneFeatureName.equals(interactingGeneFeatureName)) {
+				//continue;
+			//}
 			
 			String action = res.getString("bait_hit");
 			String[] a = action.split("-");
@@ -1634,9 +1695,9 @@ public class SgdConverter extends BioDBConverter {
 			Item interactingGene = genes.get(interactingGeneFeatureName);
 
 			//seen act1 interacting with act1 - check later
-			if(geneFeatureName.equals(interactingGeneFeatureName)) {
-				continue;
-			}
+			//if(geneFeatureName.equals(interactingGeneFeatureName)) {
+				//continue;
+			//}
 			
 			String action = res.getString("bait_hit");
 			String[] a = action.split("-");
@@ -1689,9 +1750,12 @@ public class SgdConverter extends BioDBConverter {
 		while (res.next()) {
 
 			// use these to switch from feature to next && annotation to next && condition to next
+			
 			String geneFeatureNo = res.getString("dbentity_id");
 			String phenotypeAnnotNo = res.getString("annotation_id");
 			String groupNo = res.getString("group_id");
+			
+			System.out.println("dbentity no gene found " + geneFeatureNo);
 			
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 				gene = genes.get(geneFeatureNo);
@@ -1753,13 +1817,20 @@ public class SgdConverter extends BioDBConverter {
 
 	private Item getPhenotype(String phenotype) throws ObjectStoreException {
 		Item pheno = phenotypes.get("phenotype");
+		//System.out.println("phenotype pair is  "+ phenotype);
 		if(pheno == null) {
+			
+			if(phenotype.contains(":")){
 			String t[] = phenotype.split(":");
 			String qualifier = t[0].trim();
 			String observable = t[1].trim();
 			pheno = createItem("Phenotype");
 			pheno.setAttribute("qualifier", qualifier);
 			pheno.setAttribute("observable", observable);
+			}else{
+				pheno = createItem("Phenotype");
+				pheno.setAttribute("qualifier", phenotype.trim());
+			}
 			phenotypes.put(phenotype, pheno);
           try {
 				store(pheno);
@@ -2224,7 +2295,7 @@ public class SgdConverter extends BioDBConverter {
 			if (storedRef != null) {
 				storedPheno.addToCollection("publications", storedRef
 						.getIdentifier());
-				storedRef.addToCollection("phenotypes", storedPheno.getIdentifier());
+				storedRef.addToCollection("phenotypeAnnotations", storedPheno.getIdentifier());
 			} else {
 				Item item = createItem("Publication");
 
