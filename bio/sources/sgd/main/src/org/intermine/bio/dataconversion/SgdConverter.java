@@ -117,6 +117,9 @@ public class SgdConverter extends BioDBConverter {
 		processPubsWithFeatures(connection);  
 		processParalogs(connection);
 		//processRegulation(connection);
+		//processRegulationSummary(connection);
+		processFunctionSummary(connection);
+		//processGeneSummary(connection);
 				
 	    if(TEST_LOCAL) {
 				
@@ -131,6 +134,7 @@ public class SgdConverter extends BioDBConverter {
 			
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
+			processPhenotypeSummary(connection);
 			storePhenotypeAnnotations();
 		
 		}
@@ -1684,7 +1688,73 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 	}
+	
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+	private void processPhenotypeSummary(Connection connection)
+			throws SQLException, ObjectStoreException {
+		
+		System.out.println("Processing Phenotype Summary....");
+		ResultSet res = PROCESSOR.getPhenotypeSummary(connection);	
+		
+		while (res.next()) {
 
+			String featureNo = res.getString("dbentity_id");
+			String summary = res.getString("text");
+	
+			Item gene = genes.get(featureNo);		
+			gene.setAttribute("phenotypeSummary", summary);
+
+		}
+	}
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+	private void processFunctionSummary(Connection connection)
+			throws SQLException, ObjectStoreException {
+		
+		System.out.println("Processing Function Summary....");
+		ResultSet res = PROCESSOR.getFunctionSummary(connection);	
+		
+		while (res.next()) {
+
+			String featureNo = res.getString("dbentity_id");
+			String summary = res.getString("text");
+	
+			Item gene = genes.get(featureNo);		
+			gene.setAttribute("functionSummary", summary);
+
+		}
+	}
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+	private void processGeneSummary(Connection connection)
+			throws SQLException, ObjectStoreException {
+		
+		System.out.println("Processing Gene Summary....");
+		ResultSet res = PROCESSOR.getGeneSummary(connection);	
+		
+		while (res.next()) {
+
+			String featureNo = res.getString("dbentity_id");
+			String summary = res.getString("text");
+	
+			Item gene = genes.get(featureNo);		
+			gene.setAttribute("geneSummary", summary);
+
+		}
+	}
 	/*
 	 * private void processPubs(Connection connection) throws SQLException,
 	 * ObjectStoreException { ResultSet res =

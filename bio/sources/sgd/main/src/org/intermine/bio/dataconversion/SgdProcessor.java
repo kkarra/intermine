@@ -369,6 +369,94 @@ public class SgdProcessor
         ResultSet res = stmt.executeQuery(query);
         return res; 
     }
+    /**
+     * Return the results of running a query for phenotype summaries
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getPhenotypeSummary(Connection connection)
+        throws SQLException {
+
+    	String query = "select distinct(text), db.dbentity_id"
+    			+ " from nex.phenotypeannotation pa, nex.dbentity db,  nex.locussummary ls"
+    			+ " where pa.dbentity_id = db.dbentity_id"
+    			+ " and db.dbentity_id  = ls.locus_id"
+    			+ " and summary_type = 'Phenotype'"
+    			+ " group by text, db.dbentity_id";
+                
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res; 
+    }
+    
+    /**
+     * Return the results of running a query for phenotype summaries
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getFunctionSummary(Connection connection)
+        throws SQLException {
+
+    	String query = "select distinct(text), db.dbentity_id"
+    			+ " from nex.goannotation ga, nex.dbentity db,  nex.locussummary ls"
+    			+ " where ga.dbentity_id = db.dbentity_id"
+    			+ " and db.dbentity_id  = ls.locus_id"
+    			+ " and summary_type = 'Function'"
+    			+ " group by text, db.dbentity_id";
+                
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res; 
+    }
+    
+    /**
+     * Return the results of running a query for phenotype summaries
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getGeneSummary(Connection connection)
+        throws SQLException {
+
+    	String query = "select distinct(text), db.dbentity_id"
+    			+ " from nex.locusdbentity ldb, nex.dbentity db,  nex.locussummary ls"
+    			+ " where ldb.dbentity_id = db.dbentity_id"
+    			+ " and db.dbentity_id  = ls.locus_id"
+    			+ " and summary_type = 'Gene'"
+    			+ " group by text, db.dbentity_id";
+                
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res; 
+    }
+    
+    
+    /**
+     * Return the results of running a query for phenotype summaries
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getRegulationSummary(Connection connection)
+        throws SQLException {
+
+    	String query = "select distinct(text), db.dbentity_id"
+    			+ " from nex.regulationannotation ra, nex.dbentity db,  nex.locussummary ls"
+    			+ " where ra.dbentity_id = db.dbentity_id"
+    			+ " and db.dbentity_id  = ls.locus_id"
+    			+ " and summary_type = 'Gene'"
+    			+ " group by text, db.dbentity_id";
+                
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res; 
+    }
     
     /**
      * Return the results of running a query for CDSs and their sequences
