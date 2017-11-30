@@ -137,9 +137,9 @@
       <property name="src.data.dir" location="/share/intermine/go/function_summary"/>
     </source>
 
-    <source name="phenotype-summary" type="phenotype-summary">
+    <!--<source name="phenotype-summary" type="phenotype-summary">
       <property name="src.data.dir" location="/data/intermine/phenotype_summary"/>
-    </source>
+    </source>-->
 
      <source name="go-slim" type="go-slim">
       <property name="src.data.file" location="/share/intermine/go/goslim_yeast.obo"/>
