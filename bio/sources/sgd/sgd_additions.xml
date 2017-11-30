@@ -2,6 +2,7 @@
 <classes>
 
  <class name="ARS" extends="SequenceFeature" is-interface="true">
+   <attribute name="geneSummary" type="java.lang.String"/>
   <collection name="arsconsensussequences" referenced-type="ARSConsensusSequence" reverse-reference="ars"/>
  </class>
 
@@ -74,9 +75,14 @@
  </class>
 
  <class name="Gene" is-interface="true">
+  <attribute name="phenotypeSummary" type="java.lang.String"/>
+  <attribute name="functionSummary" type="java.lang.String"/>
+  <attribute name="geneSummary" type="java.lang.String"/>
+  <reference name="regulationSummary" referenced-type="RegulationSummary"/>
   <reference name="plasmid" referenced-type="Plasmid" reverse-reference="genes"/>
   <reference name="plasmidLocation" referenced-type="Location"/>
   <reference name="sequence" referenced-type="Sequence"/>
+  <reference name="regulationSummary" referenced-type="RegulationSummary"/>
   <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
   <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="genes"/>
@@ -85,6 +91,12 @@
   <collection name="publicationAnnotations" referenced-type="PublicationAnnotation" reverse-reference="genes"/>
   <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
  </class>
+ 
+  <class name="RegulationSummary" is-interface="true">
+      <attribute name="summaryParagraph" type="java.lang.String"/>
+      <collection name="publications" referenced-type="Publication"/>
+ </class>
+ 
  
  <class name="Homologue" is-interface="true">
   <reference name="publication" referenced-type="Publication"/>
@@ -182,7 +194,9 @@
   <attribute name="name" type="java.lang.String"/>
  </class>
 
- <class name="LongTerminalRepeat" extends="SequenceFeature" is-interface="true"> </class>
+ <class name="LongTerminalRepeat" extends="SequenceFeature" is-interface="true"> 
+   <attribute name="geneSummary" type="java.lang.String"/>
+ </class>
  
 <class name="OriginOfReplication" extends="SequenceFeature" is-interface="true"> </class>
 
@@ -329,6 +343,7 @@
   <attribute name="firstAuthor" type="java.lang.String"/>
   <attribute name="citation" type="java.lang.String"/>
   <attribute name="summary" type="java.lang.String"/>
+  <attribute name="dateCreated" type="java.util.Date"/>
   <collection name="literatureTopics" referenced-type="LiteratureTopic"/>
   <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="publications"/>
   <collection name="authors" referenced-type="Author" reverse-reference="publications"/>
@@ -380,8 +395,23 @@
  <class name="Pathway" is-interface="true">
 	<attribute name="identifier" type="java.lang.String"/>
 	<attribute name="name" type="java.lang.String"/>
+	<attribute name="summaryType" type="java.lang.String"/>
+	<attribute name="text" type="java.lang.String"/>
 	<collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
     <collection name="dataSets" referenced-type="DataSet"/>
+</class>
+
+ <class name="RegulationSummary" is-interface="true">
+      <attribute name="summaryParagraph" type="java.lang.String"/>
+      <collection name="publications" referenced-type="Publication"/>
+ </class>
+ 
+
+<class name="RegulationEvidence" extends="OntologyAnnotation" is-interface="true">
+    <!-- <attribute name="evidenceMethod" type="java.lang.String"/>
+    <attribute name="evidenceId" type="java.lang.String"/>  
+    <reference name="ecoId" referenced-type="ECOTerm"/> -->
+   <collection name="publications" referenced-type="Publication"/>
 </class>
 
 </classes>
