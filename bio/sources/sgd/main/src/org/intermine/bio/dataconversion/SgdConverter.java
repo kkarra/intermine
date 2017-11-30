@@ -47,6 +47,7 @@ public class SgdConverter extends BioDBConverter {
 	private Map<String, Item> interactions = new HashMap();
 	private Map<String, String> interactionterms = new HashMap<String, String>();
 	private Map<MultiKey, Item> interactionsnew = new HashMap<MultiKey, Item>();
+	private final Map<String, Item> ecoMap = new HashMap<String, Item>(); //regulation data
 	private Map<String, String> literatureTopics = new HashMap();
 	private Map<String, Item> genes = new HashMap();
 	private Map<String, Item> proteins = new HashMap();
@@ -66,7 +67,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -110,13 +111,12 @@ public class SgdConverter extends BioDBConverter {
 		processAliases(connection);
 		processCrossReferences(connection);
 		processGeneLocations(connection);
-		//processChrLocations(connection); <-- this seems to be NPM and NISS specific
-		
 		processGeneChildrenLocations(connection);	
-		processProteins(connection);	
-		processAllPubs(connection);             //get all publications and their topics loaded								
-		processPubsWithFeatures(connection);    //for chromosomal features load pubmed and topics	
+		processProteins(connection);
+		processAllPubs(connection);           						
+		processPubsWithFeatures(connection);  
 		processParalogs(connection);
+		//processRegulation(connection);
 				
 	    if(TEST_LOCAL) {
 				
@@ -365,13 +365,159 @@ public class SgdConverter extends BioDBConverter {
 		}
 	}
 
+	
+	
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+
+	private void processRegulation(Connection connection) throws SQLException,
+	ObjectStoreException {
+
+		System.out.println("Processing Regulation data...");
+		ResultSet res = PROCESSOR.getRegulationData(connection); // ordered by featureNo
+
+		while (res.next()) {
+			String factorGene = res.getString("parent_id");
+			String targetGene = res.getString("child_id");
+			String evidenceCode = res.getString("reference_id");	
+			String condition = res.getString("reference_id");	
+			String regulationDirection = res.getString("reference_id");	
+			String pmid = res.getString("reference_id");	
+			String source = res.getString("reference_id");	
+			String pvalue = res.getString("reference_id");	
+			String fdr = res.getString("reference_id");	
+			String strainBackground = res.getString("reference_id");	
+			String strain = res.getString("reference_id");	
+		
+			getRegulation(factorGene, targetGene, evidenceCode, condition,  regulationDirection,  pmid,  source,  pvalue,  fdr, strainBackground, strain);
+
+		}
+	}
+	
+	/**
+	 * 
+	 * @param factorGene
+	 * @param targetGene
+	 * @param evidenceCode
+	 * @param condition
+	 * @param regulationDirection
+	 * @param pmid
+	 * @param source
+	 * @param pvalue
+	 * @param fdr
+	 * @param strainBackground
+	 * @param strain
+	 * @throws ObjectStoreException
+	 */
+	private void getRegulation(String factorGene, String targetGene, 
+			String evidenceCode, String condition, String regulationDirection, String pmid, String source, String pvalue, String fdr, String strainBackground, String strain) 
+					throws ObjectStoreException {
+
+		Item rGene = genes.get(factorGene);
+		Item tGene = genes.get(targetGene);
+
+		if (rGene != null && tGene != null) {       	               	           			
+
+			Item bindingSite = createItem("TFBindingSite");  
+			String name = factorGene + "_binding_site";
+
+			bindingSite.setAttribute("name", name);
+			bindingSite.setReference("factor", rGene.getIdentifier());
+			bindingSite.setReference("gene", tGene.getIdentifier());
+
+			Item evidence = createItem("RegulationEvidence");
+
+			if (StringUtils.isNotEmpty(evidenceCode)) {
+
+				Item eco = ecoMap.get(evidenceCode);
+				if(eco == null) {
+					eco = createItem("ECOTerm");
+					ecoMap.put(evidenceCode, eco);
+					eco.setAttribute("identifier", evidenceCode); 
+					try {
+						store(eco);
+					} catch (ObjectStoreException e) {
+						throw new ObjectStoreException(e);
+					}	
+				}
+				evidence.setReference("ontologyTerm", eco.getIdentifier());
+			}
+
+
+			try {
+				store(evidence);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}			
+
+			bindingSite.setReference("regEvidence", evidence.getIdentifier());                  	
+
+			if (StringUtils.isNotEmpty(condition)) {
+				String[] t = condition.split(";");
+				String newcond = t[0]+";"+t[3];
+				bindingSite.setAttribute("experimentCondition", newcond);
+				bindingSite.setAttribute("assay", t[1]);
+			}
+			if (StringUtils.isNotEmpty(regulationDirection)) {
+				bindingSite.setAttribute("regulationDirection", regulationDirection);
+			}
+			if (StringUtils.isNotEmpty(source)) { 
+				bindingSite.setAttribute("datasource", source);
+			}
+			if (StringUtils.isNotEmpty(pvalue)) {
+				bindingSite.setAttribute("pvalue", pvalue);
+			}	
+			if (StringUtils.isNotEmpty(fdr)) {
+				bindingSite.setAttribute("FDR", fdr);
+			}
+			if (StringUtils.isNotEmpty(strain)) {
+				bindingSite.setAttribute("construct", strain);
+			}
+			if (StringUtils.isNotEmpty(strainBackground)) {
+				bindingSite.setAttribute("strainBackground", strainBackground);
+			}
+
+			Item publication = publications.get(pmid);
+
+			if(publication == null) {
+				publication = createItem("Publication");
+				publications.put(pmid, publication);
+				publication.setAttribute("pubMedId", pmid);                      
+				try {
+					store(publication);
+				} catch (ObjectStoreException e) {
+					throw new ObjectStoreException(e);
+				}			
+			}
+
+			bindingSite.addToCollection("publications", publication);      
+
+			try {
+				store(bindingSite);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}	
+
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param gene1
+	 * @param gene2
+	 * @param pmid
+	 * @param source
+	 * @throws ObjectStoreException
+	 */
 	private void processHomologues(String gene1, String gene2, String pmid, String source) throws ObjectStoreException {
-
-
 		if (gene1 == null || gene2 == null) {
 			return;
 		}
-		
 		Item homologue = createItem("Homologue");
 		homologue.setReference("gene", gene1);
 		homologue.setReference("homologue", gene2);
@@ -381,7 +527,6 @@ public class SgdConverter extends BioDBConverter {
 		store(homologue);
 	}
 
-
 	/**
 	 * 
 	 * @param connection
@@ -389,11 +534,10 @@ public class SgdConverter extends BioDBConverter {
 	 * @throws ObjectStoreException
 	 */
 
-	private void processAliases(Connection connection) throws SQLException,
-	ObjectStoreException {
+	private void processAliases(Connection connection) throws SQLException, ObjectStoreException {
 
-		ResultSet res = PROCESSOR.getAliases(connection); // ordered by
-		// featureNo
+		ResultSet res = PROCESSOR.getAliases(connection); // ordered by featureNo
+		
 		System.out.println("Processing ALiases...");
 		while (res.next()) {
 
@@ -403,10 +547,7 @@ public class SgdConverter extends BioDBConverter {
 
 			Item item = genes.get(geneFeatureNo);
 			if (item != null) {
-
-				// adding sgd_aliases as synonyms..
-				getSynonym(item.getIdentifier(), alias_type, alias_name);
-
+				getSynonym(item.getIdentifier(), alias_type, alias_name); // adding sgd_aliases as synonyms
 				String name = genesAliases.get(geneFeatureNo);
 				if (name == null) {
 					genesAliases.put(geneFeatureNo, alias_name);
@@ -423,7 +564,6 @@ public class SgdConverter extends BioDBConverter {
 		java.util.Iterator<Map.Entry<String, String>> it = set.iterator();
 
 		while (it.hasNext()) {
-
 			Map.Entry<String, String> anEntry = it.next();
 			String geneFeatureNo = anEntry.getKey();
 			String alias = anEntry.getValue();
@@ -450,20 +590,23 @@ public class SgdConverter extends BioDBConverter {
 			String geneFeatureNo = res.getString("dbentity_id");
 			String dbxref_name = res.getString("biocyc_id"); //pathway name
 			String dbxref_id = res.getString("display_name"); //pathway identifier i.e. short name
+			String summary_type = res.getString("summary_type");
+			String text = res.getString("text");
+			
 			Item item = genes.get(geneFeatureNo);
 			if (item != null) {
-				getPathway(item.getIdentifier(), dbxref_id, dbxref_name);
+				getPathway(item.getIdentifier(), dbxref_id, dbxref_name, summary_type, text);
 			}
 		}
 	}
+	
 	/**
 	 * 
 	 * @param connection
 	 * @throws SQLException
 	 * @throws ObjectStoreException
 	 */
-	private void processCrossReferences(Connection connection)
-			throws SQLException, ObjectStoreException {
+	private void processCrossReferences(Connection connection) throws SQLException, ObjectStoreException {
 
 		System.out.println("Processing DbXRefs...");
 		ResultSet res = PROCESSOR.getCrossReferences(connection); // ordered by featureNo
@@ -633,31 +776,6 @@ public class SgdConverter extends BioDBConverter {
 	 * @param connection
 	 * @throws SQLException
 	 * @throws ObjectStoreException
-	 *
-	private void processUniProtCrossReference(Connection connection) 
-			throws SQLException, ObjectStoreException {
-
-		ResultSet res = PROCESSOR.getUniProtCrossReference(connection);
-		System.out.println("Processing DbXRefs...");
-		while (res.next()) {
-			String geneFeatureNo = res.getString("feature_no");
-			String dbx_source = res.getString("source");
-			String dbxref_id = res.getString("dbxref_id");
-
-			Item item = proteins.get(geneFeatureNo);
-
-			if (item != null) {
-				item.setAttribute("primaryAccession", dbxref_id);
-			}
-		}
-
-	}*/
-	
-	/**
-	 * 
-	 * @param connection
-	 * @throws SQLException
-	 * @throws ObjectStoreException
 	 * @throws Exception
 	 */
 
@@ -761,8 +879,7 @@ public class SgdConverter extends BioDBConverter {
 		res.close();
 	}*/
 
-	private void processGeneChildrenLocations(Connection connection)
-			throws SQLException, ObjectStoreException, Exception {
+	private void processGeneChildrenLocations(Connection connection) throws SQLException, ObjectStoreException, Exception {
 
 		System.out.println("Processing GeneChildrenLocations...");
 		ResultSet res = PROCESSOR.getChildrenFeatureLocationResults(connection);
@@ -777,7 +894,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String chromosome_no = res.getString("format_name"); //root chr.number
 			//String secondaryIdentifier = res.getString("child_identifier"); //child identifier is wrong -- fix it 11/13
-			String primaryIdentifier = res.getString("child_sgdid")+"_child"; // SXX
+			String primaryIdentifier = res.getString("child_sgdid")+"_C"; // SXX
 
 			String maxcoord = res.getString("child_end_coord");
 			String mincoord = res.getString("child_start_coord");
@@ -828,7 +945,7 @@ public class SgdConverter extends BioDBConverter {
 
 			// ~~~ chromosome and location ~~~
 			String refId = null;
-			if (chromosome_no.equalsIgnoreCase("2-micron")) {
+			if (chromosome_no.equalsIgnoreCase("2-micron_plasmid")) {
 				refId = getPlasmid(fixed_chromosome_no);
 				childItem.setReference("plasmid", refId);
 				String locationRefId = getLocation(childItem, refId, mincoord, maxcoord, newstrand);
@@ -1362,6 +1479,7 @@ public class SgdConverter extends BioDBConverter {
 		String prevIssue = "";
 		String prevAbst = "";
 		String prevDbxRef = "";
+		String prevDateCreated = "";
 
 		ArrayList<String> hm = new ArrayList<String>();
 
@@ -1386,6 +1504,7 @@ public class SgdConverter extends BioDBConverter {
 			String issue = res.getString("issue");
 			String abst = res.getString("fulltext_status");
 			String dbxrefid = res.getString("sgdid");
+			String date_created = res.getString("date_created");
 
 			if (firstrow) {
 				prevReferenceNo = referenceNo;
@@ -1395,7 +1514,7 @@ public class SgdConverter extends BioDBConverter {
 			if (!referenceNo.equalsIgnoreCase(prevReferenceNo)) {
 				getPub(prevReferenceNo, prevTitle, prevPubMedId, prevCitation,
 						hm, prevJournal, prevVolume, prevPages, prevYear,
-						prevIssue, prevAbst, prevDbxRef);
+						prevIssue, prevAbst, prevDbxRef, prevDateCreated);
 				hm.clear();
 			}
 
@@ -1414,12 +1533,13 @@ public class SgdConverter extends BioDBConverter {
 			prevPages = pages;
 			prevAbst = abst;
 			prevDbxRef = dbxrefid;
+			prevDateCreated = date_created;
 
 		}
 		// process the very last reference group
 		getPub(prevReferenceNo, prevTitle, prevPubMedId, prevCitation, hm,
 				prevJournal, prevVolume, prevPages, prevYear, prevIssue,
-				prevAbst, prevDbxRef);
+				prevAbst, prevDbxRef, prevDateCreated);
 		hm.clear();
 
 	}
@@ -1445,6 +1565,7 @@ public class SgdConverter extends BioDBConverter {
 		String prevYear = "";
 		String prevIssue = "";
 		String prevDbxRef = "";
+		String prevDateCreated = "";
 
 		ArrayList<String> hm = new ArrayList<String>();
 
@@ -1467,6 +1588,7 @@ public class SgdConverter extends BioDBConverter {
 			String year = res.getString("year");
 			String issue = res.getString("issue");
 			String dbxrefid = res.getString("sgdid");
+			String date_created = res.getString("date_created");
 
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 
@@ -1478,7 +1600,7 @@ public class SgdConverter extends BioDBConverter {
 					
 					getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
 							prevCitation, hm, gene, prevJournal, prevVolume,
-							prevPages, prevYear, prevIssue, prevDbxRef);
+							prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
 					hm.clear();
 					prevReferenceNo = referenceNo;
 					}
@@ -1496,7 +1618,7 @@ public class SgdConverter extends BioDBConverter {
 				if(gene != null) {
 				getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
 						prevCitation, hm, gene, prevJournal, prevVolume,
-						prevPages, prevYear, prevIssue, prevDbxRef);
+						prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
 				hm.clear();
 				}
 			}
@@ -1522,7 +1644,7 @@ public class SgdConverter extends BioDBConverter {
 		// process the very last reference group
 		if(gene != null) {
 		getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId, prevCitation, hm,
-				gene, prevJournal, prevVolume, prevPages, prevYear, prevIssue, prevDbxRef);
+				gene, prevJournal, prevVolume, prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
 		hm.clear();
 		}
 
@@ -1554,9 +1676,10 @@ public class SgdConverter extends BioDBConverter {
 			String citation = res.getString("citation");
 			String journal = res.getString("med_abbr");
 			String dbxrefid = res.getString("sgdid");
+			String date_created = res.getString("date_created");
 
 			getPubPhenotype(phenoAnnotNo, referenceNo, title, pubMedId,
-					citation, journal, volume, pages, year, issue, dbxrefid);
+					citation, journal, volume, pages, year, issue, dbxrefid, date_created);
 
 		}
 
@@ -2048,7 +2171,7 @@ public class SgdConverter extends BioDBConverter {
 	}
 
 
-	private String getPathway(String geneIdentifier, String id, String name)
+	private String getPathway(String geneIdentifier, String id, String name, String summaryType, String text)
 			throws ObjectStoreException {
 
 		Item crf = pathways.get(id);
@@ -2057,6 +2180,9 @@ public class SgdConverter extends BioDBConverter {
 			crf = createItem("Pathway");
 			crf.setAttribute("identifier", id);
 			crf.setAttribute("name", name);
+			crf.setAttribute("summaryType", summaryType);
+			crf.setAttribute("summary", text);
+			
 			pathways.put(id, crf);
 
 			crf.addToCollection("genes", geneIdentifier);
@@ -2224,7 +2350,7 @@ public class SgdConverter extends BioDBConverter {
 
 	private void getPub(String referenceNo, String title, String pubMedId,
 			String citation, ArrayList hm, String journal, String volume,
-			String pages, String year, String issue, String abst, String dbxrefid)
+			String pages, String year, String issue, String abst, String dbxrefid, String datecreated)
 					throws ObjectStoreException {
 
 		Item storedRef = publications.get(referenceNo);
@@ -2263,6 +2389,9 @@ public class SgdConverter extends BioDBConverter {
 			if (StringUtils.isNotEmpty(abst)) {
 				item.setAttribute("summary", abst);
 			}
+			if (StringUtils.isNotEmpty(datecreated)) {
+				item.setAttribute("dateCreated", datecreated);
+			}
 
 			Iterator iter = hm.iterator();
 			while (iter.hasNext()) {
@@ -2283,7 +2412,7 @@ public class SgdConverter extends BioDBConverter {
 
 	private void getPubPhenotype(String phenoAnnotNo, String prevReferenceNo,
 			String title, String pubMedId, String citation, String journal,
-			String volume, String pages, String year, String issue, String dbxrefid)
+			String volume, String pages, String year, String issue, String dbxrefid, String datecreated)
 					throws ObjectStoreException {
 
 		Item storedPheno = phenotypeannots.get(phenoAnnotNo);
@@ -2326,6 +2455,9 @@ public class SgdConverter extends BioDBConverter {
 				if (StringUtils.isNotEmpty(issue)) {
 					item.setAttribute("issue", issue);
 				}
+				if (StringUtils.isNotEmpty(datecreated)) {
+					item.setAttribute("dateCreated", datecreated);
+				}
 
 				publications.put(prevReferenceNo, item);
 
@@ -2353,7 +2485,7 @@ public class SgdConverter extends BioDBConverter {
 	 */
 	private void getPubAnnot(String referenceNo, String title, String pubMedId,
 			String citation, ArrayList hm, Item gene, String journal,
-			String volume, String pages, String year, String issue, String dbxrefid)
+			String volume, String pages, String year, String issue, String dbxrefid, String datecreated)
 					throws ObjectStoreException {
 
 		Item pubAnnot = createItem("PublicationAnnotation");
@@ -2388,6 +2520,9 @@ public class SgdConverter extends BioDBConverter {
 			}
 			if (StringUtils.isNotEmpty(issue)) {
 				item.setAttribute("issue", issue);
+			}
+			if (StringUtils.isNotEmpty(datecreated)) {
+				item.setAttribute("dateCreated", datecreated);
 			}
 
 			Iterator iter = hm.iterator();

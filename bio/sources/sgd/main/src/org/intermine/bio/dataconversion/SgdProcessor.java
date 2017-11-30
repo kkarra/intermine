@@ -292,13 +292,13 @@ public class SgdProcessor
                 + " and col_name = 'FEATURE_TYPE')"
                 +" ORDER by f.feature_no, r.reference_no";*/
     	String query = "select ldb.dbentity_id as featureNo, r.dbentity_id as referenceFeatureNo, r.pmid, r.fulltext_status, r.title, r.volume,"
-    				+ " r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid"
+    				+ " r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid, db.date_created"
     				+ " from nex.literatureannotation la"
     				+ " inner join nex.referencedbentity r on la.reference_id = r.dbentity_id"
     				+ " inner join nex.locusdbentity ldb on la.dbentity_id  = ldb.dbentity_id"
     				+ " inner join nex.dbentity db on ldb.dbentity_id = db.dbentity_id"
     				+ " left join nex.journal j on j.journal_id = r.journal_id"
-    				+ " group by ldb.dbentity_id, r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid"
+    				+ " group by ldb.dbentity_id, r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, db.sgdid, db.date_created"
     				+ " order by ldb.dbentity_id, r.dbentity_id";
                 
         LOG.info("executing: " + query);
@@ -323,7 +323,8 @@ public class SgdProcessor
                 + " AND a.reference_no (+) = r.reference_no"
                 +" ORDER by r.reference_no";*/
  
-        String query = "select r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue, r.citation, la.topic, j.med_abbr, rd.text, db.sgdid "
+        String query = "select r.dbentity_id, r.pmid, r.fulltext_status, r.title, r.volume, r.page, r.year, r.issue,"
+        		+	" r.citation, la.topic, j.med_abbr, rd.text, db.sgdid, db.date_created"
         		+ " from nex.dbentity db"
         		+ " inner join nex.referencedbentity r on db.dbentity_id = r.dbentity_id"
         		+ " left join nex.journal j on j.journal_id = r.journal_id"
@@ -357,7 +358,7 @@ public class SgdProcessor
                 +" ORDER by rl.primary_key, r.reference_no";*/
     	
     	String query = "select annotation_id, reference_id, pmid, fulltext_status, rdb.title, volume, page, year, issue, citation, med_abbr, db.sgdid"
-    			+ " from nex.phenotypeannotation pa, nex.referencedbentity rdb, nex.journal j, nex.dbentity db"
+    			+ " from nex.phenotypeannotation pa, nex.referencedbentity rdb, nex.journal j, nex.dbentity db, to_char(db.date_created, 'YYYY-MM-DD')"
     			+ " where pa.reference_id = rdb.dbentity_id"
     			+" and rdb.journal_id = j.journal_id"
     			+ " and rdb.dbentity_id = db.dbentity_id"
@@ -624,9 +625,10 @@ public class SgdProcessor
     		+ " AND col_name = 'FEATURE_TYPE') "
     		+ " and dbx.source = 'MetaCyc' "
     		+ " order by f.feature_no asc";*/
-    	String query = "select distinct db.dbentity_id, biocyc_id, db2.display_name "
-    			+ " from nex.dbentity db, nex.pathwaydbentity pdf, nex.pathwayannotation pa, nex.dbentity db2 "
+    	String query = "select distinct db.dbentity_id, biocyc_id, db2.display_name, ps.summary_type, ps.text "
+    			+ " from nex.dbentity db, nex.pathwaydbentity pdf, nex.pathwayannotation pa, nex.dbentity db2, nex.pathwaysummary ps "
     			+ " where db.dbentity_id = pa.dbentity_id "
+    			+ " and ps.pathway_id = pdf.dbentity_id "
     			+ " and pa.pathway_id = pdf.dbentity_id "
     			+ " and pdf.dbentity_id = db2.dbentity_id " 
     			+ " order by 1";
@@ -636,6 +638,31 @@ public class SgdProcessor
     	ResultSet res = stmt.executeQuery(query);
     	return res;
     }
+    
+    
+    /**
+     * Return the results for regulation info
+     * @param connection the connection
+     * @return the results
+     * @throws SQLException if there is a database problem
+     */
+    protected ResultSet getRegulationData(Connection connection)
+    throws SQLException {
+
+    	String query = "select target_id, regulator_id, regulator_type, regulation_type, direction, happens_during, annotation_type "
+    			+ " from nex.dbentity db, nex.regulationannotation ra, nex.referecedbentity rdb, nex.dbentity db2 "
+    			+ " where db.dbentity_id = ra.regulator_id "
+    			+ " and ra.target_id = db2.dbentity_id " 
+    			+ " and rdb.dbentity_id = ra.reference_id "
+    			+ " order by 1";
+
+    	LOG.info("executing: " + query);        
+    	Statement stmt = connection.createStatement();
+    	ResultSet res = stmt.executeQuery(query);
+    	return res;
+    }
+    
+    
 
     
 }
