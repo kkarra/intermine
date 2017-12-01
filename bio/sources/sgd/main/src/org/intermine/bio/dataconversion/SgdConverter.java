@@ -67,7 +67,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = false;
+	private static final boolean TEST_LOCAL = true;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -2251,7 +2251,7 @@ public class SgdConverter extends BioDBConverter {
 			crf.setAttribute("identifier", id);
 			crf.setAttribute("name", name);
 			crf.setAttribute("summaryType", summaryType);
-			crf.setAttribute("summary", text);
+			crf.setAttribute("text", text);
 			
 			pathways.put(id, crf);
 

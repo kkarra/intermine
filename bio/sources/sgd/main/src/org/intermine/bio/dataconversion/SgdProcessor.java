@@ -357,8 +357,8 @@ public class SgdProcessor
                 + " AND j.journal_no  (+) =   r.journal_no"
                 +" ORDER by rl.primary_key, r.reference_no";*/
     	
-    	String query = "select annotation_id, reference_id, pmid, fulltext_status, rdb.title, volume, page, year, issue, citation, med_abbr, db.sgdid"
-    			+ " from nex.phenotypeannotation pa, nex.referencedbentity rdb, nex.journal j, nex.dbentity db, to_char(db.date_created, 'YYYY-MM-DD')"
+    	String query = "select annotation_id, reference_id, pmid, fulltext_status, rdb.title, volume, page, year, issue, citation, med_abbr, db.sgdid, db.date_created"
+    			+ " from nex.phenotypeannotation pa, nex.referencedbentity rdb, nex.journal j, nex.dbentity db"
     			+ " where pa.reference_id = rdb.dbentity_id"
     			+" and rdb.journal_id = j.journal_id"
     			+ " and rdb.dbentity_id = db.dbentity_id"
