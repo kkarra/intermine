@@ -592,8 +592,8 @@ public class SgdConverter extends BioDBConverter {
 
 		while (res.next()) {			
 			String geneFeatureNo = res.getString("dbentity_id");
-			String dbxref_name = res.getString("biocyc_id"); //pathway name
-			String dbxref_id = res.getString("display_name"); //pathway identifier i.e. short name
+			String dbxref_id = res.getString("biocyc_id"); //pathway name
+			String dbxref_name = res.getString("display_name"); //pathway identifier i.e. short name
 			String summary_type = res.getString("summary_type");
 			String text = res.getString("text");
 			
@@ -1816,11 +1816,6 @@ public class SgdConverter extends BioDBConverter {
 
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
 			Item interactingGene = genes.get(interactingGeneFeatureName);
-
-			//seen act1 interacting with act1 - check later
-			//if(geneFeatureName.equals(interactingGeneFeatureName)) {
-				//continue;
-			//}
 			
 			String action = res.getString("bait_hit");
 			String[] a = action.split("-");
@@ -1846,12 +1841,13 @@ public class SgdConverter extends BioDBConverter {
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
 			
 			//store the reverse relationship so that template changes do not have to be made
+			if(!geneFeatureName.equals(interactingGeneFeatureName)) {
 			String interactionRefId2 = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
 					annotationType, modification, gene, role2, source,
 					phenotype, citation, interactingGene, pubmed, title, volume, page,
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
-
+			}
 		}
 	}
 
@@ -1886,12 +1882,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
 			Item interactingGene = genes.get(interactingGeneFeatureName);
-
-			//seen act1 interacting with act1 - check later
-			//if(geneFeatureName.equals(interactingGeneFeatureName)) {
-				//continue;
-			//}
-			
+		
 			String action = res.getString("bait_hit");
 			String[] a = action.split("-");
 			String role1 = a[0];
@@ -1915,12 +1906,14 @@ public class SgdConverter extends BioDBConverter {
 					phenotype, citation, gene, pubmed, title, volume, page,
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
 			
+			if(!geneFeatureName.equals(interactingGeneFeatureName)) {
 			//store the reverse relationship so that template changes do not have to be made; act1 in gene.X or participant.X
 			String interactionRefId2 = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
 					annotationType, modification, gene, role2, source,
 					phenotype, citation, interactingGene, pubmed, title, volume, page,
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+			}
 
 		}
 	}

@@ -209,15 +209,9 @@ public class GoConverter extends BioFileConverter
             String pub = array[5];
             String strEvidence = array[6];
             String withText = array[7];
-            String annotationExtension = null;
-            String annotType = null;
-            if (array.length >= 16) {
-               annotType = array[15]; //kk
-            }
-            if (array.length >= 17) {
-            	annotationExtension = array[16];
-            }
-
+            String annotationExtension = array[15];
+            String annotType = array[16];
+     
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence, annotType, withText);
             } else {

@@ -133,11 +133,11 @@
       <property name="src.data.file" location="/data/intermine/chebi_ontology/ChEBI_sgd_biological_role_slim.obo"/>
     </source>-->
 
-    <source name="go-function-summary" type="go-function-summary">
+    <!--<source name="go-function-summary" type="go-function-summary">
       <property name="src.data.dir" location="/share/intermine/go/function_summary"/>
     </source>
 
-    <!--<source name="phenotype-summary" type="phenotype-summary">
+    <source name="phenotype-summary" type="phenotype-summary">
       <property name="src.data.dir" location="/data/intermine/phenotype_summary"/>
     </source>-->
 
