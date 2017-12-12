@@ -103,6 +103,16 @@ public class SgdGffUtrConverter extends BioFileConverter
 			String geneEnd = array[6].trim();
 			String transcriptEnd = array[7].trim();
 			String strand = array[8].trim();
+			
+			if(geneStart.equalsIgnoreCase(transcriptStart)) {
+				System.out.println("TS and GS are same : "+ geneId + "   "+ transcriptId);
+				continue;
+			}
+			
+			if(geneEnd.equalsIgnoreCase(transcriptEnd)) {
+				System.out.println("TE and GE are same : "+ geneId + "   "+ transcriptId);
+				continue;
+			}
 		    
 			System.out.println("Processing line..." + geneId + "   "+ transcriptId);
 			getUTRs(geneId, transcriptId, chromosome, geneStart, transcriptStart, geneEnd, transcriptEnd, strand);

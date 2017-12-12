@@ -2393,7 +2393,7 @@ public class SgdConverter extends BioDBConverter {
 		String q[] = strain_background.split("_");
 		int len = q.length;
 		String strain;
-		if(len == 2){
+		if(len == 3){
 			 strain = q[len-1];
 		}else{
 			 strain = "Other";
