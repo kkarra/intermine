@@ -112,13 +112,13 @@ public class SgdConverter extends BioDBConverter {
 		processChromosomeSequences(connection);
 		processGenes(connection);
 		processNISS(connection);
-		/*processAliases(connection);
+		processAliases(connection);
 		processCrossReferences(connection);
 		processGeneLocations(connection);
-		processGeneChildrenLocations(connection);*/	
+		processGeneChildrenLocations(connection);
 		processProteins(connection);
 		processAllPubs(connection);           						
-		/*processPubsWithFeatures(connection); 
+		processPubsWithFeatures(connection); 
 		processProteinAbundance(connection);
 		processProteinHalfLife(connection);
 		processProteinDomains(connection);
@@ -127,19 +127,19 @@ public class SgdConverter extends BioDBConverter {
 		processParalogs(connection);
 		processFunctionSummary(connection);
 		processRegulation(connection);
-		processRegulationSummary(connection);*/
+		processRegulationSummary(connection);
 		//processGeneSummary(connection);
 
 		if(TEST_LOCAL) {
 
-			/*processPathways(connection);
+			processPathways(connection);
 			storePathways();
 
 			processPhysicalInteractions(connection);
 			processGeneticInteractions(connection);
 			storeInteractionTypes();
 			storeInteractionExperiments();
-			storeInteractions();*/
+			storeInteractions();
 
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
@@ -2357,7 +2357,7 @@ public class SgdConverter extends BioDBConverter {
 
 			if (!phenotypeAnnotNo.equalsIgnoreCase(prevPhenotypeAnnotNo)) {
 				phenoannot = getPhenotypeAnnotation(phenotypeAnnotNo, experimentType, experimentComment, alleleComment,
-						reporterComment, mutantType, reporter, allele, assay, strain_background, details, gene, feature_type, qualifier_observable);	
+						reporterComment, mutantType, reporter, allele, assay, strain_background, details, gene, qualifier_observable);	
 			}else{
 				phenoannot = phenotypeannots.get(phenotypeAnnotNo);	
 			}
@@ -2377,8 +2377,7 @@ public class SgdConverter extends BioDBConverter {
 
 
 	private Item getPhenotypeAnnotation(String phenotypeAnnotNo, String experimentType, String experimentComment, String alleleComment, String reporterComment,
-			String mutantType, String reporter, String allele, String assay, String strain_background, String details, Item gene, String feature_type,
-			String qualifier_observable) throws ObjectStoreException {
+			String mutantType, String reporter, String allele, String assay, String strain_background, String details, Item gene, String qualifier_observable) throws ObjectStoreException {
 
 		Item phenoannot = createItem("PhenotypeAnnotation");
 
