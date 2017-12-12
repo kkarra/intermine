@@ -30,14 +30,14 @@
       <property name="src.data.file" location="/data/intermine/eco/eco.obo"/>
     </source>
 
-    <source name="sgd-yetfasco" type="sgd-yetfasco">
+    <!--<source name="sgd-yetfasco" type="sgd-yetfasco">
      <property name="src.data.dir" location="/data/intermine/regulation"/>
      <property name="bindingSitesFile" location="/data/intermine/bindingsites/predictedTFBSsummaryNumbers.txt"/> 
      <property name="paragraphsFile" location="/data/intermine/paragraphs/Reg_Summary_Paragraphs"/>
      <property name="jasparFile" location="/data/intermine/jaspar_reg/TF_family_class.txt"/>
      <property name="logosFile" location="/data/intermine/yetfasco_logos/yetfasco_file_names"/>
      <property name="confirmedFile" location="/data/intermine/regulation_exp/combined.txt"/>
-    </source> 
+    </source>--> 
 
      <source name="spell-expression" type="spell-expression">
         <property name="source.db.name" value="yeast"/>
@@ -105,12 +105,6 @@
       <property name="homologene.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
 
-     <!--<source name="orthodb" type="orthodb">
-      <property name="src.data.dir" location="/data/intermine/yeast_orthologs/orthoDB"/>
-      <property name="orthodb.organisms" value="4932"/>   
-      <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source>-->
-
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/data/intermine/yeast_orthologs/ensembl_compara"/>
       <property name="ensemblcompara.organisms" value="4932"/>
@@ -124,14 +118,6 @@
     <source name="go" type="go">
       <property name="src.data.file" location="/share/intermine/go/gene_ontology_edit.obo"/>
     </source>
-
-    <!--<source name="chebi" type="chebi">
-      <property name="src.data.file" location="/data/intermine/chebi_ontology/chebi-slim_subsets-20141217_bio.obo"/>
-    </source>
-   
-    <source name="chebi-slim" type="chebi-slim">
-      <property name="src.data.file" location="/data/intermine/chebi_ontology/ChEBI_sgd_biological_role_slim.obo"/>
-    </source>-->
 
     <!--<source name="go-function-summary" type="go-function-summary">
       <property name="src.data.dir" location="/share/intermine/go/function_summary"/>
@@ -157,7 +143,7 @@
       <property name="complexes.source" value="sgd"/>
     </source>
 
-    <source name="sgd-protein-info" type="sgd-protein-info">
+    <!--<source name="sgd-protein-info" type="sgd-protein-info">
      <property name="src.data.dir" location="/share/intermine/protein-info"/>
     </source>
 
@@ -167,23 +153,23 @@
 
     <source name="sgd-protein-mods" type="sgd-protein-mods">
      <property name="src.data.dir" location="/data/intermine/protein-modifications"/>
-    </source>
+    </source>-->
 
     <source name="sgd-protein-ntermini" type="sgd-protein-ntermini">
      <property name="src.data.dir" location="/data/intermine/protein-ntermini"/>
     </source>
 
-   <source name="sgd-protein-abundance" type="sgd-protein-abundance">
+   <!--<source name="sgd-protein-abundance" type="sgd-protein-abundance">
       <property name="src.data.dir" location="/data/intermine/protein-abundance"/>
-   </source>
+   </source>-->
 
    <source name="sgd-protein-properties" type="sgd-protein-properties">
       <property name="src.data.dir" location="/data/intermine/protein-properties"/>
    </source>
 
-   <source name="protein-half-life" type="protein-half-life">
+   <!--<source name="protein-half-life" type="protein-half-life">
       <property name="src.data.dir" location="/data/intermine/protein-half-life"/>
-   </source>
+   </source>-->
 
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
