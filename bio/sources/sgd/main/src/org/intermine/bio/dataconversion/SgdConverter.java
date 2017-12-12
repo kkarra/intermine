@@ -64,6 +64,10 @@ public class SgdConverter extends BioDBConverter {
 	private Map<String, Item> phenotypeannots = new HashMap();
 	private Map<String, Item> phenotypeconds = new HashMap();
 	private Map<String, String> datasources = new HashMap();
+	private Map<String, Item> proteinDomains = new HashMap<String, Item>();
+	private Map<String, Item> interproDomains = new HashMap<String, Item>();
+	private Map<String, Item> proteinAbundance = new HashMap<String, Item>();
+
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
@@ -108,40 +112,44 @@ public class SgdConverter extends BioDBConverter {
 		processChromosomeSequences(connection);
 		processGenes(connection);
 		processNISS(connection);
-		processAliases(connection);
+		/*processAliases(connection);
 		processCrossReferences(connection);
 		processGeneLocations(connection);
-		processGeneChildrenLocations(connection);	
+		processGeneChildrenLocations(connection);*/	
 		processProteins(connection);
 		processAllPubs(connection);           						
-		processPubsWithFeatures(connection);  
+		/*processPubsWithFeatures(connection); 
+		processProteinAbundance(connection);
+		processProteinHalfLife(connection);
+		processProteinDomains(connection);
+		processProteinModifications(connection);
+		processProteinInfo(connection);
 		processParalogs(connection);
-		//processRegulation(connection);
-		//processRegulationSummary(connection);
 		processFunctionSummary(connection);
+		processRegulation(connection);
+		processRegulationSummary(connection);*/
 		//processGeneSummary(connection);
-				
-	    if(TEST_LOCAL) {
-				
-			processPathways(connection);
+
+		if(TEST_LOCAL) {
+
+			/*processPathways(connection);
 			storePathways();
-			
+
 			processPhysicalInteractions(connection);
 			processGeneticInteractions(connection);
 			storeInteractionTypes();
 			storeInteractionExperiments();
-			storeInteractions();
-			
+			storeInteractions();*/
+
 			processPhenotypes(connection);
 			processPubsForPhenotypes(connection);
 			processPhenotypeSummary(connection);
 			storePhenotypeAnnotations();
-		
+
 		}
 		storePublications();
 		storeGenes();
 		storeProteins();
-
 
 	}
 
@@ -157,7 +165,7 @@ public class SgdConverter extends BioDBConverter {
 
 		System.out.println("Processing Genes...");
 		ResultSet res = PROCESSOR.getChromosomalFeatureResults(connection);
-		
+
 		while (res.next()) {
 
 			String featureNo = res.getString("dbentity_id");
@@ -249,11 +257,6 @@ public class SgdConverter extends BioDBConverter {
 						item.setAttribute("qualifier", qualifier);
 					}
 				}
-				/*if (feat_attribute != null) {
-					if (StringUtils.isNotEmpty(feat_attribute)) {
-						item.setAttribute("featAttribute", feat_attribute);
-					}
-				}*/
 				if (status != null) {
 					if (StringUtils.isNotEmpty(status)) {
 						item.setAttribute("status", status);
@@ -270,7 +273,7 @@ public class SgdConverter extends BioDBConverter {
 		}
 		System.out.println("size of genes:  " + genes.size());
 	}
-	
+
 	/**
 	 * 
 	 * @param connection
@@ -283,7 +286,7 @@ public class SgdConverter extends BioDBConverter {
 
 		System.out.println("Processing NISS 55 features...");
 		ResultSet res = PROCESSOR.getNISS(connection);
-		
+
 		while (res.next()) {
 
 			String featureNo = res.getString("dbentity_id");
@@ -299,7 +302,7 @@ public class SgdConverter extends BioDBConverter {
 				String status = res.getString("dbentity_status");
 
 				Item item = createItem("NotInSystematicSequenceOfS288C");
-		
+
 				// set for all types, so you can use LSF to query for these
 				// different type of objects in a template.
 				item.setAttribute("featureType", "not in systematic sequence of S288C");
@@ -331,7 +334,7 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param connection
@@ -351,7 +354,7 @@ public class SgdConverter extends BioDBConverter {
 			String childFeatureNo = res.getString("child_id");
 			String refNo = res.getString("reference_id");		
 			String source="";
-			if(refNo.equalsIgnoreCase("50997")){ //hack for PMID 16169922
+			if(refNo.equalsIgnoreCase("526423")){ //hack for PMID 16169922
 				source= "YGOB";
 			}else{
 				source = "SGD";
@@ -369,8 +372,6 @@ public class SgdConverter extends BioDBConverter {
 		}
 	}
 
-	
-	
 	/**
 	 * 
 	 * @param connection
@@ -385,23 +386,26 @@ public class SgdConverter extends BioDBConverter {
 		ResultSet res = PROCESSOR.getRegulationData(connection); // ordered by featureNo
 
 		while (res.next()) {
-			String factorGene = res.getString("parent_id");
-			String targetGene = res.getString("child_id");
-			String evidenceCode = res.getString("reference_id");	
-			String condition = res.getString("reference_id");	
-			String regulationDirection = res.getString("reference_id");	
-			String pmid = res.getString("reference_id");	
-			String source = res.getString("reference_id");	
-			String pvalue = res.getString("reference_id");	
-			String fdr = res.getString("reference_id");	
-			String strainBackground = res.getString("reference_id");	
-			String strain = res.getString("reference_id");	
-		
-			getRegulation(factorGene, targetGene, evidenceCode, condition,  regulationDirection,  pmid,  source,  pvalue,  fdr, strainBackground, strain);
+
+			String factorGene = res.getString("regulator_id");
+			String targetGene = res.getString("target_id");
+			String evidenceCode = res.getString("eco_id");	
+			String condition = res.getString("happens_during");	
+			String regulationDirection = res.getString("direction");
+			String regulationType = res.getString("regulation_type");	
+			String regulatorType = res.getString("regulator_type");	
+			String annotationType = res.getString("annotation_type");	
+			String pmid = res.getString("pmid");	
+			String refNo = res.getString("refNo");
+			String strainBackground = res.getString("strain_background");	
+			String source = res.getString("source");
+
+			getRegulation(factorGene, targetGene, evidenceCode, condition,  regulationDirection,  pmid,
+					refNo, source, strainBackground,regulationType,regulatorType, annotationType);
 
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param factorGene
@@ -418,7 +422,8 @@ public class SgdConverter extends BioDBConverter {
 	 * @throws ObjectStoreException
 	 */
 	private void getRegulation(String factorGene, String targetGene, 
-			String evidenceCode, String condition, String regulationDirection, String pmid, String source, String pvalue, String fdr, String strainBackground, String strain) 
+			String evidenceCode, String condition, String regulationDirection, String pmid, String refNo, String source, 
+			String strainBackground, String regulationType, String regulatorType, String annotationType) 
 					throws ObjectStoreException {
 
 		Item rGene = genes.get(factorGene);
@@ -461,10 +466,7 @@ public class SgdConverter extends BioDBConverter {
 			bindingSite.setReference("regEvidence", evidence.getIdentifier());                  	
 
 			if (StringUtils.isNotEmpty(condition)) {
-				String[] t = condition.split(";");
-				String newcond = t[0]+";"+t[3];
-				bindingSite.setAttribute("experimentCondition", newcond);
-				bindingSite.setAttribute("assay", t[1]);
+				bindingSite.setAttribute("experimentCondition", condition);
 			}
 			if (StringUtils.isNotEmpty(regulationDirection)) {
 				bindingSite.setAttribute("regulationDirection", regulationDirection);
@@ -472,30 +474,25 @@ public class SgdConverter extends BioDBConverter {
 			if (StringUtils.isNotEmpty(source)) { 
 				bindingSite.setAttribute("datasource", source);
 			}
-			if (StringUtils.isNotEmpty(pvalue)) {
-				bindingSite.setAttribute("pvalue", pvalue);
-			}	
-			if (StringUtils.isNotEmpty(fdr)) {
-				bindingSite.setAttribute("FDR", fdr);
-			}
-			if (StringUtils.isNotEmpty(strain)) {
-				bindingSite.setAttribute("construct", strain);
-			}
 			if (StringUtils.isNotEmpty(strainBackground)) {
 				bindingSite.setAttribute("strainBackground", strainBackground);
 			}
+			if (StringUtils.isNotEmpty(regulationType)) {
+				bindingSite.setAttribute("regulationType", regulationType);
+			}
+			if (StringUtils.isNotEmpty(regulatorType)) {
+				bindingSite.setAttribute("regulatorType", regulatorType);
+			}
+			if (StringUtils.isNotEmpty(annotationType)) {
+				bindingSite.setAttribute("annotationType", annotationType);
+			}
 
-			Item publication = publications.get(pmid);
+			Item publication = publications.get(refNo);
 
 			if(publication == null) {
 				publication = createItem("Publication");
-				publications.put(pmid, publication);
-				publication.setAttribute("pubMedId", pmid);                      
-				try {
-					store(publication);
-				} catch (ObjectStoreException e) {
-					throw new ObjectStoreException(e);
-				}			
+				publication.setAttribute("pubMedId", pmid); 
+				publications.put(refNo, publication);	
 			}
 
 			bindingSite.addToCollection("publications", publication);      
@@ -527,7 +524,7 @@ public class SgdConverter extends BioDBConverter {
 		homologue.setReference("homologue", gene2);
 		homologue.setAttribute("type", "paralogue"); 
 		homologue.setAttribute("source", source);
-	    homologue.setReference("publication", pmid);
+		homologue.setReference("publication", pmid);
 		store(homologue);
 	}
 
@@ -541,7 +538,7 @@ public class SgdConverter extends BioDBConverter {
 	private void processAliases(Connection connection) throws SQLException, ObjectStoreException {
 
 		ResultSet res = PROCESSOR.getAliases(connection); // ordered by featureNo
-		
+
 		System.out.println("Processing ALiases...");
 		while (res.next()) {
 
@@ -596,14 +593,14 @@ public class SgdConverter extends BioDBConverter {
 			String dbxref_name = res.getString("display_name"); //pathway identifier i.e. short name
 			String summary_type = res.getString("summary_type");
 			String text = res.getString("text");
-			
+
 			Item item = genes.get(geneFeatureNo);
 			if (item != null) {
 				getPathway(item.getIdentifier(), dbxref_id, dbxref_name, summary_type, text);
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param connection
@@ -630,19 +627,19 @@ public class SgdConverter extends BioDBConverter {
 		}
 	}
 
-/**
- * 
- * @param source
- * @param dbxref_id
- * @param dbxref_type
- * @return
- * @throws SQLException
- * @throws ObjectStoreException
- */
+	/**
+	 * 
+	 * @param source
+	 * @param dbxref_id
+	 * @param dbxref_type
+	 * @return
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
 	private String getCrossRefURL(String source, String dbxref_id, String dbxref_type) throws SQLException, ObjectStoreException {
-		
+
 		String url = "";
-		
+
 		if(source.equalsIgnoreCase("AspGD")){
 			url = "http://www.aspgd.org/cgi-bin/locus.pl?locus="+dbxref_id;
 		}else if (source.equalsIgnoreCase("BioGRID")){
@@ -654,7 +651,7 @@ public class SgdConverter extends BioDBConverter {
 		}else if (source.equalsIgnoreCase("EBI")){
 			url = "http://www.uniprot.org/uniprot/"+dbxref_id;
 		}else if (source.equalsIgnoreCase("EUROSCARF")){
-	        url = "http://web.uni-frankfurt.de/fb15/mikro/euroscarf/data/"+dbxref_id;
+			url = "http://web.uni-frankfurt.de/fb15/mikro/euroscarf/data/"+dbxref_id;
 		}else if (source.equalsIgnoreCase("IUBMB")){
 			url = "http://www.expasy.org/enzyme/"+dbxref_id;
 		}else if (source.equalsIgnoreCase("LoQate")){
@@ -663,31 +660,31 @@ public class SgdConverter extends BioDBConverter {
 			url = "http://pathway.yeastgenome.org/YEAST/new-image?type=PATHWAY&object="+dbxref_id;
 		}else if (source.equalsIgnoreCase("PDB")){
 			url = "http://www.rcsb.org/pdb/explore/explore.do?structureId="+dbxref_id;
-        }else if (source.equalsIgnoreCase("NCBI") && (dbxref_type.equalsIgnoreCase("Gene ID"))){
+		}else if (source.equalsIgnoreCase("NCBI") && (dbxref_type.equalsIgnoreCase("Gene ID"))){
 			url = "http://www.ncbi.nlm.nih.gov/gene/"+dbxref_id;
-        }else if (source.equalsIgnoreCase("NCBI") && (dbxref_type.equalsIgnoreCase("RefSeq protein version ID"))){
+		}else if (source.equalsIgnoreCase("NCBI") && (dbxref_type.equalsIgnoreCase("RefSeq protein version ID"))){
 			url = "http://www.ncbi.nlm.nih.gov:80/entrez/viewer.fcgi?val="+dbxref_id;
-        }else if (source.equalsIgnoreCase("PomBase")){
-	       url = "http://www.pombase.org/spombe/result/"+dbxref_id;
-        }else if (source.equalsIgnoreCase("RNAcentral")){
-        	url = "http://rnacentral.org/rna/"+dbxref_id;
-        }else if (source.equalsIgnoreCase("TCDB")){
-        	url = "http://www.tcdb.org/tcdb/index.php?tc="+dbxref_id;
-        }
-			
+		}else if (source.equalsIgnoreCase("PomBase")){
+			url = "http://www.pombase.org/spombe/result/"+dbxref_id;
+		}else if (source.equalsIgnoreCase("RNAcentral")){
+			url = "http://rnacentral.org/rna/"+dbxref_id;
+		}else if (source.equalsIgnoreCase("TCDB")){
+			url = "http://www.tcdb.org/tcdb/index.php?tc="+dbxref_id;
+		}
+
 		return url;
 	}
-	
-/**
- * 
- * @param subjectId
- * @param id
- * @param source
- * @param dbxref_type
- * @param url
- * @return
- * @throws ObjectStoreException
- */
+
+	/**
+	 * 
+	 * @param subjectId
+	 * @param id
+	 * @param source
+	 * @param dbxref_type
+	 * @param url
+	 * @return
+	 * @throws ObjectStoreException
+	 */
 	private String getCrossReference(String subjectId, String id, String source, String dbxref_type, String url)
 			throws ObjectStoreException {
 
@@ -732,16 +729,16 @@ public class SgdConverter extends BioDBConverter {
 		return refId;
 
 	}
-/**
- * 
- * @param source
- * @return
- * @throws ObjectStoreException
- */
+	/**
+	 * 
+	 * @param source
+	 * @return
+	 * @throws ObjectStoreException
+	 */
 	private String getSourceURL(String source) throws ObjectStoreException {
-		
+
 		String url = "";
-		
+
 		if(source.equalsIgnoreCase("AspGD")){
 			url = "http://www.aspgd.org/";
 		}else if (source.equalsIgnoreCase("BioGRID")){
@@ -753,7 +750,7 @@ public class SgdConverter extends BioDBConverter {
 		}else if (source.equalsIgnoreCase("EBI")){
 			url = "http://www.uniprot.org/uniprot/";
 		}else if (source.equalsIgnoreCase("EUROSCARF")){
-	        url = "http://web.uni-frankfurt.de/";
+			url = "http://web.uni-frankfurt.de/";
 		}else if (source.equalsIgnoreCase("IUBMB")){
 			url = "http://www.expasy.org/";
 		}else if (source.equalsIgnoreCase("LoQate")){
@@ -762,19 +759,19 @@ public class SgdConverter extends BioDBConverter {
 			url = "http://pathway.yeastgenome.org/";
 		}else if (source.equalsIgnoreCase("PDB")){
 			url = "http://www.rcsb.org/pdb/";
-        }else if (source.equalsIgnoreCase("NCBI")){
+		}else if (source.equalsIgnoreCase("NCBI")){
 			url = "http://www.ncbi.nlm.nih.gov/";
-        }else if (source.equalsIgnoreCase("PomBase")){
-	       url = "http://www.pombase.org/";
-        }else if (source.equalsIgnoreCase("RNAcentral")){
-        	url = "http://rnacentral.org/rna/";
-        }else if (source.equalsIgnoreCase("TCDB")){
-        	url = "http://www.tcdb.org/tcdb/";
-        }
-		
+		}else if (source.equalsIgnoreCase("PomBase")){
+			url = "http://www.pombase.org/";
+		}else if (source.equalsIgnoreCase("RNAcentral")){
+			url = "http://rnacentral.org/rna/";
+		}else if (source.equalsIgnoreCase("TCDB")){
+			url = "http://www.tcdb.org/tcdb/";
+		}
+
 		return url;
 	}
-	
+
 	/**
 	 * 
 	 * @param connection
@@ -788,7 +785,7 @@ public class SgdConverter extends BioDBConverter {
 
 		System.out.println("Processing GeneLocations...");
 		ResultSet res = PROCESSOR.getChromosomalFeatureLocationResults(connection);
-		
+
 		while (res.next()) {
 			String featureNo = res.getString("contig_id");
 			String featureName = res.getString("format_name");
@@ -806,7 +803,7 @@ public class SgdConverter extends BioDBConverter {
 			} else if (strand.equals("0")) {
 				newstrand = "0";
 			}
-		   String fixed_chromosome_no = getFixedChrName(featureName);
+			String fixed_chromosome_no = getFixedChrName(featureName);
 			Item item = genes.get(geneFeatureNo);
 
 			// ~~~ chromosome OR plasmid ~~~
@@ -889,7 +886,7 @@ public class SgdConverter extends BioDBConverter {
 		ResultSet res = PROCESSOR.getChildrenFeatureLocationResults(connection);
 
 		while (res.next()) {
-	    			   
+
 			String geneFeatureNo = res.getString("parent_id");
 			String parentFeatureType = res.getString("parent_type").trim();
 
@@ -927,7 +924,6 @@ public class SgdConverter extends BioDBConverter {
 			}*/
 
 			Item parent = genes.get(geneFeatureNo);
-			System.out.println("parent: "+ parentFeatureType + " child: "+ childFeatureType);
 			// create the child Item
 			Item childItem = getChildItem(childFeatureType);
 
@@ -940,7 +936,6 @@ public class SgdConverter extends BioDBConverter {
 				childItem.addToCollection("genes", parent.getIdentifier());
 			} else {
 				String refname = getReferenceName(childFeatureType,parentFeatureType);
-				System.out.println("refname "+refname+ "    " +parent.getIdentifier());
 				childItem.setReference(refname, parent.getIdentifier());
 			}
 			// ~~ add sequence
@@ -982,7 +977,7 @@ public class SgdConverter extends BioDBConverter {
 
 		String name = "";
 
-      if (type.equalsIgnoreCase("ARS_consensus_sequence") && ptype.equalsIgnoreCase("ARS")) {
+		if (type.equalsIgnoreCase("ARS_consensus_sequence") && ptype.equalsIgnoreCase("ARS")) {
 			name = "ars";
 		}else if (type.equalsIgnoreCase("CDS") && ptype.equalsIgnoreCase("blocked_reading_frame")) {
 			name = "blockedreadingframe";
@@ -1093,8 +1088,9 @@ public class SgdConverter extends BioDBConverter {
 	private void processProteins(Connection connection) throws SQLException,
 	ObjectStoreException, Exception {
 
-		ResultSet res = PROCESSOR.getProteinResults(connection);
 		System.out.println("Processing Proteins...");
+		ResultSet res = PROCESSOR.getProteinResults(connection);
+		
 		while (res.next()) {
 			String featureNo = res.getString("dbentity_id");
 			String primaryIdentifier = res.getString("sgdid");
@@ -1116,7 +1112,7 @@ public class SgdConverter extends BioDBConverter {
 				String modSymbol = getCasedName(symbol);
 				protein.setAttribute("symbol", modSymbol);
 			}
-			
+
 			Item seq = createItem("Sequence");
 			seq.setAttribute("residues", residues);
 			seq.setAttribute("length", length);
@@ -1134,6 +1130,345 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 	}
+
+	private void processProteinHalfLife(Connection connection) throws SQLException,
+	ObjectStoreException, Exception {
+
+		System.out.println("Processing Proteins Half-life data...");
+		ResultSet res = PROCESSOR.getProteinHalfLifeResults(connection);
+
+		while (res.next()) {
+			String featureNo = res.getString("dbentity_id");
+			String units = res.getString("data_unit");
+			String value = res.getString("data_value");
+			if(value.equalsIgnoreCase(">= 100")) value = "10000";
+			String refNo = res.getString("referencedbentity");
+			String pmid = res.getString("pmid");
+			String experiment = "protein half-life";	
+
+			Item protein = proteins.get(featureNo);
+			Item pmods = getProteinHalfLife(experiment, value, units, pmid, refNo);
+			protein.addToCollection("proteinHalfLife", pmods.getIdentifier());
+
+		}
+
+	}
+
+
+	private Item getProteinHalfLife(String experiment, String value, String units, String pmid, String refNo) throws ObjectStoreException {
+
+		Item item = createItem("ProteinHalfLife");
+
+		if(StringUtils.isNotEmpty(experiment)){  item.setAttribute("experiment", experiment);}
+		if(StringUtils.isNotEmpty(value)){  item.setAttribute("value", value);}
+		if(StringUtils.isNotEmpty(units)){  item.setAttribute("units", units);}
+		item.setAttribute("source", "SGD");
+
+		Item publication = publications.get(refNo);
+
+		if (publication == null) {	
+			publication = createItem("Publication");			
+			publication.setAttribute("pubMedId", pmid);			 
+			publications.put(refNo, publication);
+		}
+		item.setReference("publication", publication);   
+
+		try {
+			store(item);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}	
+		return item;
+	}
+
+
+	private void processProteinDomains(Connection connection) throws SQLException, ObjectStoreException, Exception {
+
+		System.out.println("Processing Proteins Domains data...");
+		ResultSet res = PROCESSOR.getProteinDomainsResults(connection);
+
+		while (res.next()) {
+			String featureNo = res.getString("dbentity_id");
+			String domainDesc = res.getString("description");
+			String domainMatch = res.getString("display_name");
+			String sstart = res.getString("start_index");
+			String send = res.getString("end_index");
+			String runDate = res.getString("date_of_run");
+			String method = res.getString("url_type");
+			String interpro = res.getString("interpro_id");
+
+			Item protein = proteins.get(featureNo);					
+			Item pdomain = getDomain(domainMatch, domainDesc, sstart, send, runDate, method);
+			protein.addToCollection("proteinDomains", pdomain.getIdentifier());
+
+		}
+
+	}
+
+	private Item getDomain(String identifier, String description, String s_start, String s_end, String runDate, String method)
+			throws ObjectStoreException{
+
+		Item item = createItem("ProteinDomain");
+		item.setAttribute("name", identifier);
+		if(StringUtils.isNotEmpty(description)) item.setAttribute("description", description);
+		item.setAttribute("start", s_start);
+		item.setAttribute("end", s_end );
+		item.setAttribute("runDate", runDate);            	            
+		item.setAttribute("method", method);
+
+		try {
+			store(item);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}	
+		return item;
+	}
+
+	private void processProteinModifications(Connection connection) throws SQLException, ObjectStoreException, Exception {
+		
+		System.out.println("Processing Proteins Modification data...");
+		ResultSet res = PROCESSOR.getProteinModificationResults(connection);
+		while (res.next()) {
+			String featureNo = res.getString("dbentity_id");
+			String siteindex = res.getString("site_index");
+			String siteresidue = res.getString("site_residue");
+			String modType = res.getString("display_name");
+			String modifier = res.getString("modifier");
+			String modSite = siteresidue+siteindex;
+			String source =  "SGD";
+			String pmid = res.getString("pmid");
+			String refNo = res.getString("referencedbentity");
+
+			Item protein = proteins.get(featureNo);						
+			Item pmods = getProteinMod(modSite, modType, modifier, source, refNo, pmid);
+			protein.addToCollection("proteinModificationSites", pmods.getIdentifier());				
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param modSite
+	 * @param modType
+	 * @param source
+	 * @param pmid
+	 * @return
+	 */
+	private Item getProteinMod(String modSite, String modType, String modifier, String source, String refNo, String pmid) throws ObjectStoreException {
+
+		Item item = createItem("ProteinModificationSite");
+
+		item.setAttribute("modificationType", modType);
+		item.setAttribute("modificationSite", modSite);
+		item.setAttribute("source", source);
+
+		if (!StringUtils.isEmpty(modifier)) {
+			Item gene = genes.get(modifier);
+			item.addToCollection("modifier", gene.getIdentifier());
+		}
+
+		Item publication = publications.get(refNo);
+
+		if(publication == null) {
+			publication = createItem("Publication");
+			publication.setAttribute("pubMedId", pmid);
+			publications.put(refNo, publication);		
+		}
+		item.setReference("publication", publication);      
+
+		try {
+			store(item);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}	
+
+		return item;
+	}
+
+
+	/**
+	 * 
+	 * @param modSite
+	 * @param modType
+	 * @param source
+	 * @param pmid
+	 * @return
+	 */
+	private Item getProteinTermini(String modSite, String modType, String pmid, String refNo, String category, String seq) throws ObjectStoreException {
+
+		Item item = createItem("ProteinModificationSite");
+
+		if(!StringUtils.isEmpty(modType)) { item.setAttribute("modificationType", modType); }
+		if(!StringUtils.isEmpty(modSite)) {item.setAttribute("experimentalNterminalSite", modSite); }
+		if(!StringUtils.isEmpty(category)) { item.setAttribute("category", category); }
+		if(!StringUtils.isEmpty(category)) { item.setAttribute("experimentalNterminalSequence", seq); }
+
+
+		Item publication = publications.get(refNo);
+
+		if(publication == null) {
+			publication = createItem("Publication");
+			publication.setAttribute("pubMedId", pmid);       
+			publications.put(refNo, publication);		
+		}
+		item.setReference("publication", publication);      
+
+		try {
+			store(item);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}	
+
+		return item;
+	}
+
+
+	private void processProteinInfo(Connection connection) throws SQLException, ObjectStoreException, Exception {
+
+		System.out.println("Processing Proteins Info data...");
+		ResultSet res = PROCESSOR.getProteinInfoResults(connection);
+
+		while (res.next()) {
+
+			String featureNo = res.getString("dbentity_id");
+
+			String molwt = res.getString("molecular_weight");
+			String pi = res.getString("pi");
+
+			String ntermseq = res.getString("n_term_seq");
+			String ctermseq = res.getString("c_term_seq");
+			String gravyScore = res.getString("gravy_score");
+			String aromaticityScore = res.getString("aromaticity_score");
+			String cai = res.getString("cai");
+			String codonBias = res.getString("codon_bias");
+			String fopScore = res.getString("fop_score");
+
+			String ala = res.getString("ala");
+			String cys = res.getString("cys");
+			String asp = res.getString("asp");
+			String glu = res.getString("glu");
+			String phe = res.getString("phe");
+			String gly = res.getString("gly");
+			String his = res.getString("his");
+
+			String ile = res.getString("ile");
+			String lys = res.getString("lys");
+			String leu = res.getString("leu");
+			String met = res.getString("met");
+			String asn = res.getString("asn");
+			String pro = res.getString("pro");		
+			String gln = res.getString("gln");
+			String arg = res.getString("arg");
+			String ser = res.getString("ser");		
+			String thr = res.getString("thr");
+			String val = res.getString("val");			
+			String trp = res.getString("trp");
+			String tyr = res.getString("tyr");
+
+			String carbon = res.getString("carbon");
+			String hydrogen = res.getString("hydrogen");
+			String nitrogen = res.getString("nitrogen");
+			String oxygen = res.getString("oxygen");
+			String sulphur = res.getString("sulfur");
+			String instabilityIndex = res.getString("instability_index");
+			String allCysHalf = res.getString("all_cys_ext_coeff");
+			String noCysHalf = res.getString("no_cys_ext_coeff");
+			String aliphaticIndex = res.getString("aliphatic_index");
+
+			Item protein = proteins.get(featureNo);		
+
+			if (molwt != null) protein.setAttribute("molecularWeight", molwt);		       									
+			if (pi != null) protein.setAttribute("pI", pi);					
+			if (fopScore != null) protein.setAttribute("fopScore", fopScore);					
+			if (gravyScore != null) protein.setAttribute("gravyScore", gravyScore);					
+			if (aromaticityScore != null) protein.setAttribute("aromaticityScore", aromaticityScore);					
+			if (cys != null) protein.setAttribute("cys", cys);					
+			if (gln != null) protein.setAttribute("gln", gln);				
+			if (glu != null) protein.setAttribute("glu", glu);					
+			if (gly != null) protein.setAttribute("gly", gly);					
+			if (his != null) protein.setAttribute("his", his);					
+			if (ile != null) protein.setAttribute("ile", ile);					
+			if (leu != null) protein.setAttribute("leu", leu);					
+			if (lys != null) protein.setAttribute("lys", lys);
+			if (met != null) protein.setAttribute("met", met);					
+			if (phe != null) protein.setAttribute("phe", phe);					
+			if (pro != null) protein.setAttribute("pro", pro);					
+			if (ser != null) protein.setAttribute("ser", ser);					
+			if (thr != null) protein.setAttribute("thr", thr);					
+			if (trp != null) protein.setAttribute("trp", trp);					
+			if (val != null) protein.setAttribute("val", val);					
+			if (ala != null) protein.setAttribute("ala", ala);					
+			if (arg != null) protein.setAttribute("arg", arg);					
+			if (asn != null) protein.setAttribute("asn", asn);					
+			if (asp != null) protein.setAttribute("asp", asp);					
+			if (ntermseq != null) protein.setAttribute("ntermseq", ntermseq);					
+			if (ctermseq != null) protein.setAttribute("ctermseq", ctermseq);					
+			if (cai != null) protein.setAttribute("cai", cai);					
+			if (codonBias != null) protein.setAttribute("codonBias", codonBias);							
+			if (carbon != null) protein.setAttribute("carbon", carbon);				
+			if (hydrogen != null) protein.setAttribute("hydrogen", hydrogen);					
+			if (nitrogen != null) protein.setAttribute("nitrogen", nitrogen);					
+			if (oxygen != null) protein.setAttribute("oxygen", oxygen);					
+			if (sulphur != null) protein.setAttribute("sulphur", sulphur);					
+			if (instabilityIndex != null) protein.setAttribute("instabilityIndex", instabilityIndex);					
+			if (allCysHalf != null) protein.setAttribute("allCysHalf", allCysHalf);					
+			if (noCysHalf != null) protein.setAttribute("noCysHalf", noCysHalf);					
+			if (aliphaticIndex != null) protein.setAttribute("aliphaticIndex", aliphaticIndex);
+
+		}
+
+	}
+
+
+	private void processProteinAbundance(Connection connection) throws SQLException,
+	ObjectStoreException, Exception {
+
+		System.out.println("Processing Proteins Abundance data...");
+		ResultSet res = PROCESSOR.getProteinAbundanceResults(connection);
+		while (res.next()) {
+
+			String featureNo = res.getString("dbentity_id");
+			String annotationId = res.getString("annotation_id");
+			String units = res.getString("data_unit");
+			String abundance = res.getString("data_value");
+			String pmid = res.getString("pmid");
+			String refNo = res.getString("referencedbentity");
+			String experiment = "abundance";	
+
+			Item protein = proteins.get(featureNo);
+			Item pmods = getProteinAbundance(abundance, pmid, refNo, units, annotationId);
+			protein.addToCollection("proteinAbundance", pmods.getIdentifier());
+
+		}
+
+	}
+
+
+	private Item getProteinAbundance(String abundance, String pmid, String refNo, String units, String annotation_id) throws ObjectStoreException {
+
+		Item item = createItem("ProteinAbundance");
+
+		if(StringUtils.isNotEmpty(abundance)){ item.setAttribute("abundance", abundance);}
+		if(StringUtils.isNotEmpty(units)){ item.setAttribute("units", units);}	
+		item.setAttribute("source", "SGD");
+
+		Item publication = publications.get(refNo);
+
+		if (publication == null) {
+			publication = createItem("Publication");			
+			publication.setAttribute("pubMedId", pmid);			 
+			publications.put(refNo, publication);			
+		}
+		item.setReference("publication", publication);   
+
+		try {
+			store(item);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}
+		return item;
+	}
+
 
 	private String getFixedChrName(String name) throws Exception {
 
@@ -1243,10 +1578,10 @@ public class SgdConverter extends BioDBConverter {
 		return item;
 
 	}
-	
+
 	private void processChromosomeSequences(Connection connection)
 			throws SQLException, ObjectStoreException, Exception {
-		
+
 		System.out.println("Processing ChromosomeSequence...");
 		ResultSet res = PROCESSOR.getChromosomeSequenceResults(connection);
 
@@ -1258,7 +1593,7 @@ public class SgdConverter extends BioDBConverter {
 			String length = res.getString(5);
 
 			String fixed_chromosome_no = getFixedChrName(chromosomeNo);
-			
+
 			if (feature_type.equalsIgnoreCase("chromosome")) {
 				Item chr = createItem("Chromosome");
 				chr.setAttribute("primaryIdentifier", fixed_chromosome_no);
@@ -1316,7 +1651,7 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @throws ObjectStoreException
@@ -1438,7 +1773,7 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
-	
+
 
 	private void storePhenotypeAnnotations() throws ObjectStoreException {
 		for (Item pheno : phenotypeannots.values()) {
@@ -1449,7 +1784,16 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
-	
+
+	private void storeProteinAbundance() throws ObjectStoreException {
+		for (Item pa : proteinAbundance.values()) {
+			try {
+				store(pa);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+		}
+	}
 
 	private void storePhenotypeConditions() throws ObjectStoreException {
 		for (Item pheno : phenotypeconds.values()) {
@@ -1460,7 +1804,7 @@ public class SgdConverter extends BioDBConverter {
 			}
 		}
 	}
-	
+
 
 	/**
 	 * 
@@ -1490,9 +1834,8 @@ public class SgdConverter extends BioDBConverter {
 		Item gene = null;
 		boolean firstrow = true;
 
-		ResultSet res = PROCESSOR.getPubAllResults(connection);
-
 		System.out.println("Processing All Publications with Topics...");
+		ResultSet res = PROCESSOR.getPubAllResults(connection);
 
 		while (res.next()) {
 
@@ -1579,7 +1922,7 @@ public class SgdConverter extends BioDBConverter {
 		ResultSet res = PROCESSOR.getPubWithFeaturesResults(connection);
 
 		while (res.next()) {
-			
+
 			String referenceNo = res.getString("referenceFeatureNo");
 			String geneFeatureNo = res.getString("featureNo");
 			String pubMedId = res.getString("pmid");
@@ -1597,19 +1940,19 @@ public class SgdConverter extends BioDBConverter {
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 
 				if (!firstrow) {
-					
+
 					gene = genes.get(geneFeatureNo);
-					
+
 					if(gene != null) {
-					
-					getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
-							prevCitation, hm, gene, prevJournal, prevVolume,
-							prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
-					hm.clear();
-					prevReferenceNo = referenceNo;
+
+						getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
+								prevCitation, hm, gene, prevJournal, prevVolume,
+								prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
+						hm.clear();
+						prevReferenceNo = referenceNo;
 					}
 				}
-				
+
 			}
 
 			if (firstrow) {
@@ -1618,12 +1961,12 @@ public class SgdConverter extends BioDBConverter {
 			}
 
 			if (!referenceNo.equalsIgnoreCase(prevReferenceNo)) {
-				
+
 				if(gene != null) {
-				getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
-						prevCitation, hm, gene, prevJournal, prevVolume,
-						prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
-				hm.clear();
+					getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId,
+							prevCitation, hm, gene, prevJournal, prevVolume,
+							prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
+					hm.clear();
 				}
 			}
 
@@ -1647,9 +1990,9 @@ public class SgdConverter extends BioDBConverter {
 
 		// process the very last reference group
 		if(gene != null) {
-		getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId, prevCitation, hm,
-				gene, prevJournal, prevVolume, prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
-		hm.clear();
+			getPubAnnot(prevReferenceNo, prevTitle, prevPubMedId, prevCitation, hm,
+					gene, prevJournal, prevVolume, prevPages, prevYear, prevIssue, prevDbxRef, prevDateCreated);
+			hm.clear();
 		}
 
 	}
@@ -1665,7 +2008,7 @@ public class SgdConverter extends BioDBConverter {
 
 		System.out.println("Processing Publications associated with Pheno_annot_no....");
 		ResultSet res = PROCESSOR.getPubForPhenotype(connection);
-				
+
 		while (res.next()) {
 
 			String phenoAnnotNo = res.getString("annotation_id");
@@ -1688,7 +2031,7 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 	}
-	
+
 	/**
 	 * 
 	 * @param connection
@@ -1697,15 +2040,15 @@ public class SgdConverter extends BioDBConverter {
 	 */
 	private void processPhenotypeSummary(Connection connection)
 			throws SQLException, ObjectStoreException {
-		
+
 		System.out.println("Processing Phenotype Summary....");
 		ResultSet res = PROCESSOR.getPhenotypeSummary(connection);	
-		
+
 		while (res.next()) {
 
 			String featureNo = res.getString("dbentity_id");
 			String summary = res.getString("text");
-	
+
 			Item gene = genes.get(featureNo);		
 			gene.setAttribute("phenotypeSummary", summary);
 
@@ -1719,15 +2062,15 @@ public class SgdConverter extends BioDBConverter {
 	 */
 	private void processFunctionSummary(Connection connection)
 			throws SQLException, ObjectStoreException {
-		
+
 		System.out.println("Processing Function Summary....");
 		ResultSet res = PROCESSOR.getFunctionSummary(connection);	
-		
+
 		while (res.next()) {
 
 			String featureNo = res.getString("dbentity_id");
 			String summary = res.getString("text");
-	
+
 			Item gene = genes.get(featureNo);		
 			gene.setAttribute("functionSummary", summary);
 
@@ -1741,20 +2084,66 @@ public class SgdConverter extends BioDBConverter {
 	 */
 	private void processGeneSummary(Connection connection)
 			throws SQLException, ObjectStoreException {
-		
+
 		System.out.println("Processing Gene Summary....");
 		ResultSet res = PROCESSOR.getGeneSummary(connection);	
-		
+
 		while (res.next()) {
 
 			String featureNo = res.getString("dbentity_id");
 			String summary = res.getString("text");
-	
+
 			Item gene = genes.get(featureNo);		
 			gene.setAttribute("geneSummary", summary);
 
 		}
 	}
+
+	/**
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 * @throws ObjectStoreException
+	 */
+	private void processRegulationSummary(Connection connection)
+			throws SQLException, ObjectStoreException {
+
+		System.out.println("Processing Regulation Summary....");
+		ResultSet res = PROCESSOR.getRegulationSummary(connection);	
+
+		while (res.next()) {
+
+			String featureNo = res.getString("dbentity_id");
+			String summary = res.getString("text");
+			String refNo = res.getString("reference_id");
+			String pmid = res.getString("pmid");
+
+			Item gene = genes.get(featureNo);
+
+			Item rs = createItem("RegulationSummary");
+			rs.setAttribute("summaryParagraph", summary);	
+			
+			if (StringUtils.isNotEmpty(pmid)) {
+				Item publication = publications.get(refNo);
+				if(publication == null) {
+					publication = createItem("Publication");
+					publication.setAttribute("pubMedId", pmid);     
+					publications.put(pmid, publication);                		
+				}
+				rs.addToCollection("publications", publication);
+			}
+			
+			try {
+				store(rs);
+			} catch (ObjectStoreException e) {
+				throw new ObjectStoreException(e);
+			}
+
+			gene.setReference("regulationSummary", rs.getIdentifier());
+
+		}
+	}
+
 	/*
 	 * private void processPubs(Connection connection) throws SQLException,
 	 * ObjectStoreException { ResultSet res =
@@ -1799,14 +2188,15 @@ public class SgdConverter extends BioDBConverter {
 
 		String dsId = getBioGridDataSet();
 		int count = 0;
-
-		ResultSet res = PROCESSOR.getPhysicalInteractionResults(connection);
+		
 		System.out.println("Processing Physical Interactions...");
+		ResultSet res = PROCESSOR.getPhysicalInteractionResults(connection);
+
 		while (res.next()) {
 			count++;
 			String geneFeatureName = res.getString("dbentity1_id");
 			Item gene = genes.get(geneFeatureName);
-	    			
+
 			String interactionNo = res.getString("annotation_id");
 			String referenceNo = res.getString("reference_id");
 			String interactionType = "physical interactions";
@@ -1816,7 +2206,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
 			Item interactingGene = genes.get(interactingGeneFeatureName);
-			
+
 			String action = res.getString("bait_hit");
 			String[] a = action.split("-");
 			String role1 = a[0];
@@ -1839,14 +2229,14 @@ public class SgdConverter extends BioDBConverter {
 					annotationType, modification, interactingGene, role1, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
-			
+
 			//store the reverse relationship so that template changes do not have to be made
 			if(!geneFeatureName.equals(interactingGeneFeatureName)) {
-			String interactionRefId2 = getInteraction(interactionNo,
-					referenceNo, interactionType, experimentType,
-					annotationType, modification, gene, role2, source,
-					phenotype, citation, interactingGene, pubmed, title, volume, page,
-					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+				String interactionRefId2 = getInteraction(interactionNo,
+						referenceNo, interactionType, experimentType,
+						annotationType, modification, gene, role2, source,
+						phenotype, citation, interactingGene, pubmed, title, volume, page,
+						year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
 			}
 		}
 	}
@@ -1870,7 +2260,7 @@ public class SgdConverter extends BioDBConverter {
 		while (res.next()) {
 			count++;
 			String geneFeatureName = res.getString("dbentity1_id");
-	    			
+
 			Item gene = genes.get(geneFeatureName); //can save on look-ups here
 
 			String interactionNo = res.getString("annotation_id");
@@ -1882,7 +2272,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
 			Item interactingGene = genes.get(interactingGeneFeatureName);
-		
+
 			String action = res.getString("bait_hit");
 			String[] a = action.split("-");
 			String role1 = a[0];
@@ -1905,14 +2295,14 @@ public class SgdConverter extends BioDBConverter {
 					annotationType, modification, interactingGene, role1, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
 					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
-			
+
 			if(!geneFeatureName.equals(interactingGeneFeatureName)) {
-			//store the reverse relationship so that template changes do not have to be made; act1 in gene.X or participant.X
-			String interactionRefId2 = getInteraction(interactionNo,
-					referenceNo, interactionType, experimentType,
-					annotationType, modification, gene, role2, source,
-					phenotype, citation, interactingGene, pubmed, title, volume, page,
-					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+				//store the reverse relationship so that template changes do not have to be made; act1 in gene.X or participant.X
+				String interactionRefId2 = getInteraction(interactionNo,
+						referenceNo, interactionType, experimentType,
+						annotationType, modification, gene, role2, source,
+						phenotype, citation, interactingGene, pubmed, title, volume, page,
+						year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
 			}
 
 		}
@@ -1925,36 +2315,27 @@ public class SgdConverter extends BioDBConverter {
 		String prevPhenotypeAnnotNo = "0"; //annotation_id
 		String prevGroupNo = "0"; //group_id	
 		//String prevCondName = "";
-		//String prevCondValue = "";	
+		//String prevCondValue = "";
+		
 		Item gene = null;
 		Item phenoannot = null;
-		Item pheno = null;
-		
+
 		System.out.println("Processing Phenotypes...");
-		ResultSet res = PROCESSOR.getPhenotypeResults(connection);
+		ResultSet res = PROCESSOR.getPhenotypeResults(connection);				
 
 		while (res.next()) {
 
 			// use these to switch from feature to next && annotation to next && condition to next
-			
 			String geneFeatureNo = res.getString("dbentity_id");
 			String phenotypeAnnotNo = res.getString("annotation_id");
 			String groupNo = res.getString("group_id");
-			
-			System.out.println("dbentity no gene found " + geneFeatureNo);
-			
+
 			if (!geneFeatureNo.equalsIgnoreCase(prevGeneFeatureNo)) {
 				gene = genes.get(geneFeatureNo);
 			}
-			
-			//phenotype info
-			String qualifier_observable = res.getString("phenotype");
-			pheno = phenotypes.get(qualifier_observable);
-			if(pheno == null){
-				pheno = getPhenotype(qualifier_observable);
-			}
-			
+
 			//phenotype annotation
+			String qualifier_observable = res.getString("phenotype");
 			String experimentType = res.getString("experiment");
 			String experimentComment = res.getString("experiment_comment");
 			String alleleComment = res.getString("allele_comment");
@@ -1966,32 +2347,25 @@ public class SgdConverter extends BioDBConverter {
 			String strain_background = res.getString("strain_name");
 			String details = res.getString("details");
 			String pmid = res.getString("pmid");
-			String feature_type = ""; //res.getString("feature_type");  <-- fix when NPM is addressed
-			
+
 			//phenotype condition
 			String key = res.getString("condition_class");
 			String value = res.getString("condition_name");
 			String desc = res.getString("condition_value");
 			String unit = res.getString("condition_unit");
 			Item phenocond = null; 
-			
+
 			if (!phenotypeAnnotNo.equalsIgnoreCase(prevPhenotypeAnnotNo)) {
 				phenoannot = getPhenotypeAnnotation(phenotypeAnnotNo, experimentType, experimentComment, alleleComment,
-						reporterComment, mutantType, reporter, allele, assay, strain_background, details, gene, feature_type);	
+						reporterComment, mutantType, reporter, allele, assay, strain_background, details, gene, feature_type, qualifier_observable);	
 			}else{
 				phenoannot = phenotypeannots.get(phenotypeAnnotNo);	
 			}
 
 			phenocond = getPhenotypeCondition(key, value, desc, unit);
-			
 			phenoannot.addToCollection("phenotypeAnnotConds", phenocond.getIdentifier());
-			phenoannot.addToCollection("phenotypes", pheno.getIdentifier());
-			
-			if (feature_type.equalsIgnoreCase("not physically mapped")) {
-				phenoannot.addToCollection("notphysicallymapped", gene.getIdentifier());
-			} else {
-				phenoannot.addToCollection("genes", gene.getIdentifier());
-			}			
+			phenoannot.addToCollection("genes", gene.getIdentifier());
+				
 			prevGeneFeatureNo = geneFeatureNo;
 			prevPhenotypeAnnotNo = phenotypeAnnotNo;
 			prevGroupNo = groupNo;
@@ -2001,38 +2375,56 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 
-	private Item getPhenotype(String phenotype) throws ObjectStoreException {
-		Item pheno = phenotypes.get("phenotype");
-		//System.out.println("phenotype pair is  "+ phenotype);
-		if(pheno == null) {
-			
-			if(phenotype.contains(":")){
-			String t[] = phenotype.split(":");
+
+	private Item getPhenotypeAnnotation(String phenotypeAnnotNo, String experimentType, String experimentComment, String alleleComment, String reporterComment,
+			String mutantType, String reporter, String allele, String assay, String strain_background, String details, Item gene, String feature_type,
+			String qualifier_observable) throws ObjectStoreException {
+
+		Item phenoannot = createItem("PhenotypeAnnotation");
+
+		if (experimentType != null && StringUtils.isNotEmpty(experimentType)) phenoannot.setAttribute("experimentType", experimentType);
+		if (experimentComment != null && StringUtils.isNotEmpty(experimentComment)) phenoannot.setAttribute("experimentComment", experimentComment);
+		if (mutantType != null && StringUtils.isNotEmpty(mutantType)) phenoannot.setAttribute("mutantType", mutantType);		
+		if (alleleComment != null && StringUtils.isNotEmpty(alleleComment)) phenoannot.setAttribute("alleleComment", alleleComment);
+		if (reporterComment != null && StringUtils.isNotEmpty(reporterComment)) phenoannot.setAttribute("reporterComment", reporterComment);
+		if (reporter != null && StringUtils.isNotEmpty(reporter)) phenoannot.setAttribute("reporter", reporter);
+		if (allele != null && StringUtils.isNotEmpty(allele)) phenoannot.setAttribute("allele", allele);
+		if (assay != null && StringUtils.isNotEmpty(assay)) phenoannot.setAttribute("assay", assay);
+		
+		String q[] = strain_background.split("_");
+		int len = q.length;
+		String strain;
+		if(len == 2){
+			 strain = q[len-1];
+		}else{
+			 strain = "Other";
+		}
+		if (strain_background != null && StringUtils.isNotEmpty(strain_background)) phenoannot.setAttribute("strainBackground", strain);
+		if (details != null && StringUtils.isNotEmpty(details)) phenoannot.setAttribute("details", details);
+		
+		
+		if(qualifier_observable.contains(":")){
+			String t[] = qualifier_observable.split(":");
 			String qualifier = t[0].trim();
 			String observable = t[1].trim();
-			pheno = createItem("Phenotype");
-			pheno.setAttribute("qualifier", qualifier);
-			pheno.setAttribute("observable", observable);
-			}else{
-				pheno = createItem("Phenotype");
-				pheno.setAttribute("qualifier", phenotype.trim());
-			}
-			phenotypes.put(phenotype, pheno);
-          try {
-				store(pheno);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
+			phenoannot.setAttribute("qualifier", qualifier);
+			phenoannot.setAttribute("observable", observable);
+		}else{
+			phenoannot.setAttribute("qualifier", qualifier_observable.trim());
 		}
-		return pheno;
+
+		phenotypeannots.put(phenotypeAnnotNo, phenoannot);
+		return phenoannot;
+
 	}
-		
+	
+
 	private Item getPhenotypeCondition(String condClass, String condName, String condValue, String condUnit) throws ObjectStoreException {
-		
+
 		Item phenocond = createItem("PhenotypeAnnotationCond");
-		
-		if (condClass != null && StringUtils.isNotEmpty(condClass)) phenocond.setAttribute("className", condClass);
-		if (condName != null && StringUtils.isNotEmpty(condName)) phenocond.setAttribute("name", condName);
+
+		if (condClass != null && StringUtils.isNotEmpty(condClass)) phenocond.setAttribute("category", condClass);
+		if (condName != null && StringUtils.isNotEmpty(condName)) phenocond.setAttribute("condition", condName);
 		if (condValue != null && StringUtils.isNotEmpty(condValue)) phenocond.setAttribute("value", condValue);
 		if (condUnit != null && StringUtils.isNotEmpty(condUnit)) phenocond.setAttribute("unit", condUnit);
 
@@ -2042,30 +2434,10 @@ public class SgdConverter extends BioDBConverter {
 			throw new ObjectStoreException(e);
 		}
 		return phenocond;
-		
-	}
-	
-	private Item getPhenotypeAnnotation(String phenotypeAnnotNo, String experimentType, String experimentComment, String alleleComment, String reporterComment,
-			String mutantType, String reporter, String allele, String assay, String strain_background, String details, Item gene, String feature_type) throws ObjectStoreException {
-		
-		Item phenoannot = createItem("PhenotypeAnnotation");
-		
-		if (experimentType != null && StringUtils.isNotEmpty(experimentType)) phenoannot.setAttribute("experimentType", experimentType);
-		if (experimentComment != null && StringUtils.isNotEmpty(experimentComment)) phenoannot.setAttribute("experimentComment", experimentComment);
-		if (mutantType != null && StringUtils.isNotEmpty(mutantType)) phenoannot.setAttribute("mutantType", mutantType);		
-		if (alleleComment != null && StringUtils.isNotEmpty(alleleComment)) phenoannot.setAttribute("alleleComment", alleleComment);
-		if (reporterComment != null && StringUtils.isNotEmpty(reporterComment)) phenoannot.setAttribute("reporterComment", reporterComment);
-		if (reporter != null && StringUtils.isNotEmpty(reporter)) phenoannot.setAttribute("reporter", reporter);
-		if (allele != null && StringUtils.isNotEmpty(allele)) phenoannot.setAttribute("allele", allele);
-		if (assay != null && StringUtils.isNotEmpty(assay)) phenoannot.setAttribute("assay", assay);
-		if (strain_background != null && StringUtils.isNotEmpty(strain_background)) phenoannot.setAttribute("strainBackground", strain_background);
-		if (details != null && StringUtils.isNotEmpty(details)) phenoannot.setAttribute("details", details);
-	
-		phenotypeannots.put(phenotypeAnnotNo, phenoannot);
-		return phenoannot;
 
 	}
 	
+
 	private String getLocation(Item subject, String chromosomeRefId,
 			String startCoord, String stopCoord, String strand)
 					throws ObjectStoreException {
@@ -2245,7 +2617,7 @@ public class SgdConverter extends BioDBConverter {
 			crf.setAttribute("name", name);
 			crf.setAttribute("summaryType", summaryType);
 			crf.setAttribute("text", text);
-			
+
 			pathways.put(id, crf);
 
 			crf.addToCollection("genes", geneIdentifier);
@@ -2312,11 +2684,11 @@ public class SgdConverter extends BioDBConverter {
 		//add publication as experiment type
 		Item storedExperimentType = experimenttype.get(unqName);		
 		if(storedExperimentType == null) {	
-			
+
 			storedExperimentType = createItem("InteractionExperiment");
 			storedExperimentType.setAttribute("name", unqName);	
 			experimenttype.put(unqName, storedExperimentType);			
-			
+
 			String storedTermId = interactionterms.get(experimentType);
 			if (storedTermId != null) {
 				storedExperimentType.addToCollection("interactionDetectionMethods", storedTermId );
@@ -2465,13 +2837,13 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 	}
-	
+
 	private Item getExistingPub(String referenceNo)
-					throws ObjectStoreException {
+			throws ObjectStoreException {
 		Item storedRef = publications.get(referenceNo);
 		return storedRef;
 	}
-	
+
 
 	private void getPubPhenotype(String phenoAnnotNo, String prevReferenceNo,
 			String title, String pubMedId, String citation, String journal,
@@ -2485,8 +2857,7 @@ public class SgdConverter extends BioDBConverter {
 			Item storedRef = publications.get(prevReferenceNo);
 
 			if (storedRef != null) {
-				storedPheno.addToCollection("publications", storedRef
-						.getIdentifier());
+				storedPheno.addToCollection("publications", storedRef.getIdentifier());
 				storedRef.addToCollection("phenotypeAnnotations", storedPheno.getIdentifier());
 			} else {
 				Item item = createItem("Publication");
@@ -2612,8 +2983,7 @@ public class SgdConverter extends BioDBConverter {
 			Iterator iter = hm.iterator();
 			while (iter.hasNext()) {
 				String value = (String) iter.next();
-				pubAnnot.addToCollection("literatureTopics",
-						getLiteratureTopic(value));
+				pubAnnot.addToCollection("literatureTopics", getLiteratureTopic(value));
 			}
 
 			pubAnnot.setReference("publication", storedRef.getIdentifier());
@@ -2632,22 +3002,22 @@ public class SgdConverter extends BioDBConverter {
 		}
 
 	}
-	
-    private String getInteractionTerm(String identifier)  throws ObjectStoreException {
-            String refId = interactionterms.get(identifier);
-            if (refId != null) {
-                return refId;
-            }
-            Item item = createItem("InteractionTerm");
-            item.setAttribute("identifier", identifier);
-            interactionterms.put(identifier, item.getIdentifier());
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-            return item.getIdentifier();
-        }
+
+	private String getInteractionTerm(String identifier)  throws ObjectStoreException {
+		String refId = interactionterms.get(identifier);
+		if (refId != null) {
+			return refId;
+		}
+		Item item = createItem("InteractionTerm");
+		item.setAttribute("identifier", identifier);
+		interactionterms.put(identifier, item.getIdentifier());
+		try {
+			store(item);
+		} catch (ObjectStoreException e) {
+			throw new ObjectStoreException(e);
+		}
+		return item.getIdentifier();
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -2656,4 +3026,6 @@ public class SgdConverter extends BioDBConverter {
 	public String getDataSetTitle(@SuppressWarnings("unused") int taxonId) {
 		return DATASET_TITLE;
 	}
+
+
 }

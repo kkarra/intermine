@@ -18,6 +18,7 @@
  </class>
 
  <class name="BindingSite" extends="SequenceFeature" is-interface="true">
+   <reference name="factor" referenced-type="Gene"/>
   <reference name="xelement" referenced-type="XElement" reverse-reference="bindingsites"/>
  </class>
 
@@ -38,6 +39,7 @@
  </class>
  
   <class name="ORF" extends="ProteinCodingGene" is-interface="true">
+   <reference name="regulationSummary" referenced-type="RegulationSummary"/>
   <collection name="CDSs" referenced-type="CDS" reverse-reference="orf"/>
   <collection name="telomericRepeats" referenced-type="TelomericRepeat" reverse-reference="orf"/>
   <collection name="uORFs" referenced-type="uORF" reverse-reference="orf"/>
@@ -82,7 +84,7 @@
   <reference name="plasmid" referenced-type="Plasmid" reverse-reference="genes"/>
   <reference name="plasmidLocation" referenced-type="Location"/>
   <reference name="sequence" referenced-type="Sequence"/>
-  <reference name="regulationSummary" referenced-type="RegulationSummary"/>
+  <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
   <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
   <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="genes"/>
@@ -232,10 +234,6 @@
 
  <class name="NotInSystematicSequenceOfS288C" extends="Gene" is-interface="true"> </class>
 
- <class name="NotPhysicallyMapped" extends="SequenceFeature" is-interface="true">
-  <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="notphysicallymapped"/>
- </class>
-
  <class name="TelomericRepeat" extends="Telomere" is-interface="true">
   <reference name="orf" referenced-type="ORF" reverse-reference="telomericRepeats"/>
   </class>
@@ -272,12 +270,6 @@
 	<reference name="Z2_regions" referenced-type="Z2_region" reverse-reference="matingtyperegion"/>
 </class>
 
-
- <class name="Phenotype" is-interface="true">
-  <attribute name="qualifier" type="java.lang.String"/>
-  <attribute name="observable" type="java.lang.String"/>
-  <attribute name="description" type="java.lang.String"/>
- </class>
  
  <class name="PhenotypeAnnotation" is-interface="true">
   <attribute name="experimentType" type="java.lang.String"/>
@@ -285,25 +277,21 @@
   <attribute name="alleleComment" type="java.lang.String"/>
   <attribute name="reporterComment" type="java.lang.String"/>
   <attribute name="mutantType" type="java.lang.String"/>
-  <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="observable" type="java.lang.String"/>
+  <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="allele" type="java.lang.String"/>
   <attribute name="strainBackground" type="java.lang.String"/>
-  <attribute name="chemical" type="java.lang.String"/>
-  <attribute name="condition" type="java.lang.String"/>
   <attribute name="details" type="java.lang.String"/>
   <attribute name="reporter" type="java.lang.String"/>
   <attribute name="assay" type="java.lang.String"/>
   <collection name="genes" referenced-type="Gene" reverse-reference="phenotypeAnnotations"/>
   <collection name="phenotypeAnnotConds" referenced-type="PhenotypeAnnotationCond" />
-  <collection name="phenotypes" referenced-type="Phenotype" />
   <collection name="publications" referenced-type="Publication" reverse-reference="phenotypeAnnotations"/>
-  <collection name="notphysicallymapped" referenced-type="NotPhysicallyMapped" reverse-reference="phenotypeAnnotations"/>
  </class>
    
   <class name="PhenotypeAnnotationCond" is-interface="true">
-  <attribute name="className" type="java.lang.String"/>
-  <attribute name="name" type="java.lang.String"/>
+  <attribute name="category" type="java.lang.String"/>
+  <attribute name="condition" type="java.lang.String"/>
   <attribute name="value" type="java.lang.String"/>
   <attribute name="unit" type="java.lang.String"/>
  </class>
@@ -322,7 +310,101 @@
 
  <class name="Protein" is-interface="true">
   <attribute name="symbol" type="java.lang.String"/>  
+  <attribute name="pI" type="java.lang.Float"/>
+  <attribute name="molecularWeight" type="java.lang.Float"/>
+  <attribute name="fopScore" type="java.lang.Float"/>
+  <attribute name="gravyScore" type="java.lang.Float"/>
+  <attribute name="aromaticityScore" type="java.lang.Float"/>
+  <attribute name="cys" type="java.lang.Integer"/>
+  <attribute name="gln" type="java.lang.Integer"/>
+  <attribute name="glu" type="java.lang.Integer"/>
+  <attribute name="gly" type="java.lang.Integer"/>
+  <attribute name="his" type="java.lang.Integer"/>
+  <attribute name="ile" type="java.lang.Integer"/>
+  <attribute name="leu" type="java.lang.Integer"/>
+  <attribute name="lys" type="java.lang.Integer"/>
+  <attribute name="met" type="java.lang.Integer"/>
+  <attribute name="phe" type="java.lang.Integer"/>
+  <attribute name="pro" type="java.lang.Integer"/>
+  <attribute name="ser" type="java.lang.Integer"/>
+  <attribute name="thr" type="java.lang.Integer"/>
+  <attribute name="trp" type="java.lang.Integer"/>
+  <attribute name="tyr" type="java.lang.Integer"/>
+  <attribute name="val" type="java.lang.Integer"/>
+  <attribute name="ala" type="java.lang.Integer"/>
+  <attribute name="arg" type="java.lang.Integer"/>
+  <attribute name="asn" type="java.lang.Integer"/>
+  <attribute name="asp" type="java.lang.Integer"/>
+  <attribute name="ntermseq" type="java.lang.String"/>
+  <attribute name="ctermseq" type="java.lang.String"/>
+  <attribute name="cai" type="java.lang.Float"/>
+  <attribute name="codonBias" type="java.lang.Float"/>
+  <attribute name="carbon" type="java.lang.String"/>
+  <attribute name="hydrogen" type="java.lang.String"/>
+  <attribute name="nitrogen" type="java.lang.String"/>
+  <attribute name="oxygen" type="java.lang.String"/>
+  <attribute name="sulphur" type="java.lang.String"/> 
+  <attribute name="instabilityIndex" type="java.lang.Float"/>
+  <attribute name="allCysHalf" type="java.lang.Float"/>
+  <attribute name="noCysHalf" type="java.lang.Float"/>
+  <attribute name="aliphaticIndex" type="java.lang.Float"/>
+  <collection name="proteinHalfLife" referenced-type="ProteinHalfLife" reverse-reference="proteins"/>
+  <collection name="proteinAbundance" referenced-type="ProteinAbundance" reverse-reference="proteins"/>
+  <collection name="proteinProperties" referenced-type="ProteinProperty" reverse-reference="proteins"/>
+   <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="proteins"/>
+   <collection name="proteinModificationSites" referenced-type="ProteinModificationSite" reverse-reference="proteins"/>
  </class>
+
+<class name="ProteinHalfLife" extends="BioEntity" is-interface="true">
+	<attribute name="experiment" type="java.lang.String"/>
+	<attribute name="value" type="java.lang.Float"/>
+	<attribute name="units" type="java.lang.String"/>
+	<attribute name="source" type="java.lang.String"/>
+	<reference name="publication" referenced-type="Publication"/>
+	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinHalfLife"/>
+</class>
+
+<class name="ProteinAbundance" extends="BioEntity" is-interface="true">
+	<attribute name="abundance" type="java.lang.Float"/>
+	<attribute name="units" type="java.lang.String"/>
+	<attribute name="source" type="java.lang.String"/>
+	<reference name="publication" referenced-type="Publication"/>
+	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinAbundance"/>
+</class>
+
+<class name="ProteinProperty"  is-interface="true">
+	<attribute name="propertyName" type="java.lang.String"/>
+	<attribute name="isReversible" type="java.lang.String"/>
+	<attribute name="condition" type="java.lang.String"/>
+	<attribute name="location" type="java.lang.String"/>
+	<attribute name="source" type="java.lang.String"/>
+	<reference name="publication" referenced-type="Publication"/>
+	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinProperties"/>
+</class>
+
+  <class name="ProteinDomain" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="start" type="java.lang.Integer"/>
+    <attribute name="end" type="java.lang.Integer"/>
+     <attribute name="method" type="java.lang.String"/>
+    <attribute name="runDate" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="interpro" type="java.lang.String"/>
+    <collection name="proteins" referenced-type="Protein" reverse-reference="proteinDomains"/>
+  </class>
+  
+  <class name="ProteinModificationSite" extends="BioEntity" is-interface="true">
+	<attribute name="modificationType" type="java.lang.String"/>
+	<attribute name="modificationSite" type="java.lang.String"/>
+    <attribute name="category" type="java.lang.String"/>
+	<attribute name="experimentalNterminalSite" type="java.lang.String"/>
+	<attribute name="experimentalNterminalSequence" type="java.lang.String"/>
+	<collection name="modifier" referenced-type="Gene"/>
+	<reference name="publication" referenced-type="Publication"/>
+	<attribute name="source" type="java.lang.String"/>
+	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinModificationSites"/>
+</class>
 
  <class name="ProteinCodingGene" extends="Gene" is-interface="true"> </class>
 
@@ -401,11 +483,28 @@
     <collection name="dataSets" referenced-type="DataSet"/>
 </class>
 
+<class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
+   <attribute name="experimentCondition" type="java.lang.String"/>
+   <attribute name="regulationDirection" type="java.lang.String"/>
+    <attribute name="strainBackground" type="java.lang.String"/>
+   <attribute name="regulatorType" type="java.lang.String"/>
+   <attribute name="regulationType" type="java.lang.String"/>
+   <attribute name="annotationType" type="java.lang.String"/>             
+   <attribute name="datasource" type="java.lang.String"/>
+   <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
+   <reference name="regEvidence" referenced-type="RegulationEvidence"/>
+</class>
+
+
  <class name="RegulationSummary" is-interface="true">
       <attribute name="summaryParagraph" type="java.lang.String"/>
       <collection name="publications" referenced-type="Publication"/>
  </class>
  
+
+<class name="TFBindingSite" extends="BindingSite RegulatoryRegion" is-interface="true">
+	<attribute name="type" type="java.lang.String"/>
+</class>
 
 <class name="RegulationEvidence" extends="OntologyAnnotation" is-interface="true">
     <!-- <attribute name="evidenceMethod" type="java.lang.String"/>
