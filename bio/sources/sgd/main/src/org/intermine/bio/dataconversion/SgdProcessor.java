@@ -665,9 +665,10 @@ public class SgdProcessor
 
         + " ORDER BY me.feature_no, pheno_annotations.pheno_annotation_no";*/
 
-		String query = " select db.dbentity_id, pa.annotation_id, pac.group_id, p.display_name as phenotype, t.format_name as strain_name, pa.details,"
-				+ " pa.experiment_comment, pa.allele_comment, pa.reporter_comment, condition_class, condition_name, condition_value, condition_unit,"
-				+ " a1.display_name as experiment, a2.display_name as mutant, al.display_name as allele, rp.display_name as reporter, o.display_name as assay, rdb.pmid"
+		String query = "  select db.dbentity_id, pa.annotation_id, pac.group_id, p.display_name as phenotype, t.format_name as strain_name, pa.details,"
+				+ " pa.experiment_comment, pa.allele_comment, pa.reporter_comment, a1.display_name as experiment, a2.display_name as mutant,"
+				+ " al.display_name as allele, rp.display_name as reporter, o.display_name as assay, rdb.pmid, string_agg(condition_class, '#') as condclass,"
+				+ " string_agg(condition_name, '#') as condname , string_agg(condition_value, '#') as condvalue , string_agg(condition_unit, '#') as condunit"
 				+ " from nex.phenotypeannotation pa"
 				+ " inner join nex.dbentity db on  db.dbentity_id = pa.dbentity_id"
 				+ " inner join nex.phenotype p on pa.phenotype_id = p.phenotype_id"
@@ -679,8 +680,37 @@ public class SgdProcessor
 				+ " left join nex.allele al on al.allele_id = pa.allele_id"
 				+ " left join nex.reporter rp on rp.reporter_id = pa.reporter_id"
 				+ " left join nex.obi o on pa.assay_id = o.obi_id"
-				//+ " where db.dbentity_id = 1282601"
-				+ " order by  db.dbentity_id, pa.annotation_id, group_id";
+				//+ " where db.dbentity_id = 1268334"
+				+ " group by  db.dbentity_id, pa.annotation_id, pac.group_id, p.display_name, t.format_name, pa.details,"
+				+ " pa.experiment_comment, pa.allele_comment, pa.reporter_comment, a1.display_name, a2.display_name,"
+				+ " al.display_name, rp.display_name, o.display_name, rdb.pmid"
+				+ " order by db.dbentity_id, pa.annotation_id, pac.group_id ";
+	
+		LOG.info("executing: " + query);        
+		Statement stmt = connection.createStatement();
+		ResultSet res = stmt.executeQuery(query);
+		return res;
+	}
+	
+	
+	
+	/**
+	 * Return the results of running a query for CDSs and their sequences
+	 * @param connection the connection
+	 * @return the results
+	 * @throws SQLException if there is a database problem
+	 */
+	protected ResultSet getPhenotypeConditionsResults(Connection connection)
+			throws SQLException {
+
+		String query = "select db.dbentity_id, pa.annotation_id, pac.group_id,"
+				+ " string_agg(condition_class, '#') as condclass, string_agg(condition_name, '#') as condname, string_agg(condition_value, '#') as condvalue, string_agg(condition_unit, '#') as condunits"
+				+ " from nex.phenotypeannotation pa"
+				+ " inner join nex.dbentity db on  db.dbentity_id = pa.dbentity_id"
+				+ " inner join nex.phenotype p on pa.phenotype_id = p.phenotype_id"
+				+ " inner join nex.phenotypeannotation_cond pac on pac.annotation_id = pa.annotation_id"
+				//+ " where db.dbentity_id = 1266450"
+				+ " group by  db.dbentity_id, pa.annotation_id, group_id";
 	
 		LOG.info("executing: " + query);        
 		Statement stmt = connection.createStatement();
@@ -828,21 +858,21 @@ public class SgdProcessor
 	 * Return the results for regulation info
 	 * @param connection the connection
 	 * @return the results
-	 * @throws SQLException if there is a database problem
+	 * @throws SQLException if there is a database proble
 	 */
 	protected ResultSet getRegulationData(Connection connection)
 			throws SQLException {
 
 		String query = "select target_id, regulator_id, regulator_type, regulation_type, direction, annotation_type, pmid,"
 				+ " rdb.dbentity_id as refNo, e.eco_id, g.display_name as happens_during, s.display_name as source, t.format_name as strain_background"
-				+ " from nex.dbentity db, nex.regulationannotation ra, nex.referencedbentity rdb, nex.dbentity db2, nex.eco e, nex.go g, nex.taxonomy t, nex.source s"
-				+ " where db.dbentity_id = ra.regulator_id"
-				+ " and ra.target_id = db2.dbentity_id"
-				+ " and rdb.dbentity_id = ra.reference_id"
-				+ " and e.eco_id = ra.eco_id"
-				+ " and g.go_id = ra.happens_during"
-				+ " and t.taxonomy_id = ra.taxonomy_id"
-				+ " and s.source_id = ra.source_id"
+				+ " from nex.dbentity db"
+				+ " inner join nex.regulationannotation ra on db.dbentity_id = ra.regulator_id"
+				+ " inner join nex.referencedbentity rdb on rdb.dbentity_id = ra.reference_id"
+				+ " inner join nex.dbentity db2 on ra.target_id = db2.dbentity_id"
+				+ " left join nex.eco e on e.eco_id = ra.eco_id"
+				+ " left join nex.go g on g.go_id = ra.happens_during"
+				+ " left join nex.taxonomy t on t.taxonomy_id = ra.taxonomy_id"
+				+ " left join nex.source s on s.source_id = ra.source_id"
 				+ " order by 1";
 
 		LOG.info("executing: " + query);        

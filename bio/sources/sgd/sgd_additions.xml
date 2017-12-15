@@ -87,8 +87,9 @@
   <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
   <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   <collection name="introns" referenced-type="Intron" reverse-reference="genes"/>
-  <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="genes"/>
- <!--<collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>  -->
+   <collection name="phenotypes" referenced-type="Phenotype" reverse-reference="genes"/>
+  <!--<collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="genes"/>
+     <collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>  -->
    <collection name="interactions" referenced-type="Interaction" reverse-reference="participant1"/>
   <collection name="publicationAnnotations" referenced-type="PublicationAnnotation" reverse-reference="genes"/>
   <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
@@ -270,8 +271,28 @@
 	<reference name="Z2_regions" referenced-type="Z2_region" reverse-reference="matingtyperegion"/>
 </class>
 
+
+ <class name="Phenotype" is-interface="true">
+  <attribute name="experimentType" type="java.lang.String"/>
+  <attribute name="experimentComment" type="java.lang.String"/>
+  <attribute name="alleleComment" type="java.lang.String"/>
+  <attribute name="reporterComment" type="java.lang.String"/>
+  <attribute name="mutantType" type="java.lang.String"/>
+  <attribute name="qualifier" type="java.lang.String"/>
+  <attribute name="observable" type="java.lang.String"/>
+  <attribute name="allele" type="java.lang.String"/>
+  <attribute name="strainBackground" type="java.lang.String"/>
+  <attribute name="chemical" type="java.lang.String"/>
+  <attribute name="condition" type="java.lang.String"/>
+  <attribute name="details" type="java.lang.String"/>
+  <attribute name="reporter" type="java.lang.String"/>
+  <attribute name="assay" type="java.lang.String"/>
+  <collection name="genes" referenced-type="Gene" reverse-reference="phenotypes"/>
+  <collection name="publications" referenced-type="Publication" reverse-reference="phenotypes"/>
+ </class>
+
  
- <class name="PhenotypeAnnotation" is-interface="true">
+ <!-- <class name="PhenotypeAnnotation" is-interface="true">
   <attribute name="experimentType" type="java.lang.String"/>
   <attribute name="experimentComment" type="java.lang.String"/>
   <attribute name="alleleComment" type="java.lang.String"/>
@@ -294,7 +315,7 @@
   <attribute name="condition" type="java.lang.String"/>
   <attribute name="value" type="java.lang.String"/>
   <attribute name="unit" type="java.lang.String"/>
- </class>
+ </class> -->
  
  <class name="Plasmid" extends="SequenceFeature" is-interface="true">
   <collection name="genes" referenced-type="Gene" reverse-reference="plasmid"/>
@@ -427,7 +448,8 @@
   <attribute name="summary" type="java.lang.String"/>
   <attribute name="dateCreated" type="java.util.Date"/>
   <collection name="literatureTopics" referenced-type="LiteratureTopic"/>
-  <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="publications"/>
+  <!--<collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="publications"/>-->
+  <collection name="phenotypes" referenced-type="Phenotype" reverse-reference="publications"/>
   <collection name="authors" referenced-type="Author" reverse-reference="publications"/>
  </class>
 
