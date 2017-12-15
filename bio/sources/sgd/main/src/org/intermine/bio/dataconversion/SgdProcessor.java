@@ -667,7 +667,7 @@ public class SgdProcessor
 
 		String query = "  select db.dbentity_id, pa.annotation_id, pac.group_id, p.display_name as phenotype, t.format_name as strain_name, pa.details,"
 				+ " pa.experiment_comment, pa.allele_comment, pa.reporter_comment, a1.display_name as experiment, a2.display_name as mutant,"
-				+ " al.display_name as allele, rp.display_name as reporter, o.display_name as assay, rdb.pmid, string_agg(condition_class, '#') as condclass,"
+				+ " al.display_name as allele, rp.display_name as reporter, o.display_name as assay, rdb.pmid, rdb.dbentity_id as refNo, string_agg(condition_class, '#') as condclass,"
 				+ " string_agg(condition_name, '#') as condname , string_agg(condition_value, '#') as condvalue , string_agg(condition_unit, '#') as condunit"
 				+ " from nex.phenotypeannotation pa"
 				+ " inner join nex.dbentity db on  db.dbentity_id = pa.dbentity_id"
@@ -683,7 +683,7 @@ public class SgdProcessor
 				//+ " where db.dbentity_id = 1268334"
 				+ " group by  db.dbentity_id, pa.annotation_id, pac.group_id, p.display_name, t.format_name, pa.details,"
 				+ " pa.experiment_comment, pa.allele_comment, pa.reporter_comment, a1.display_name, a2.display_name,"
-				+ " al.display_name, rp.display_name, o.display_name, rdb.pmid"
+				+ " al.display_name, rp.display_name, o.display_name, rdb.pmid, rdb.dbentity_id"
 				+ " order by db.dbentity_id, pa.annotation_id, pac.group_id ";
 	
 		LOG.info("executing: " + query);        
@@ -704,12 +704,12 @@ public class SgdProcessor
 			throws SQLException {
 
 		String query = "select db.dbentity_id, pa.annotation_id, pac.group_id,"
-				+ " string_agg(condition_class, '#') as condclass, string_agg(condition_name, '#') as condname, string_agg(condition_value, '#') as condvalue, string_agg(condition_unit, '#') as condunits"
+				+ " string_agg(condition_class, '#') as condclass, string_agg(condition_name, '#') as condname, string_agg(condition_value, '#') as condvalue, string_agg(condition_unit, '  #') as condunits"
 				+ " from nex.phenotypeannotation pa"
 				+ " inner join nex.dbentity db on  db.dbentity_id = pa.dbentity_id"
 				+ " inner join nex.phenotype p on pa.phenotype_id = p.phenotype_id"
 				+ " inner join nex.phenotypeannotation_cond pac on pac.annotation_id = pa.annotation_id"
-				//+ " where db.dbentity_id = 1266450"
+				//+ " where db.dbentity_id = 1268334"
 				+ " group by  db.dbentity_id, pa.annotation_id, group_id";
 	
 		LOG.info("executing: " + query);        

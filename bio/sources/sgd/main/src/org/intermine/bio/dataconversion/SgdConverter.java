@@ -142,7 +142,7 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractions();
 
 			processPhenotypes(connection);
-			processPubsForPhenotypes(connection);
+			//processPubsForPhenotypes(connection);
 			processPhenotypeSummary(connection);
 			storePhenotypes();
 
@@ -2043,8 +2043,8 @@ public class SgdConverter extends BioDBConverter {
 			String dbxrefid = res.getString("sgdid");
 			String date_created = res.getString("date_created");
 
-			getPubPhenotype(phenoAnnotNo, referenceNo, title, pubMedId,
-					citation, journal, volume, pages, year, issue, dbxrefid, date_created);
+			//getPubPhenotype(phenoAnnotNo, referenceNo, title, pubMedId,
+					//citation, journal, volume, pages, year, issue, dbxrefid, date_created);
 
 		}
 
@@ -2339,7 +2339,7 @@ public class SgdConverter extends BioDBConverter {
 		ResultSet res = PROCESSOR.getPhenotypeResults(connection);
 		System.out.println("Processing Phenotypes...");
 		while (res.next()) {
-
+			
 			String geneFeatureNo = res.getString("dbentity_id");
 			String phenotypeAnnotNo = res.getString("annotation_id");	
 			String groupNo = res.getString("group_id");
@@ -2349,10 +2349,13 @@ public class SgdConverter extends BioDBConverter {
 			String reporterComment = res.getString("reporter_comment");
 			String mutantType = res.getString("mutant");
 			String qualifier_observable = res.getString("phenotype");
-			String strain_background = res.getString("strain_name");
+			String strainBackground = res.getString("strain_name");
 			String reporter = res.getString("reporter");
 			String allele = res.getString("allele");
 			String assay = res.getString("assay");
+			String details = res.getString("details");
+			String pmid = res.getString("pmid");
+			String refNo = res.getString("refNo");
 			
 			String condClass = res.getString("condclass");
 			String condName = res.getString("condname");
@@ -2369,29 +2372,40 @@ public class SgdConverter extends BioDBConverter {
 				observable = qualifier_observable.trim();
 			}
 		
+			String strain = "";
+			if (StringUtils.isNotEmpty(strainBackground)) {
+				String q[] = strainBackground.split("_");
+				int len = q.length;
+				if(len == 3){
+					 strain = q[len-1];
+				}else{
+					 strain = "Other";
+				}
+			}
 			Item gene = genes.get(geneFeatureNo);
 			
-			//String chemical = "";
-			//String condition = "";
-			//String chemcond = "";
-			//if(condClass != null) {
-				 //chemcond = getPhenotypeCondition(condClass, condName, condValue, condUnits);
-				//System.out.println("chemcond is...." + chemcond);
-				//String cc[] = chemcond.split("_");
-				//chemical = cc[0];
-				//condition = cc[1];				
-			//}
+			String chemical = "";
+			String condition = "";
+			String chemcond = "";
+			if(condClass != null && condName != null) {
+				chemcond = getPhenotypeCondition(condClass, condName, condValue, condUnits);
+				System.out.println("chemcond is...." + chemcond);
+				String cc[] = chemcond.split("_");
+				chemical = cc[0];
+				condition = cc[1];				
+			}
 			
 			getPhenotype(phenotypeAnnotNo, groupNo, qualifier, observable, experimentType, experimentComment,
-					alleleComment, reporterComment, strain_background, mutantType, reporter, allele, assay, condName, condValue, gene);
-
+					alleleComment, reporterComment, strain, mutantType, reporter, allele, assay, chemical, condition, details, pmid, refNo, gene);
+			
 		}
 
 
 	}
 
 	private void getPhenotype(String phenotypeAnnotNo, String groupNo, String qualifier, String observable, String experimentType, String experimentComment, 
-			String alleleComment, String reporterComment, String strain_background, String mutantType, String reporter, String allele, String assay, String chemical, String condition, Item gene ) throws ObjectStoreException {
+			String alleleComment, String reporterComment, String strain_background, String mutantType, String reporter, String allele, 
+			String assay, String chemical, String condition, String details, String pmid, String refNo, Item gene ) throws ObjectStoreException {
 
 		Item  pheno = createItem("Phenotype");
 			
@@ -2434,42 +2448,85 @@ public class SgdConverter extends BioDBConverter {
 		if (condition != null && StringUtils.isNotEmpty(condition)) {
 			pheno.setAttribute("condition", condition);
 		}
+		if (details != null && StringUtils.isNotEmpty(details)) {
+			pheno.setAttribute("details", details);
+		}
 		
+		Item pub = getPubPhenotype(refNo, pmid);
+
 		pheno.addToCollection("genes", gene.getIdentifier());
+		pheno.addToCollection("publications", pub.getIdentifier());
+		pub.addToCollection("phenotypes", pheno.getIdentifier());
+		
 		String unq = phenotypeAnnotNo+":"+groupNo;
 		phenotypes.put(unq, pheno);
+	
 
 	}
 	
 	
 	private String getPhenotypeCondition(String condClass, String condName, String condValue, String condUnits) {
 
-		String chemical = "";
-		String condition = "";
+		String chemical = " ";
+		String condition = " ";
 		
 		if(condClass.indexOf('#') > 0){
 			
-			String c[] = condClass.split("#");
-			String n[] = condName.split("#");
-			String v[] = condValue.split("#");
-			String u[] = condUnits.split("#");
+			System.out.println("in case of string with ##.." + condClass + " "+ condName + " " + condValue + " " + condUnits);
+			String c[] = condClass.split("\\#");
+			String n[] = condName.split("\\#");
+			String v[] = null;
+			if(condValue != null) v = condValue.split("\\#");
+			//String u[] = null;
+			//if(condUnits != null) u = condUnits.split("\\#");
+			
+			System.out.println("in case of string with ##.." + c.length + " "+ n.length + " " + v.length);
 
 			for(int i = 0; i< c.length; i++) {
 				
-				if(c[0].equalsIgnoreCase("chemical")){
-					chemical += condName+" "+condValue+" "+condValue+":";				
+				if(c[i].equalsIgnoreCase("chemical")){
+					chemical += n[i];
+					if( v != null && v.length !=0 ){
+						chemical += " "+v[i];
+					}
+					if(condUnits != null){
+						chemical += condUnits;
+					}	
+					//if(u != null &&  u.length !=0 ){
+						//chemical += u[i];
+					//}				
 				}else{
-					condition += condName+" "+condValue+" "+condValue+";";	
-				}
-				
+					condition += n[i];
+					if(v != null && v.length !=0 ){
+						condition += " "+v[i];
+					}
+					//if(condUnits != null){
+						//condition += condUnits;
+					//}	
+					//if(u != null && u.length !=0 ){
+						//condition += u[i];
+					//}
+				}				
 			}
 			
 		}else{
 			
 			if(condClass.equalsIgnoreCase("chemical")){
-				chemical = condName+" "+condValue+" "+condValue.trim();				
+				chemical += condName;
+				if(condValue != null){
+					chemical += " "+condValue;
+				}
+				if(condUnits != null){
+					chemical += " "+condUnits;
+				}							
 			}else{
-				condition = condName+" "+condValue+" "+condValue.trim();	
+				condition += condName;
+				if(condValue != null){
+					condition += " "+condValue;
+				}
+				//if(condUnits != null){
+					//condition += condUnits;
+				//}	
 			}
 		}
 		
@@ -2886,62 +2943,26 @@ public class SgdConverter extends BioDBConverter {
 	}
 
 
-	private void getPubPhenotype(String phenoAnnotNo, String prevReferenceNo,
-			String title, String pubMedId, String citation, String journal,
-			String volume, String pages, String year, String issue, String dbxrefid, String datecreated)
+	private Item getPubPhenotype(String prevReferenceNo, String pubMedId)
 					throws ObjectStoreException {
 
-		Item storedPheno = phenotypes.get(phenoAnnotNo);
-
-		if (storedPheno != null) {
+		//Item storedPheno = phenotypepubs.get(phenoAnnotNo);
+		//if (storedPheno != null) {
 
 			Item storedRef = publications.get(prevReferenceNo);
 
-			if (storedRef != null) {
-				storedPheno.addToCollection("publications", storedRef.getIdentifier());
-				storedRef.addToCollection("phenotypes", storedPheno.getIdentifier());
-			} else {
-				Item item = createItem("Publication");
-
+			if (storedRef == null) {
+				 storedRef = createItem("Publication");
 				if (StringUtils.isNotEmpty(pubMedId)) {
-					item.setAttribute("pubMedId", pubMedId);
+					storedRef.setAttribute("pubMedId", pubMedId);
 				}
-				if (StringUtils.isNotEmpty(dbxrefid)) {
-					item.setAttribute("sgdDbXrefId", dbxrefid);
-				}
-				if (StringUtils.isNotEmpty(title)) {
-					item.setAttribute("title", title);
-				}
-				if (StringUtils.isNotEmpty(citation)) {
-					item.setAttribute("citation", citation);
-				}
-				if (StringUtils.isNotEmpty(journal)) {
-					item.setAttribute("journal", journal);
-				}
-				if (StringUtils.isNotEmpty(volume)) {
-					item.setAttribute("volume", volume);
-				}
-				if (StringUtils.isNotEmpty(pages)) {
-					item.setAttribute("pages", pages);
-				}
-				if (StringUtils.isNotEmpty(year)) {
-					item.setAttribute("year", year);
-				}
-				if (StringUtils.isNotEmpty(issue)) {
-					item.setAttribute("issue", issue);
-				}
-				if (StringUtils.isNotEmpty(datecreated)) {
-					item.setAttribute("dateCreated", datecreated);
-				}
-
-				publications.put(prevReferenceNo, item);
-
-				storedPheno.addToCollection("publications", item.getIdentifier());
-				item.addToCollection("phenotypes", storedPheno.getIdentifier());
-
+				publications.put(prevReferenceNo, storedRef);
+				//storedPheno.addToCollection("publications", item.getIdentifier());
+				//item.addToCollection("phenotypes", storedPheno.getIdentifier());
 			}
+			return storedRef;
 
-		}
+		//}
 
 	}
 
