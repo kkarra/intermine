@@ -142,7 +142,6 @@ public class SgdConverter extends BioDBConverter {
 			storeInteractions();
 
 			processPhenotypes(connection);
-			//processPubsForPhenotypes(connection);
 			processPhenotypeSummary(connection);
 			storePhenotypes();
 
@@ -2021,41 +2020,6 @@ public class SgdConverter extends BioDBConverter {
 	 * @throws SQLException
 	 * @throws ObjectStoreException
 	 */
-	private void processPubsForPhenotypes(Connection connection)
-			throws SQLException, ObjectStoreException {
-
-		System.out.println("Processing Publications associated with Pheno_annot_no....");
-		ResultSet res = PROCESSOR.getPubForPhenotype(connection);
-
-		while (res.next()) {
-
-			String phenoAnnotNo = res.getString("annotation_id");
-			String referenceNo = res.getString("reference_id");
-			String pubMedId = res.getString("pmid");
-			String status = res.getString("fulltext_status");
-			String title = res.getString("title");
-			String volume = res.getString("volume");
-			String pages = res.getString("page");
-			String year = res.getString("year");
-			String issue = res.getString("issue");
-			String citation = res.getString("citation");
-			String journal = res.getString("med_abbr");
-			String dbxrefid = res.getString("sgdid");
-			String date_created = res.getString("date_created");
-
-			//getPubPhenotype(phenoAnnotNo, referenceNo, title, pubMedId,
-					//citation, journal, volume, pages, year, issue, dbxrefid, date_created);
-
-		}
-
-	}
-
-	/**
-	 * 
-	 * @param connection
-	 * @throws SQLException
-	 * @throws ObjectStoreException
-	 */
 	private void processPhenotypeSummary(Connection connection)
 			throws SQLException, ObjectStoreException {
 
@@ -2487,7 +2451,7 @@ public class SgdConverter extends BioDBConverter {
 				if(c[i].equalsIgnoreCase("chemical")){
 					chemical += n[i];
 					if( v != null && v.length !=0 ){
-						chemical += " "+v[i];
+						if(n.length == v.length) chemical += " "+v[i];
 					}
 					if(condUnits != null){
 						chemical += condUnits;
@@ -2497,9 +2461,11 @@ public class SgdConverter extends BioDBConverter {
 					//}				
 				}else{
 					condition += n[i];
+					
 					if(v != null && v.length !=0 ){
-						condition += " "+v[i];
+						if(n.length == v.length)  condition += " "+v[i];
 					}
+					
 					//if(condUnits != null){
 						//condition += condUnits;
 					//}	
