@@ -388,7 +388,7 @@ public class SgdConverter extends BioDBConverter {
 
 			String factorGene = res.getString("regulator_id");
 			String targetGene = res.getString("target_id");
-			String evidenceCode = "ECO:"+res.getString("eco_id");	
+			String evidenceCode = res.getString("format_name");	
 			String condition = res.getString("happens_during");	
 			String regulationDirection = res.getString("direction");
 			String regulationType = res.getString("regulation_type");	
