@@ -704,7 +704,7 @@ public class SgdProcessor
 			throws SQLException {
 
 		String query = "select db.dbentity_id, pa.annotation_id, pac.group_id,"
-				+ " string_agg(condition_class, '#') as condclass, string_agg(condition_name, '#') as condname, string_agg(condition_value, '#') as condvalue, string_agg(condition_unit, '  #') as condunits"
+				+ " string_agg(condition_class, '#') as condclass, string_agg(condition_name, '#') as condname, string_agg(condition_value, '#') as condvalue, string_agg(condition_unit, '  #  ') as condunits"
 				+ " from nex.phenotypeannotation pa"
 				+ " inner join nex.dbentity db on  db.dbentity_id = pa.dbentity_id"
 				+ " inner join nex.phenotype p on pa.phenotype_id = p.phenotype_id"
@@ -864,7 +864,7 @@ public class SgdProcessor
 			throws SQLException {
 
 		String query = "select target_id, regulator_id, regulator_type, regulation_type, direction, annotation_type, pmid,"
-				+ " rdb.dbentity_id as refNo, e.eco_id, g.display_name as happens_during, s.display_name as source, t.format_name as strain_background"
+				+ " rdb.dbentity_id as refNo, e.format_name, g.display_name as happens_during, s.display_name as source, t.format_name as strain_background"
 				+ " from nex.dbentity db"
 				+ " inner join nex.regulationannotation ra on db.dbentity_id = ra.regulator_id"
 				+ " inner join nex.referencedbentity rdb on rdb.dbentity_id = ra.reference_id"
