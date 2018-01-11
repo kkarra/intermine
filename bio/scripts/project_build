@@ -206,7 +206,7 @@ if (defined $release) {
 }
 
 my @psql_command = 'psql';
-my @dump_command = qw[pg_dump -F c -i];
+my @dump_command = qw[pg_dump -F c];
 my @load_command = qw[pg_restore -1 -i];
 my @dropdb_command = qw[dropdb];
 my @createdb_command = (qw[createdb -E ], $db_encoding);
