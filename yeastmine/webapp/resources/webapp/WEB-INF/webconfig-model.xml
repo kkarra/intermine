@@ -146,7 +146,7 @@
 		</fields>
 	</class>
 	
-		<class className="org.intermine.model.bio.ProteinAbundance">
+	<!-- <class className="org.intermine.model.bio.ProteinAbundance">
 		<fields>
 			<fieldconfig fieldExpr="gfpTagged" />
 			<fieldconfig fieldExpr="gfpVisualized" />
@@ -154,7 +154,7 @@
 			<fieldconfig fieldExpr="abundance"/>
 			<fieldconfig fieldExpr="units"/>
 		</fields>
-	</class>
+	</class>-->
 	
 	<class className="org.intermine.model.bio.InterProDomain">
 		<fields>
