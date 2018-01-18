@@ -117,17 +117,22 @@ public class SgdConverter extends BioDBConverter {
 		processGeneLocations(connection);
 		processGeneChildrenLocations(connection);
 		processProteins(connection);
+		
 		processAllPubs(connection);           						
 		processPubsWithFeatures(connection); 
+		
 		processProteinAbundance(connection);
 		processProteinHalfLife(connection);
 		processProteinDomains(connection);
 		processProteinModifications(connection);
 		processProteinInfo(connection);
+		
 		processParalogs(connection);
+		
 		processFunctionSummary(connection);
 		processRegulation(connection);
 		processRegulationSummary(connection);
+		
 		//processGeneSummary(connection);
 
 		if(TEST_LOCAL) {
@@ -2351,6 +2356,7 @@ public class SgdConverter extends BioDBConverter {
 			String chemical = "";
 			String condition = "";
 			String chemcond = "";
+			
 			if(condClass != null && condName != null) {
 				chemcond = getPhenotypeCondition(condClass, condName, condValue, condUnits);
 				System.out.println("chemcond is...." + chemcond);
@@ -2435,70 +2441,58 @@ public class SgdConverter extends BioDBConverter {
 		String condition = " ";
 		
 		if(condClass.indexOf('#') > 0){
-			
-			System.out.println("in case of string with ##.." + condClass + " "+ condName + " " + condValue + " " + condUnits);
 			String c[] = condClass.split("\\#");
 			String n[] = condName.split("\\#");
 			String v[] = null;
 			if(condValue != null) v = condValue.split("\\#");
-			//String u[] = null;
-			//if(condUnits != null) u = condUnits.split("\\#");
-			
-			System.out.println("in case of string with ##.." + c.length + " "+ n.length + " " + v.length);
-
-			for(int i = 0; i< c.length; i++) {
-				
+			String u[] = null;
+			if(condUnits != null) {
+				if(condUnits.indexOf('#') > 0) u = condUnits.split("\\#");
+			}
+			//System.out.println("condClass: "+ condClass + "    " + "condName: "+ "   " + condName + " condValue: "+  condValue+ " condUnits: " + condUnits);
+			int ui = 0;
+			for(int i = 0; i< c.length; i++) {				
 				if(c[i].equalsIgnoreCase("chemical")){
-					chemical += n[i];
+					chemical += " "+n[i];
 					if( v != null && v.length !=0 ){
 						if(n.length == v.length) chemical += " "+v[i];
 					}
-					if(condUnits != null){
+					if(u != null && u.length !=0 ){
+						if(u.length == v.length){
+							chemical += u[ui];
+						}else{
+							chemical += u[ui];
+						}
+					}else{
 						chemical += condUnits;
-					}	
-					//if(u != null &&  u.length !=0 ){
-						//chemical += u[i];
-					//}				
+					}
+					ui++;
 				}else{
-					condition += n[i];
-					
+					condition += " "+n[i];				
 					if(v != null && v.length !=0 ){
 						if(n.length == v.length)  condition += " "+v[i];
-					}
-					
-					//if(condUnits != null){
-						//condition += condUnits;
-					//}	
-					//if(u != null && u.length !=0 ){
-						//condition += u[i];
-					//}
+					}					
 				}				
-			}
-			
-		}else{
-			
+			}			
+		}else{		
 			if(condClass.equalsIgnoreCase("chemical")){
 				chemical += condName;
 				if(condValue != null){
 					chemical += " "+condValue;
 				}
 				if(condUnits != null){
-					chemical += " "+condUnits;
+					chemical += condUnits;
 				}							
 			}else{
 				condition += condName;
 				if(condValue != null){
 					condition += " "+condValue;
 				}
-				//if(condUnits != null){
-					//condition += condUnits;
-				//}	
 			}
-		}
+		}	
 		
-		return chemical+"_"+condition;
-	
-				
+		return chemical+"_"+condition;	
+		
 	}
 	
 	

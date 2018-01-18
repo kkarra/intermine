@@ -680,7 +680,7 @@ public class SgdProcessor
 				+ " left join nex.allele al on al.allele_id = pa.allele_id"
 				+ " left join nex.reporter rp on rp.reporter_id = pa.reporter_id"
 				+ " left join nex.obi o on pa.assay_id = o.obi_id"
-				//+ " where db.dbentity_id = 1268334"
+				//+ " where db.dbentity_id = 1286108"
 				+ " group by  db.dbentity_id, pa.annotation_id, pac.group_id, p.display_name, t.format_name, pa.details,"
 				+ " pa.experiment_comment, pa.allele_comment, pa.reporter_comment, a1.display_name, a2.display_name,"
 				+ " al.display_name, rp.display_name, o.display_name, rdb.pmid, rdb.dbentity_id"
@@ -692,31 +692,6 @@ public class SgdProcessor
 		return res;
 	}
 	
-	
-	
-	/**
-	 * Return the results of running a query for CDSs and their sequences
-	 * @param connection the connection
-	 * @return the results
-	 * @throws SQLException if there is a database problem
-	 */
-	protected ResultSet getPhenotypeConditionsResults(Connection connection)
-			throws SQLException {
-
-		String query = "select db.dbentity_id, pa.annotation_id, pac.group_id,"
-				+ " string_agg(condition_class, '#') as condclass, string_agg(condition_name, '#') as condname, string_agg(condition_value, '#') as condvalue, string_agg(condition_unit, '  #  ') as condunits"
-				+ " from nex.phenotypeannotation pa"
-				+ " inner join nex.dbentity db on  db.dbentity_id = pa.dbentity_id"
-				+ " inner join nex.phenotype p on pa.phenotype_id = p.phenotype_id"
-				+ " inner join nex.phenotypeannotation_cond pac on pac.annotation_id = pa.annotation_id"
-				//+ " where db.dbentity_id = 1268334"
-				+ " group by  db.dbentity_id, pa.annotation_id, group_id";
-	
-		LOG.info("executing: " + query);        
-		Statement stmt = connection.createStatement();
-		ResultSet res = stmt.executeQuery(query);
-		return res;
-	}
 
 	/**
 	 * Return the results of getting aliases
