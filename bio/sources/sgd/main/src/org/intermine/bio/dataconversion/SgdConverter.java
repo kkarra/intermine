@@ -2455,7 +2455,7 @@ public class SgdConverter extends BioDBConverter {
 				if(c[i].equalsIgnoreCase("chemical")){
 					chemical += " "+n[i];
 					if( v != null && v.length !=0 ){
-						if(n.length == v.length) chemical += " "+v[i];
+						if(v.length > i)  chemical += " "+v[i];
 					}
 					if(u != null && u.length !=0 ){
 						if(u.length == v.length){
@@ -2463,7 +2463,7 @@ public class SgdConverter extends BioDBConverter {
 						}else{
 							chemical += u[ui];
 						}
-					}else{
+					}else if(condUnits != null){
 						chemical += condUnits;
 					}
 					ui++;
