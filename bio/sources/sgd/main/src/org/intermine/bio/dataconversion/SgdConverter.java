@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -2326,9 +2327,9 @@ public class SgdConverter extends BioDBConverter {
 			String pmid = res.getString("pmid");
 			String refNo = res.getString("refNo");
 			
-			String condClass = res.getString("condclass");
-			String condName = res.getString("condname");
-			String condValue = res.getString("condvalue");
+			String condClass = res.getString("condclass");			
+			String condName = res.getString("condname");			
+			String condValue = res.getString("condvalue");		
 			String condUnits = res.getString("condunit");
 
 			String qualifier = "";
@@ -2433,9 +2434,63 @@ public class SgdConverter extends BioDBConverter {
 	
 
 	}
-	
-	
+
 	private String getPhenotypeCondition(String condClass, String condName, String condValue, String condUnits) {
+
+		String chemical = " ";
+		String condition = " ";
+		System.out.println("condClass: "+ condClass + "    " + "condName: "+ "   " + condName + " condValue: "+  condValue+ " condUnits: " + condUnits);
+
+		if(condClass.indexOf(';') > 0){
+			String c[] = condClass.split("\\;");
+			String n[] = condName.split("\\;");
+			String v[] = null;
+			if(condValue != null) v = condValue.split("\\;");
+			String u[] = null;
+			if(condUnits != null) {
+				if(condUnits.indexOf(';') > 0) u = condUnits.split("\\;");
+				//System.out.println("condClass: "+ c.length + "    " + "condName: "+ "   " + n.length + " condValue: "+  v.length + " condUnits: " +  u.length);
+			}
+			for(int i = 0; i< c.length; i++) {				
+				if(c[i].equalsIgnoreCase("chemical")){
+					chemical += " "+n[i];
+					if( v != null && v.length !=0 ){
+						if(v.length > i)  chemical += " "+v[i];
+					}
+					if(u != null && u.length !=0 ){
+						chemical += u[i];	
+					}else if(condUnits != null){
+						chemical += condUnits;
+					}
+				}else{
+					condition += " "+n[i];				
+					if(v != null && v.length !=0 ){
+						if(n.length == v.length)  condition += " "+v[i];
+					}					
+				}				
+			}			
+		}else{		
+			if(condClass.equalsIgnoreCase("chemical")){
+				chemical += condName;
+				if(condValue != null){
+					chemical += " "+condValue;
+				}
+				if(condUnits != null){
+					chemical += condUnits;
+				}							
+			}else{
+				condition += condName;
+				if(condValue != null){
+					condition += " "+condValue;
+				}
+			}
+		}	
+
+		return chemical+"_"+condition;	
+
+	}
+
+	/*private String getPhenotypeCondition(String condClass, String condName, String condValue, String condUnits) {
 
 		String chemical = " ";
 		String condition = " ";
@@ -2493,7 +2548,7 @@ public class SgdConverter extends BioDBConverter {
 		
 		return chemical+"_"+condition;	
 		
-	}
+	}*/
 	
 	
 	private String getLocation(Item subject, String chromosomeRefId,
