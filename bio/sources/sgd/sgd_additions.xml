@@ -18,7 +18,7 @@
  </class>
 
  <class name="BindingSite" extends="SequenceFeature" is-interface="true">
-   <reference name="factor" referenced-type="Gene"/>
+   <reference name="regulator" referenced-type="Gene"/>
   <reference name="xelement" referenced-type="XElement" reverse-reference="bindingsites"/>
  </class>
 

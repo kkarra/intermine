@@ -440,7 +440,7 @@ public class SgdConverter extends BioDBConverter {
 			String name = factorGene + "_binding_site";
 
 			bindingSite.setAttribute("name", name);
-			bindingSite.setReference("factor", rGene.getIdentifier());
+			bindingSite.setReference("regulator", rGene.getIdentifier());
 			bindingSite.setReference("gene", tGene.getIdentifier());
 
 			Item evidence = createItem("RegulationEvidence");
