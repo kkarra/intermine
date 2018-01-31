@@ -77,7 +77,7 @@
 		<headerconfig>
 			<customlinks>
 				<customlink
-					url="http://www.yeastgenome.org/cgi-bin/locus.fpl?dbid={primaryIdentifier}"
+					url="https://www.yeastgenome.org/locu{primaryIdentifier}"
 					image="SGD_logo_large.png" />
 			</customlinks>
 		</headerconfig>
@@ -101,6 +101,15 @@
         </bagdisplayers> 
 	</class>
 
+
+	<class className="org.intermine.model.bio.TFBindingSite">
+			<fields>
+			<fieldconfig fieldExpr="primaryIdentifier"></fieldconfig>
+			</fields>
+	</class>
+	
+	
+	
 	<class className="org.intermine.model.bio.ORF">
 		<fields>
 			<fieldconfig fieldExpr="primaryIdentifier"></fieldconfig>

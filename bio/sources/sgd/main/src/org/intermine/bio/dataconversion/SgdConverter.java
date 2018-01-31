@@ -2327,11 +2327,19 @@ public class SgdConverter extends BioDBConverter {
 			String pmid = res.getString("pmid");
 			String refNo = res.getString("refNo");
 			
-			String condClass = res.getString("condclass");			
-			String condName = res.getString("condname");			
-			String condValue = res.getString("condvalue");		
-			String condUnits = res.getString("condunit");
-
+				
+			Array cond_class = res.getArray("condclass");
+			String[] str_cond_class = (String[])cond_class.getArray();
+			
+			Array cond_name = res.getArray("condname");
+			String[] str_cond_name = (String[])cond_name.getArray();
+			
+			Array cond_value = res.getArray("condvalue");
+			String[] str_cond_value = (String[])cond_value.getArray();
+			
+			Array cond_unit = res.getArray("condunit");
+			String[] str_cond_unit = (String[])cond_unit.getArray();
+			 
 			String qualifier = "";
 			String observable = "";
 			if(qualifier_observable.contains(":")){
@@ -2356,15 +2364,11 @@ public class SgdConverter extends BioDBConverter {
 			
 			String chemical = "";
 			String condition = "";
-			String chemcond = "";
-			
-			if(condClass != null && condName != null) {
-				chemcond = getPhenotypeCondition(condClass, condName, condValue, condUnits);
-				System.out.println("chemcond is...." + chemcond);
-				String cc[] = chemcond.split("_");
-				chemical = cc[0];
-				condition = cc[1];				
-			}
+			String chemcond = getPhenotypeCondition(str_cond_class, str_cond_name, str_cond_value, str_cond_unit);
+			System.out.println("chemcond is...." + chemcond);
+			String cc[] = chemcond.split("_");
+			chemical = cc[0];
+			condition = cc[1];				
 			
 			getPhenotype(phenotypeAnnotNo, groupNo, qualifier, observable, experimentType, experimentComment,
 					alleleComment, reporterComment, strain, mutantType, reporter, allele, assay, chemical, condition, details, pmid, refNo, gene);
@@ -2373,6 +2377,59 @@ public class SgdConverter extends BioDBConverter {
 
 
 	}
+	
+	
+	private String getPhenotypeCondition(String[] condClass, String[] condName, String[] condValue, String[] condUnits) {
+
+		String chemical = " ";
+		String condition = " ";
+		for (int i=0; i< condClass.length; i++) {
+			
+			String cc = condClass[i];
+			String cn = condName[i];
+			String cv = condValue[i];
+			String cu = condUnits[i];
+			if(cc != null  && cn != null){	
+				cc = Character.toUpperCase(cc.charAt(0)) + cc.substring(1);
+				if(cc.equals("Chemical")){
+				if(cv !=null) chemical += cv;
+				if(cu !=null) chemical += cu;
+				if(cn !=null) chemical += " "+cn+", ";
+				}else if(cc.equals("Temperature")){
+					if(cc !=null) condition += cc+": ";
+					if(cn !=null) condition += cn;
+					if(cv !=null && cu !=null){
+						condition += " ("+cv+cu+") ";
+					}else{
+					 if(cv !=null && !cv.isEmpty()) condition += " ("+cv+") ";
+					}
+				}else{
+					if(cc !=null) condition += cc+": ";
+					if(cv !=null) condition += cv;
+					if(cu !=null) condition += cu;
+					if(cn !=null) condition += " "+cn+", ";
+				}
+			}		
+		}
+
+		String new_chemical = " ";
+		String new_condition = " ";
+		
+		if(condition.indexOf(",") > 0) {
+			new_condition = condition.trim().replaceAll(",$","");
+		}else{
+			new_condition = condition;
+		}
+		if(chemical.indexOf(",") > 0)  {
+			new_chemical = chemical.trim().replaceAll(",$","");
+		}else{
+			new_chemical = chemical;
+		}
+		
+		return new_chemical+"_"+new_condition;
+
+	}
+	
 
 	private void getPhenotype(String phenotypeAnnotNo, String groupNo, String qualifier, String observable, String experimentType, String experimentComment, 
 			String alleleComment, String reporterComment, String strain_background, String mutantType, String reporter, String allele, 
@@ -2432,61 +2489,6 @@ public class SgdConverter extends BioDBConverter {
 		String unq = phenotypeAnnotNo+":"+groupNo;
 		phenotypes.put(unq, pheno);
 	
-
-	}
-
-	private String getPhenotypeCondition(String condClass, String condName, String condValue, String condUnits) {
-
-		String chemical = " ";
-		String condition = " ";
-		System.out.println("condClass: "+ condClass + "    " + "condName: "+ "   " + condName + " condValue: "+  condValue+ " condUnits: " + condUnits);
-
-		if(condClass.indexOf(';') > 0){
-			String c[] = condClass.split("\\;");
-			String n[] = condName.split("\\;");
-			String v[] = null;
-			if(condValue != null) v = condValue.split("\\;");
-			String u[] = null;
-			if(condUnits != null) {
-				if(condUnits.indexOf(';') > 0) u = condUnits.split("\\;");
-				//System.out.println("condClass: "+ c.length + "    " + "condName: "+ "   " + n.length + " condValue: "+  v.length + " condUnits: " +  u.length);
-			}
-			for(int i = 0; i< c.length; i++) {				
-				if(c[i].equalsIgnoreCase("chemical")){
-					chemical += " "+n[i];
-					if( v != null && v.length !=0 ){
-						if(v.length > i)  chemical += " "+v[i];
-					}
-					if(u != null && u.length !=0 ){
-						chemical += u[i];	
-					}else if(condUnits != null){
-						chemical += condUnits;
-					}
-				}else{
-					condition += " "+n[i];				
-					if(v != null && v.length !=0 ){
-						if(n.length == v.length)  condition += " "+v[i];
-					}					
-				}				
-			}			
-		}else{		
-			if(condClass.equalsIgnoreCase("chemical")){
-				chemical += condName;
-				if(condValue != null){
-					chemical += " "+condValue;
-				}
-				if(condUnits != null){
-					chemical += condUnits;
-				}							
-			}else{
-				condition += condName;
-				if(condValue != null){
-					condition += " "+condValue;
-				}
-			}
-		}	
-
-		return chemical+"_"+condition;	
 
 	}
 
