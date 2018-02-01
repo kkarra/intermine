@@ -1818,17 +1818,6 @@ public class SgdConverter extends BioDBConverter {
 		}
 	}
 
-	/*private void storePhenotypeConditions() throws ObjectStoreException {
-		for (Item pheno : phenotypeconds.values()) {
-			try {
-				store(pheno);
-			} catch (ObjectStoreException e) {
-				throw new ObjectStoreException(e);
-			}
-		}
-	}*/
-
-
 	/**
 	 * 
 	 * @param connection
@@ -2138,38 +2127,6 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 	
-	/*
-	 * private void processPubs(Connection connection) throws SQLException,
-	 * ObjectStoreException { ResultSet res =
-	 * PROCESSOR.getPubResults(connection); while (res.next()) {
-	 * 
-	 * String featureNo = res.getString("reference_no"); String geneFeatureNo =
-	 * res.getString("gene_feature_no"); Item gene = genes.get(geneFeatureNo);
-	 * if (gene == null) { continue; }
-	 * 
-	 * String issue = res.getString("issue"); String volume =
-	 * res.getString("volume"); String pubMedId = res.getString("pubmed");
-	 * String pages = res.getString("page"); String title =
-	 * res.getString("title"); String year = res.getString("year"); String
-	 * citation = res.getString("citation"); String topic =
-	 * res.getString("literature_topic"); String journal =
-	 * res.getString("abbreviation");
-	 * 
-	 * String refId = getPub(featureNo, issue, volume, pubMedId, pages, title,
-	 * year, citation); //publication
-	 * 
-	 * Item item = createItem("PublicationAnnotation");
-	 * item.setReference("subject", gene.getIdentifier());
-	 * item.setReference("literatureTopic", getLiteratureTopic(topic));
-	 * item.addToCollection("publications", refId); try { store(item); } catch
-	 * (ObjectStoreException e) { throw new ObjectStoreException(e); }
-	 * 
-	 * gene.addToCollection("publicationAnnotations", item.getIdentifier());
-	 * 
-	 * } }
-	 */
-
-
 	/**
 	 * 
 	 * @param connection
@@ -2365,7 +2322,7 @@ public class SgdConverter extends BioDBConverter {
 			String chemical = "";
 			String condition = "";
 			String chemcond = getPhenotypeCondition(str_cond_class, str_cond_name, str_cond_value, str_cond_unit);
-			System.out.println("chemcond is...." + chemcond);
+			//System.out.println("chemcond is...." + chemcond);
 			String cc[] = chemcond.split("_");
 			chemical = cc[0];
 			condition = cc[1];				
@@ -2492,66 +2449,6 @@ public class SgdConverter extends BioDBConverter {
 
 	}
 
-	/*private String getPhenotypeCondition(String condClass, String condName, String condValue, String condUnits) {
-
-		String chemical = " ";
-		String condition = " ";
-		
-		if(condClass.indexOf('#') > 0){
-			String c[] = condClass.split("\\#");
-			String n[] = condName.split("\\#");
-			String v[] = null;
-			if(condValue != null) v = condValue.split("\\#");
-			String u[] = null;
-			if(condUnits != null) {
-				if(condUnits.indexOf('#') > 0) u = condUnits.split("\\#");
-			}
-			//System.out.println("condClass: "+ condClass + "    " + "condName: "+ "   " + condName + " condValue: "+  condValue+ " condUnits: " + condUnits);
-			int ui = 0;
-			for(int i = 0; i< c.length; i++) {				
-				if(c[i].equalsIgnoreCase("chemical")){
-					chemical += " "+n[i];
-					if( v != null && v.length !=0 ){
-						if(v.length > i)  chemical += " "+v[i];
-					}
-					if(u != null && u.length !=0 ){
-						if(u.length == v.length){
-							chemical += u[ui];
-						}else{
-							chemical += u[ui];
-						}
-					}else if(condUnits != null){
-						chemical += condUnits;
-					}
-					ui++;
-				}else{
-					condition += " "+n[i];				
-					if(v != null && v.length !=0 ){
-						if(n.length == v.length)  condition += " "+v[i];
-					}					
-				}				
-			}			
-		}else{		
-			if(condClass.equalsIgnoreCase("chemical")){
-				chemical += condName;
-				if(condValue != null){
-					chemical += " "+condValue;
-				}
-				if(condUnits != null){
-					chemical += condUnits;
-				}							
-			}else{
-				condition += condName;
-				if(condValue != null){
-					condition += " "+condValue;
-				}
-			}
-		}	
-		
-		return chemical+"_"+condition;	
-		
-	}*/
-	
 	
 	private String getLocation(Item subject, String chromosomeRefId,
 			String startCoord, String stopCoord, String strand)
