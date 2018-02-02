@@ -160,24 +160,24 @@
 		</fields>
 	</class>
 
-	<class classname="ProteinModificationSite">
+	<class className="org.intermine.model.bio.ProteinModificationSite">
 		<fields>
 			<fieldconfig fieldExpr="modificationType" />
 			<fieldconfig fieldExpr="modificationSite" />
-			<fieldconfig fieldExpr="category" />
-			<fieldconfig fieldExpr="experimentalNterminalSite" />
-			<fieldconfig fieldExpr="experimentalNterminalSequence" />
+			<!--<fieldconfig fieldExpr="proteinModificationSites.modifier.symbol" />
+			<fieldconfig fieldExpr="proteinModificationSites.publication.pubMedId" />-->			
 		</fields>
 	</class>
-
-
-	<class name="ProteinHalfLife">
+	
+	<class className="org.intermine.model.bio.ProteinHalfLife">
 		<fields>
 			<fieldconfig fieldExpr="experiment" />
-			<fieldconfig fieldExpr="value">
-		    <fieldconfig fieldExpr="units"/>
+			<fieldconfig fieldExpr="value" />
+			<fieldconfig fieldExpr="units" />
+			<!--<fieldconfig fieldExpr="proteinHalfLife.publication.pubMedId" />-->			
 		</fields>
 	</class>
+	
 
 	<class className="org.intermine.model.bio.InterProDomain">
 		<fields>

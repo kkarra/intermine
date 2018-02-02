@@ -290,32 +290,6 @@
   <collection name="genes" referenced-type="Gene" reverse-reference="phenotypes"/>
   <collection name="publications" referenced-type="Publication" reverse-reference="phenotypes"/>
  </class>
-
- 
- <!-- <class name="PhenotypeAnnotation" is-interface="true">
-  <attribute name="experimentType" type="java.lang.String"/>
-  <attribute name="experimentComment" type="java.lang.String"/>
-  <attribute name="alleleComment" type="java.lang.String"/>
-  <attribute name="reporterComment" type="java.lang.String"/>
-  <attribute name="mutantType" type="java.lang.String"/>
-  <attribute name="observable" type="java.lang.String"/>
-  <attribute name="qualifier" type="java.lang.String"/>
-  <attribute name="allele" type="java.lang.String"/>
-  <attribute name="strainBackground" type="java.lang.String"/>
-  <attribute name="details" type="java.lang.String"/>
-  <attribute name="reporter" type="java.lang.String"/>
-  <attribute name="assay" type="java.lang.String"/>
-  <collection name="genes" referenced-type="Gene" reverse-reference="phenotypeAnnotations"/>
-  <collection name="phenotypeAnnotConds" referenced-type="PhenotypeAnnotationCond" />
-  <collection name="publications" referenced-type="Publication" reverse-reference="phenotypeAnnotations"/>
- </class>
-   
-  <class name="PhenotypeAnnotationCond" is-interface="true">
-  <attribute name="category" type="java.lang.String"/>
-  <attribute name="condition" type="java.lang.String"/>
-  <attribute name="value" type="java.lang.String"/>
-  <attribute name="unit" type="java.lang.String"/>
- </class> -->
  
  <class name="Plasmid" extends="SequenceFeature" is-interface="true">
   <collection name="genes" referenced-type="Gene" reverse-reference="plasmid"/>
