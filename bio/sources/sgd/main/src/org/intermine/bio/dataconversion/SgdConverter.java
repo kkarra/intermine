@@ -2350,7 +2350,13 @@ public class SgdConverter extends BioDBConverter {
 				cc = Character.toUpperCase(cc.charAt(0)) + cc.substring(1);
 				if(cc.equals("Chemical")){
 				if(cv !=null) chemical += cv;
-				if(cu !=null) chemical += cu;
+				if(cu !=null) {
+					if(cu.equals("%")){
+						chemical += cu;
+					}else{
+						chemical += " "+cu;
+					}
+				}
 				if(cn !=null) chemical += " "+cn+", ";
 				}else if(cc.equals("Temperature")){
 					if(cc !=null) condition += cc+": ";
