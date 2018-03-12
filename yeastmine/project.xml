@@ -117,7 +117,7 @@
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/share/intermine/go/gene_ontology_edit.obo"/>
       <property name="src.data.dir" location="/share/intermine/go"/>
-      <property name="src.data.dir.includes" value="ym_gene_association.sgd"/>
+      <property name="src.data.dir.includes" value="gene_association.sgd-yeastmine"/>
     </source>
     
     <source name="psi-complexes" type="psi-complexes">
