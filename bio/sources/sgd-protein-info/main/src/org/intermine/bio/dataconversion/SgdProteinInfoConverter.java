@@ -180,10 +180,7 @@ public class SgdProteinInfoConverter extends BioFileConverter
 			String aliphaticIndex = line[39].trim();
 
 			Item protein = getProteinItem(orfname);
-			
-			System.out.println("orf name is ...." + orfname + "mol wt.." + molwt);
-			
-
+		
 			if (molwt != null) {                  
 	           protein.setAttribute("molecularWeight", molwt);		       				
 			}

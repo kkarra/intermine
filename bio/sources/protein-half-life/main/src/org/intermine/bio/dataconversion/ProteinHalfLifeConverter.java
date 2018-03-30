@@ -98,10 +98,6 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 			String protein =  line[1].trim();  
 			String value = line[2].trim();
 			String units = line[3].trim();
-			//String valueMinutes =  line[2].trim();
-			//String stringMinutes =  line[3].trim(); 
-			//String valueHours = line[4].trim();
-			//String stringHours = line[5].trim();
 			String pmid = line[4].trim();
 
 			newProduct(experiment, protein, value, units, pmid);
@@ -129,9 +125,6 @@ public class ProteinHalfLifeConverter extends BioFileConverter
 		
 		Item pmods = getProteinHalfLife(experiment, value, units, pmid);
 		 protein.addToCollection("proteinHalfLife", pmods.getIdentifier());
-
-		//Item pmods2 = getProteinHalfLife(experiment, valueMins, stringMinutes, pmid);
-		//protein.addToCollection("proteinHalfLife", pmods2.getIdentifier());
 
 	}
 	/**

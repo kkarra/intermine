@@ -174,31 +174,6 @@ public class SgdDomainsConverter extends BioFileConverter
 		if(!goAnnot.isEmpty()) {
 			processGOInfo(pdomain, goAnnot);
 		}
-		/*if(!goAnnot.equalsIgnoreCase("NULL")) {
-			Matcher matcher = pattern.matcher(goAnnot);
-			while (matcher.find())
-			{
-				String goId = "GO:"+matcher.group(1);
-				System.out.println("GOID: " + goId);
-
-				// create go term
-				String goTermRefId = getGoTerm(goId);
-
-				// create Go annotation
-				Item goAnnotation = createItem("GOAnnotation");
-				goAnnotation.setReference("subject", pdomain);
-				goAnnotation.setReference("ontologyTerm", goTermRefId);
-
-				pdomain.addToCollection("goAnnotation", goAnnotation);
-
-				try {
-					store(goAnnotation);
-				} catch (ObjectStoreException e) {
-					throw new Exception(e);
-				}
-
-			}
-		}*/
 		protein.addToCollection("proteinDomains", pdomain.getIdentifier());
 		
 	}
@@ -227,9 +202,6 @@ public class SgdDomainsConverter extends BioFileConverter
 	}
 	
 	  private Item getDomain(String identifier, String description, String s_start, String s_end, String evalue, String runDate, String method, int linecount) {
-	        //Item item = proteinDomains.get(identifier);
-	        //if (item == null) {
-		    //getDomain(domainMatch, domainDesc, sstart, send, evalue, runDate, method, linecount);
 		  
 	            Item item = createItem("ProteinDomain");
 	            if(identifier.isEmpty()){
@@ -248,7 +220,6 @@ public class SgdDomainsConverter extends BioFileConverter
                 String newid = identifier+":"+linecount;
                 System.out.println("new id:" + newid );
 	            proteinDomains.put(newid, item);
-	       // }
 	        return item;
 	    }
 	    private Item getInterproDomain(String identifier, String description)  throws Exception{
@@ -286,16 +257,6 @@ public class SgdDomainsConverter extends BioFileConverter
 	        }
 
 	    private void processGOInfo(Item pdomain, String goAnnot) throws ObjectStoreException, Exception {
-
-	    	//Molecular Function: DNA binding (GO:0003677), 
-	    	//Molecular Function: transcription factor activity (GO:0003700),
-	    	//Biological Process: regulation of transcription (GO:0045449)
-	    	// new file format changed to GO:0001104|GO:0006357|GO:0016592
-
-
-	    	//Matcher matcher = pattern.matcher(goAnnot);
-	    	//while (matcher.find())
-
 
 	    	if(goAnnot.contains("|")){
 
