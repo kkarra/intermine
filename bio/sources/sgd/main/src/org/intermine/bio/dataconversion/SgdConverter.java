@@ -72,7 +72,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -2218,7 +2218,7 @@ public class SgdConverter extends BioDBConverter {
 			String referenceNo = res.getString("reference_id");
 			String interactionType = "genetic interactions"; //res.getString("interaction_type");
 			String experimentType = res.getString("biogrid_experimental_system");
-			String annotationType = "genetic interactions"; //res.getString("annotation_type");
+			String annotationType = res.getString("annotation_type");
 			String modification = ""; //res.getString("modification");
 
 			String interactingGeneFeatureName = res.getString("dbentity2_id");
