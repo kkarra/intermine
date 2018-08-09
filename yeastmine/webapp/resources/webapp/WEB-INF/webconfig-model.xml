@@ -612,12 +612,6 @@
 			jspName="model/regulatoryRegionsDisplayer.jsp" replacesFields="regulatoryRegions"
 			placement="Regulation" types="Gene" />
 
-		<!--m<reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer" 
-			jspName="model/gbrowseDisplayer.jsp" replacesFields="" placement="Genome" 
-			types="SequenceFeature" /> <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer" 
-			jspName="model/jbrowseDisplayer.jsp" replacesFields="" placement="Genome" 
-			types="SequenceFeature"/> -->
-
 		<reportdisplayer
 			javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
 			jspName="model/publicationAnnotationsDisplayer.jsp" replacesFields=""
@@ -632,7 +626,6 @@
 		<reportdisplayer javaClass="org.intermine.bio.web.displayer.ComplexDisplayer"
 			jspName="model/complexDisplayer.jsp" replacesFields="" placement="summary"
 			types="Complex" />
-
 
 	</reportdisplayers>
 
@@ -667,7 +660,18 @@
 			externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
 			correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient" />
 
-
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
+                                 title="Protein Domain Enrichment"
+                                 description="Protein Domains enriched for items in this list."
+                                 label="Protein Domain"
+                                 startClass="Gene"
+                                 startClassDisplay="secondaryIdentifier"
+                                 enrich="proteins.proteinDomain.name"
+                                 enrichIdentifier="proteins.proteinDomains.name
+                                 constraints="organism.name=[list]"
+                                 typeClass="Gene"
+                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,proteins.proteinDomains.name"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
 		<enrichmentwidgetdisplayer id="publication_enrichment"
 			title="Publication Enrichment" description="Publications enriched for genes in this list."
@@ -691,16 +695,6 @@
 			constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
 			typeClass="Gene"
 			views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name" />
-
-
-		<!-- <enrichmentwidgetdisplayer id="protein_domain_enrichment" title="Protein 
-			Domain Enrichment" description="Protein domains enriched for genes in this 
-			list - data from InterPro" label="Domains" filterLabel="DataSet" startClass="Gene" 
-			startClassDisplay="secondaryIdentifier" enrich="proteins.proteinDomains.name" 
-			enrichIdentifier="proteins.proteinDomains.name" constraints="organism.taxonId=[list], 
-			primaryIdentifier != null" typeClass="Gene" views="secondaryIdentifier, symbol, 
-			organism.name, proteins.proteinDomains.name" /> -->
-
 
 		<bagtabledisplayer id="interactions" title="Interactions"
 			pathStrings="Gene.interactions.participant2"

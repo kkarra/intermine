@@ -134,45 +134,6 @@
       <property name="src.data.dir" location="/data/intermine/protein-ntermini"/>
     </source>
     
-    
-    <!--<source name="sgd-protein-info" type="sgd-protein-info">
-      <property name="src.data.dir" location="/share/intermine/protein-info"/>
-      </source>
-      
-      <source name="sgd-domains" type="sgd-domains">
-      <property name="src.data.dir" location="/share/intermine/domains"/>
-      </source>
-      
-      <source name="sgd-protein-mods" type="sgd-protein-mods">
-      <property name="src.data.dir" location="/data/intermine/protein-modifications"/>
-      </source>
-          
-      <source name="sgd-protein-abundance" type="sgd-protein-abundance">
-      <property name="src.data.dir" location="/data/intermine/protein-abundance"/>
-      </source>
-      
-      <source name="protein-half-life" type="protein-half-life">
-      <property name="src.data.dir" location="/data/intermine/protein-half-life"/>
-      </source>
-      
-      <source name="sgd-yetfasco" type="sgd-yetfasco">
-      <property name="src.data.dir" location="/data/intermine/regulation"/>
-      <property name="bindingSitesFile" location="/data/intermine/bindingsites/predictedTFBSsummaryNumbers.txt"/> 
-      <property name="paragraphsFile" location="/data/intermine/paragraphs/Reg_Summary_Paragraphs"/>
-      <property name="jasparFile" location="/data/intermine/jaspar_reg/TF_family_class.txt"/>
-      <property name="logosFile" location="/data/intermine/yetfasco_logos/yetfasco_file_names"/>
-      <property name="confirmedFile" location="/data/intermine/regulation_exp/combined.txt"/>
-      </source>
-      
-      <source name="go-function-summary" type="go-function-summary">
-      <property name="src.data.dir" location="/share/intermine/go/function_summary"/>
-      </source>
-      
-      <source name="phenotype-summary" type="phenotype-summary">
-      <property name="src.data.dir" location="/data/intermine/phenotype_summary"/>
-      </source>-->
-    
-    
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
