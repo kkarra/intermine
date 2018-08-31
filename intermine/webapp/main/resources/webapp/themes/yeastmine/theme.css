@@ -464,6 +464,18 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 	text-align: left; 
 }
 
+.imtables .modal-dialog {
+	max-height:90vh;
+	margin:3vh auto;
+}
+
+.imtables .modal-header, .imtables .modal-body, .imtables .modal-footer {padding:1vh 15px}
+
+.imtables .modal-body {
+	max-height: 70vh;
+	overflow:auto
+}
+
 
 
 
