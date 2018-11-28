@@ -51,7 +51,7 @@ Customized searches can also be created using the <a href="/${WEB_PROPERTIES['we
 <br><br>
 
 <ul>
-    <li><a href="/${WEB_PROPERTIES['webapp.path']}/template.do?name=Chromosome_Gene">Chromosome --> All genes</a>
+    <li><a href="/${WEB_PROPERTIES['webapp.path']}/template.do?name=Chromosome_Gene_FeatureType">Chromosome --> All genes</a>
     <li><a href="/${WEB_PROPERTIES['webapp.path']}/template.do?name=ChromosomeRegion_AllGenes  ">Chromosomal Region --> All genes  </a>
 	<li><a href="/${WEB_PROPERTIES['webapp.path']}/template.do?name=FeatureType_Gene">FeatureType-->Genes </a>
  	<li><a href="/${WEB_PROPERTIES['webapp.path']}/template.do?name=Gene_FeatureType_Introns">All genes of a selected Feature Type-->Genes with introns </a>

@@ -596,7 +596,8 @@ public class SgdProcessor
             + " WHERE i.pubmed = r.pubmed and r.journal_no = j.journal_no ORDER by feature_a";*/
 
 		String query = "select annotation_id, dbentity1_id, dbentity2_id, biogrid_experimental_system, bait_hit, s.display_name, annotation_type, psi.display_name as modification,"
-				+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substring(citation, 0, position( ')' in citation)+1) as first_author, db.sgdid"
+				+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substring(citation, 0, position( ')' in citation)+1) as first_author, db.sgdid, "
+				+ " pa.description as note"
 				+ " from nex.physinteractionannotation pa"
 				+ " left join nex.psimod psi on pa.psimod_id = psi.psimod_id" 
 				+ " inner join nex.source s on s.source_id = pa.source_id"
@@ -626,7 +627,8 @@ public class SgdProcessor
             + " WHERE i.pubmed = r.pubmed and r.journal_no = j.journal_no ORDER by feature_a";*/
 
 		String query = "select annotation_id, dbentity1_id, dbentity2_id, biogrid_experimental_system, p.display_name as phenotype, bait_hit, s.display_name as source, annotation_type,"
-				+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substring(citation, 0, position( ')' in citation)+1) as first_author, db.sgdid"
+				+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substring(citation, 0, position( ')' in citation)+1) as first_author, db.sgdid, "
+				+ " ga.description as note"
 				+ " from nex.geninteractionannotation ga"
 				+ " left join nex.phenotype p on p.phenotype_id = ga.phenotype_id"
 				+ " inner join nex.source s on s.source_id = ga.source_id"

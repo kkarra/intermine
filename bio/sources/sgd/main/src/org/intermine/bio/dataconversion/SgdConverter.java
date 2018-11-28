@@ -2174,12 +2174,13 @@ public class SgdConverter extends BioDBConverter {
 			String abbreviation = res.getString("med_abbr");
 			String firstAuthor = res.getString("first_author");
 			String dbxrefid = res.getString("sgdid");
+			String note = res.getString("note");
 
 			String interactionRefId = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
 					annotationType, modification, interactingGene, role1, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
-					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+					year, issue, abbreviation, dsId, firstAuthor, dbxrefid, note);
 
 			//store the reverse relationship so that template changes do not have to be made
 			if(!geneFeatureName.equals(interactingGeneFeatureName)) {
@@ -2187,7 +2188,7 @@ public class SgdConverter extends BioDBConverter {
 						referenceNo, interactionType, experimentType,
 						annotationType, modification, gene, role2, source,
 						phenotype, citation, interactingGene, pubmed, title, volume, page,
-						year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+						year, issue, abbreviation, dsId, firstAuthor, dbxrefid, note);
 			}
 		}
 	}
@@ -2240,12 +2241,13 @@ public class SgdConverter extends BioDBConverter {
 			String abbreviation = res.getString("med_abbr");
 			String firstAuthor = res.getString("first_author");
 			String dbxrefid = res.getString("sgdid");
+			String note = res.getString("note");
 
 			String interactionRefId = getInteraction(interactionNo,
 					referenceNo, interactionType, experimentType,
 					annotationType, modification, interactingGene, role1, source,
 					phenotype, citation, gene, pubmed, title, volume, page,
-					year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+					year, issue, abbreviation, dsId, firstAuthor, dbxrefid, note);
 
 			if(!geneFeatureName.equals(interactingGeneFeatureName)) {
 				//store the reverse relationship so that template changes do not have to be made; act1 in gene.X or participant.X
@@ -2253,7 +2255,7 @@ public class SgdConverter extends BioDBConverter {
 						referenceNo, interactionType, experimentType,
 						annotationType, modification, gene, role2, source,
 						phenotype, citation, interactingGene, pubmed, title, volume, page,
-						year, issue, abbreviation, dsId, firstAuthor, dbxrefid);
+						year, issue, abbreviation, dsId, firstAuthor, dbxrefid, note);
 			}
 
 		}
@@ -2681,7 +2683,7 @@ public class SgdConverter extends BioDBConverter {
 			String annotationType, String modification, Item interactingGene, String action,
 			String source, String phenotype, String citation, Item gene,
 			String pubMedId, String title, String volume, String page,
-			String year, String issue, String journal, String dsetIdentifier, String firstAuthor, String dbxrefid)
+			String year, String issue, String journal, String dsetIdentifier, String firstAuthor, String dbxrefid, String note)
 					throws ObjectStoreException {
 
 		Item item = getInteractionItem(gene.getIdentifier(), interactingGene.getIdentifier());	
@@ -2697,7 +2699,8 @@ public class SgdConverter extends BioDBConverter {
 
 		String shortType = interactionType.substring(0, interactionType.indexOf(' ')); 
 		detail.setAttribute("relationshipType", shortType); //interactionType
-		String unqName = firstAuthor+"-"+pubMedId+"-"+experimentType;  
+		String unqName = firstAuthor+"-"+pubMedId+"-"+experimentType;
+		if (StringUtils.isNotEmpty(note)) detail.setAttribute("note", note);
 
 		//add publication as experiment type
 		Item storedExperimentType = experimenttype.get(unqName);		
