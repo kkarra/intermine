@@ -133,7 +133,6 @@ public class SgdConverter extends BioDBConverter {
 		processFunctionSummary(connection);
 		processRegulation(connection);
 		processRegulationSummary(connection);
-		
 		//processGeneSummary(connection);
 
 		if(TEST_LOCAL) {
@@ -1436,6 +1435,7 @@ public class SgdConverter extends BioDBConverter {
 	private void processProteinAbundance(Connection connection) throws SQLException,
 	ObjectStoreException, Exception {
 
+									
 		System.out.println("Processing Proteins Abundance data...");
 		ResultSet res = PROCESSOR.getProteinAbundanceResults(connection);
 		while (res.next()) {
@@ -1445,11 +1445,52 @@ public class SgdConverter extends BioDBConverter {
 			String units = res.getString("data_unit");
 			String abundance = res.getString("data_value");
 			String pmid = res.getString("pmid");
+			String parentpmid = res.getString("parent_pmid");
 			String refNo = res.getString("referencedbentity");
-			String experiment = "abundance";	
+			String parentrefNo = res.getString("original_referencedbentity");
+			String experiment = "abundance";
+			String strainBackground = res.getString("strain_background");
+			
+			String strain = "";
+			if (StringUtils.isNotEmpty(strainBackground)) {
+				String q[] = strainBackground.split("_");
+				int len = q.length;
+				if(len == 3){
+					 strain = q[len-1];
+				}else{
+					 strain = "Other";
+				}
+			}
 
+			String assay = res.getString("assay");
+			String media = res.getString("media");
+			String process = res.getString("process");
+			String foldchange = res.getString("fold_change");
+			
+			String chemical = res.getString("chemical");
+			String conc_unit = res.getString("concentration_unit");
+			String conc_value = res.getString("concentration_value");
+			String treatment = "";
+			if(conc_value != null && conc_unit != null && chemical !=null) {
+				treatment = conc_value+" "+conc_unit+" "+chemical;
+			}else {
+				treatment = "untreated";
+			}
+			
+			String time_unit = res.getString("time_unit");
+			String time_value = res.getString("time_value");
+			String treatment_time = "";
+			if(time_unit != null & time_value != null) {
+				treatment_time = time_value+" "+time_unit;
+			}
+			
+			String median_value = res.getString("median_value");
+			String median_abs_dev_value = res.getString("median_abs_dev_value");
+
+	
 			Item protein = proteins.get(featureNo);
-			Item pmods = getProteinAbundance(abundance, pmid, refNo, units, annotationId);
+			Item pmods = getProteinAbundance(abundance, median_value, median_abs_dev_value, pmid, refNo, units, annotationId, treatment, treatment_time,
+					foldchange, process, media, assay, strain, parentpmid, parentrefNo);
 			protein.addToCollection("proteinAbundance", pmods.getIdentifier());
 
 		}
@@ -1457,28 +1498,50 @@ public class SgdConverter extends BioDBConverter {
 	}
 
 
-	private Item getProteinAbundance(String abundance, String pmid, String refNo, String units, String annotation_id) throws ObjectStoreException {
+	private Item getProteinAbundance(String abundance, String median_value, String median_abs_dev_value,  String pmid, String refNo, 
+			String units, String annotation_id, String treatment, String treatment_time,String fold_change, String process,
+			String media, String assay, String strain, String parentpmid, String parentrefNo) throws ObjectStoreException {
 
 		Item item = createItem("ProteinAbundance");
 
 		if(StringUtils.isNotEmpty(abundance)){ item.setAttribute("abundance", abundance);}
+		if(StringUtils.isNotEmpty(median_value)){ item.setAttribute("median", median_value);}
+		if(StringUtils.isNotEmpty(median_abs_dev_value)){ item.setAttribute("MAD", median_abs_dev_value);}
+		if(StringUtils.isNotEmpty(fold_change)){ item.setAttribute("foldChange", fold_change);}	
+		if(StringUtils.isNotEmpty(treatment)){ item.setAttribute("treatment", treatment);}	
+		if(StringUtils.isNotEmpty(treatment_time)){ item.setAttribute("treatmentTime", treatment_time);}	
+		if(StringUtils.isNotEmpty(process)){ item.setAttribute("assay", process);}	
+		if(StringUtils.isNotEmpty(media)){ item.setAttribute("media", media);}	
+		if(StringUtils.isNotEmpty(assay)){ item.setAttribute("visualization", assay);}	
+		if(StringUtils.isNotEmpty(strain)){ item.setAttribute("strainBackground", strain);}	
 		if(StringUtils.isNotEmpty(units)){ item.setAttribute("units", units);}	
+		
 		item.setAttribute("source", "SGD");
 
 		Item publication = publications.get(refNo);
-
 		if (publication == null) {
 			publication = createItem("Publication");			
 			publication.setAttribute("pubMedId", pmid);			 
 			publications.put(refNo, publication);			
 		}
 		item.setReference("publication", publication);   
+		
+		
+		Item parentpublication = publications.get(parentrefNo);
+		if (parentpublication == null) {
+			parentpublication = createItem("Publication");			
+			parentpublication.setAttribute("pubMedId", pmid);			 
+			publications.put(parentrefNo, parentpublication);			
+		}
+		item.setReference("origPublication", parentpublication);   
 
 		try {
 			store(item);
 		} catch (ObjectStoreException e) {
 			throw new ObjectStoreException(e);
 		}
+		
+	
 		return item;
 	}
 

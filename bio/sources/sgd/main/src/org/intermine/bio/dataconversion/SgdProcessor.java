@@ -330,12 +330,26 @@ public class SgdProcessor
 	protected ResultSet getProteinAbundanceResults(Connection connection)
 			throws SQLException {
 
-		String query = "select db.dbentity_id, pea.annotation_id, data_value, data_unit, pmid, rdb.dbentity_id as referencedbentity"
+		/*String query = "select db.dbentity_id, pea.annotation_id, data_value, data_unit, pmid, rdb.dbentity_id as referencedbentity"
 				+ " from nex.dbentity db, nex.proteinexptannotation pea, nex.referencedbentity rdb"
 				+ " where pea.dbentity_id = db.dbentity_id"
 				+ " and pea.reference_id = rdb.dbentity_id"
 				+ " and experiment_type = 'abundance'"
-				+ " order by db.dbentity_id";
+				+ " order by db.dbentity_id";*/
+		
+		String query = "select db.dbentity_id, pea.annotation_id, data_value, data_unit, rdb2.pmid, rdb1.pmid as parent_pmid, rdb1.dbentity_id as original_referencedbentity, rdb2.dbentity_id as referencedbentity , " 
+				+ "median_value, median_abs_dev_value, time_unit, time_value, concentration_value, concentration_unit, " 
+				+ "fold_change, g.display_name as process, ef.display_name as media, ec.display_name as assay, chb.display_name as chemical, t.format_name as strain_background "
+				+ "from nex.dbentity db " 
+				+ "inner join nex.proteinabundanceannotation pea on db.dbentity_id = pea.dbentity_id "
+				+ "inner join  nex.referencedbentity rdb1 on pea.reference_id = rdb1.dbentity_id "
+				+ "inner join  nex.referencedbentity rdb2 on pea.original_reference_id = rdb2.dbentity_id "
+				+ "left join nex.taxonomy t on t.taxonomy_id = pea.taxonomy_id "
+				+ "left join nex.go g on g.go_id = pea.process_id "
+				+ "left join nex.efo ef on ef.efo_id = pea.media_id " 
+				+ "left join nex.eco ec on ec.eco_id = pea.assay_id "
+				+ "left join nex.chebi chb on chb.chebi_id = pea.chemical_id ";
+				//+ "where db.dbentity_id = 1268334";
 
 		LOG.info("executing: " + query);
 		Statement stmt = connection.createStatement();
@@ -594,7 +608,7 @@ public class SgdProcessor
         	+ " r.reference_no, substr(r.citation, 0, (instr(r.citation, ')',1,1) )) as first_author, r.dbxref_id  "
             + " FROM "+ SCHEMA_OWNER + "interaction_mv i, "+ SCHEMA_OWNER + "reference r, "+ SCHEMA_OWNER + "journal j"
             + " WHERE i.pubmed = r.pubmed and r.journal_no = j.journal_no ORDER by feature_a";*/
-
+		
 		String query = "select annotation_id, dbentity1_id, dbentity2_id, biogrid_experimental_system, bait_hit, s.display_name, annotation_type, psi.display_name as modification,"
 				+ " citation, pmid, rdb.title, volume, page, year, issue, med_abbr, reference_id, substring(citation, 0, position( ')' in citation)+1) as first_author, db.sgdid, "
 				+ " pa.description as note"
@@ -604,6 +618,8 @@ public class SgdProcessor
 				+ " inner join  nex.referencedbentity rdb on pa.reference_id = rdb.dbentity_id"
 				+ " left join nex.journal j on rdb.journal_id = j.journal_id"
 				+ " inner join nex.dbentity db on  db.dbentity_id = rdb.dbentity_id";
+		
+
 
 		LOG.info("executing: " + query);
 		Statement stmt = connection.createStatement();

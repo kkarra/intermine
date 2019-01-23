@@ -362,9 +362,19 @@
 
 <class name="ProteinAbundance" extends="BioEntity" is-interface="true">
 	<attribute name="abundance" type="java.lang.Float"/>
+	<attribute name="median" type="java.lang.Float"/>
+	<attribute name="MAD" type="java.lang.Float"/>
 	<attribute name="units" type="java.lang.String"/>
+	<attribute name="assay" type="java.lang.String"/>
+	<attribute name="media" type="java.lang.String"/>
+	<attribute name="foldChange" type="java.lang.String"/>
+	<attribute name="treatment" type="java.lang.String"/>
+	<attribute name="strainBackground" type="java.lang.String"/>
+	<attribute name="treatmentTime" type="java.lang.String"/>
+	<attribute name="visualization" type="java.lang.String"/>
 	<attribute name="source" type="java.lang.String"/>
 	<reference name="publication" referenced-type="Publication"/>
+	<reference name="origPublication" referenced-type="Publication"/>
 	<collection name="proteins" referenced-type="Protein" reverse-reference="proteinAbundance"/>
 </class>
 
