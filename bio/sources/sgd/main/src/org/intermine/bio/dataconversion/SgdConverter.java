@@ -1473,6 +1473,8 @@ public class SgdConverter extends BioDBConverter {
 			String treatment = "";
 			if(conc_value != null && conc_unit != null && chemical !=null) {
 				treatment = conc_value+" "+conc_unit+" "+chemical;
+			}else if(chemical !=null) {
+				treatment = chemical;
 			}else {
 				treatment = "untreated";
 			}
@@ -1518,20 +1520,20 @@ public class SgdConverter extends BioDBConverter {
 		
 		item.setAttribute("source", "SGD");
 
-		Item publication = publications.get(refNo);
+		Item publication = publications.get(parentrefNo);
 		if (publication == null) {
 			publication = createItem("Publication");			
 			publication.setAttribute("pubMedId", pmid);			 
-			publications.put(refNo, publication);			
+			publications.put(parentrefNo, publication);			
 		}
 		item.setReference("publication", publication);   
 		
 		
-		Item parentpublication = publications.get(parentrefNo);
+		Item parentpublication = publications.get(refNo);
 		if (parentpublication == null) {
 			parentpublication = createItem("Publication");			
 			parentpublication.setAttribute("pubMedId", pmid);			 
-			publications.put(parentrefNo, parentpublication);			
+			publications.put(refNo, parentpublication);			
 		}
 		item.setReference("origPublication", parentpublication);   
 

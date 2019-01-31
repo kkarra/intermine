@@ -178,6 +178,14 @@
 		</fields>
 	</class>
 	
+	<class className="org.intermine.model.bio.ProteinAbundance">
+		<fields>
+			<fieldconfig fieldExpr="median" />
+			<fieldconfig fieldExpr="foldChange" />
+			<fieldconfig fieldExpr="MAD" label="Protein Abundance Median Absolute Deviation"></fieldconfig>	
+		</fields>
+	</class>
+	
 
 	<class className="org.intermine.model.bio.InterProDomain">
 		<fields>
