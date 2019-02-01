@@ -117,7 +117,6 @@ public class SgdConverter extends BioDBConverter {
 		processCrossReferences(connection);
 		processGeneLocations(connection);
 		processGeneChildrenLocations(connection);
-		processProteins(connection);
 		
 		processAllPubs(connection);           						
 		processPubsWithFeatures(connection); 
@@ -1470,14 +1469,18 @@ public class SgdConverter extends BioDBConverter {
 			String chemical = res.getString("chemical");
 			String conc_unit = res.getString("concentration_unit");
 			String conc_value = res.getString("concentration_value");
+			//System.out.println(chemical + "  " + conc_unit + " " + conc_value);
 			String treatment = "";
 			if(conc_value != null && conc_unit != null && chemical !=null) {
 				treatment = conc_value+" "+conc_unit+" "+chemical;
 			}else if(chemical !=null) {
 				treatment = chemical;
+			}else if(process != null){
+				treatment = process;
 			}else {
 				treatment = "untreated";
 			}
+			//System.out.println(treatment);
 			
 			String time_unit = res.getString("time_unit");
 			String time_value = res.getString("time_value");

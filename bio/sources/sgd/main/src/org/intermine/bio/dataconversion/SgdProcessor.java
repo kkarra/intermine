@@ -348,8 +348,8 @@ public class SgdProcessor
 				+ "left join nex.go g on g.go_id = pea.process_id "
 				+ "left join nex.efo ef on ef.efo_id = pea.media_id " 
 				+ "left join nex.eco ec on ec.eco_id = pea.assay_id "
-				+ "left join nex.chebi chb on chb.chebi_id = pea.chemical_id ";
-				//+ "where db.dbentity_id = 1268334";
+				+ "left join nex.chebi chb on chb.chebi_id = pea.chemical_id "
+				+ "where db.dbentity_id = 1268219";
 
 		LOG.info("executing: " + query);
 		Statement stmt = connection.createStatement();
