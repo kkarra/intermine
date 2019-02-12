@@ -117,6 +117,7 @@ public class SgdConverter extends BioDBConverter {
 		processCrossReferences(connection);
 		processGeneLocations(connection);
 		processGeneChildrenLocations(connection);
+		processProteins(connection);
 		
 		processAllPubs(connection);           						
 		processPubsWithFeatures(connection); 
@@ -1492,7 +1493,6 @@ public class SgdConverter extends BioDBConverter {
 			String median_value = res.getString("median_value");
 			String median_abs_dev_value = res.getString("median_abs_dev_value");
 
-	
 			Item protein = proteins.get(featureNo);
 			Item pmods = getProteinAbundance(abundance, median_value, median_abs_dev_value, pmid, refNo, units, annotationId, treatment, treatment_time,
 					foldchange, process, media, assay, strain, parentpmid, parentrefNo);
