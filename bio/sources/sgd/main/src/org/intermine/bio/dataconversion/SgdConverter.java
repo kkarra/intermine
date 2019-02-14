@@ -1494,8 +1494,11 @@ public class SgdConverter extends BioDBConverter {
 			String median_abs_dev_value = res.getString("median_abs_dev_value");
 
 			Item protein = proteins.get(featureNo);
-			Item pmods = getProteinAbundance(abundance, median_value, median_abs_dev_value, pmid, refNo, units, annotationId, treatment, treatment_time,
+			Item pmods = getProteinAbundance(abundance, pmid, refNo, units, annotationId, treatment, treatment_time,
 					foldchange, process, media, assay, strain, parentpmid, parentrefNo);
+			
+			if(StringUtils.isNotEmpty(median_value)){ protein.setAttribute("median", median_value);}
+			if(StringUtils.isNotEmpty(median_abs_dev_value)){ protein.setAttribute("MAD", median_abs_dev_value);}
 			protein.addToCollection("proteinAbundance", pmods.getIdentifier());
 
 		}
@@ -1503,15 +1506,14 @@ public class SgdConverter extends BioDBConverter {
 	}
 
 
-	private Item getProteinAbundance(String abundance, String median_value, String median_abs_dev_value,  String pmid, String refNo, 
+	private Item getProteinAbundance(String abundance, String pmid, String refNo, 
 			String units, String annotation_id, String treatment, String treatment_time,String fold_change, String process,
 			String media, String assay, String strain, String parentpmid, String parentrefNo) throws ObjectStoreException {
 
 		Item item = createItem("ProteinAbundance");
 
 		if(StringUtils.isNotEmpty(abundance)){ item.setAttribute("abundance", abundance);}
-		if(StringUtils.isNotEmpty(median_value)){ item.setAttribute("median", median_value);}
-		if(StringUtils.isNotEmpty(median_abs_dev_value)){ item.setAttribute("MAD", median_abs_dev_value);}
+
 		if(StringUtils.isNotEmpty(fold_change)){ item.setAttribute("foldChange", fold_change);}	
 		if(StringUtils.isNotEmpty(treatment)){ item.setAttribute("treatment", treatment);}	
 		if(StringUtils.isNotEmpty(treatment_time)){ item.setAttribute("treatmentTime", treatment_time);}	

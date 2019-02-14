@@ -148,6 +148,8 @@
 			<fieldconfig fieldExpr="symbol"></fieldconfig>
 			<fieldconfig fieldExpr="molecularWeight"></fieldconfig>
 			<fieldconfig fieldExpr="pI"></fieldconfig>
+		    <fieldconfig fieldExpr="median" />
+			<fieldconfig fieldExpr="MAD" label="Protein Abundance Median Absolute Deviation"></fieldconfig>	
 			<fieldconfig displayer="/model/sequenceShortDisplayerWithField.jsp"
 				fieldExpr="length"></fieldconfig>
 		</fields>
@@ -180,9 +182,7 @@
 	
 	<class className="org.intermine.model.bio.ProteinAbundance">
 		<fields>
-			<fieldconfig fieldExpr="median" />
 			<fieldconfig fieldExpr="foldChange" />
-			<fieldconfig fieldExpr="MAD" label="Protein Abundance Median Absolute Deviation"></fieldconfig>	
 		</fields>
 	</class>
 	

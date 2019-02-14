@@ -344,6 +344,8 @@
   <attribute name="allCysHalf" type="java.lang.Float"/>
   <attribute name="noCysHalf" type="java.lang.Float"/>
   <attribute name="aliphaticIndex" type="java.lang.Float"/>
+  <attribute name="median" type="java.lang.Float"/>
+  <attribute name="MAD" type="java.lang.Float"/>
   <collection name="proteinHalfLife" referenced-type="ProteinHalfLife" reverse-reference="proteins"/>
   <collection name="proteinAbundance" referenced-type="ProteinAbundance" reverse-reference="proteins"/>
   <collection name="proteinProperties" referenced-type="ProteinProperty" reverse-reference="proteins"/>
@@ -362,8 +364,6 @@
 
 <class name="ProteinAbundance" extends="BioEntity" is-interface="true">
 	<attribute name="abundance" type="java.lang.Float"/>
-	<attribute name="median" type="java.lang.Float"/>
-	<attribute name="MAD" type="java.lang.Float"/>
 	<attribute name="units" type="java.lang.String"/>
 	<attribute name="assay" type="java.lang.String"/>
 	<attribute name="media" type="java.lang.String"/>
