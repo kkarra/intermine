@@ -1470,7 +1470,7 @@ public class SgdConverter extends BioDBConverter {
 			String chemical = res.getString("chemical");
 			String conc_unit = res.getString("concentration_unit");
 			String conc_value = res.getString("concentration_value");
-			//System.out.println(chemical + "  " + conc_unit + " " + conc_value);
+
 			String treatment = "";
 			if(conc_value != null && conc_unit != null && chemical !=null) {
 				treatment = conc_value+" "+conc_unit+" "+chemical;
@@ -1481,7 +1481,6 @@ public class SgdConverter extends BioDBConverter {
 			}else {
 				treatment = "untreated";
 			}
-			//System.out.println(treatment);
 			
 			String time_unit = res.getString("time_unit");
 			String time_value = res.getString("time_value");
@@ -1499,6 +1498,7 @@ public class SgdConverter extends BioDBConverter {
 			
 			if(StringUtils.isNotEmpty(median_value)){ protein.setAttribute("median", median_value);}
 			if(StringUtils.isNotEmpty(median_abs_dev_value)){ protein.setAttribute("MAD", median_abs_dev_value);}
+			if(StringUtils.isNotEmpty(units)){ protein.setAttribute("units", units);}
 			protein.addToCollection("proteinAbundance", pmods.getIdentifier());
 
 		}
