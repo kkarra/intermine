@@ -133,7 +133,7 @@ public class SgdConverter extends BioDBConverter {
 		processFunctionSummary(connection);
 		processRegulation(connection);
 		processRegulationSummary(connection);
-		//processGeneSummary(connection);
+
 
 		if(TEST_LOCAL) {
 

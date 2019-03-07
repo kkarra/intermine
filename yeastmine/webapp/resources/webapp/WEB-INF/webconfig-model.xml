@@ -205,12 +205,30 @@
 			<fieldconfig fieldExpr="qualifier"></fieldconfig>
 		</fields>
 	</class>
+	
+		<class className="org.intermine.model.bio.DiseaseAnnotation">
+		<fields>
+			<fieldconfig fieldExpr="subject.secondaryIdentifier" />
+			<fieldconfig fieldExpr="subject.name" />
+			<fieldconfig fieldExpr="subject.symbol" />
+			<fieldconfig fieldExpr="ontologyTerm.identifier"></fieldconfig>
+			<fieldconfig fieldExpr="ontologyTerm.name"></fieldconfig>
+			<fieldconfig showInSummary="false" fieldExpr="ontologyTerm.namespace"></fieldconfig>
+			<fieldconfig fieldExpr="qualifier"></fieldconfig>
+		</fields>
+	</class>
+	
 	<class className="org.intermine.model.bio.PublicationAnnotation">
 		<fields>
 			<fieldconfig fieldExpr="publication.pubMedId"></fieldconfig>
 		</fields>
 	</class>
 	<class className="org.intermine.model.bio.GOEvidenceCode">
+		<fields>
+			<fieldconfig fieldExpr="code"></fieldconfig>
+		</fields>
+	</class>
+		<class className="org.intermine.model.bio.DiseaseEvidenceCode">
 		<fields>
 			<fieldconfig fieldExpr="code"></fieldconfig>
 		</fields>

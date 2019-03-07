@@ -212,3 +212,4 @@ prefixed
 failures.list
 *.jks
 biotestmine/project.xml
+/.recommenders/
