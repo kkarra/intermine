@@ -213,8 +213,9 @@
 			<fieldconfig fieldExpr="subject.symbol" />
 			<fieldconfig fieldExpr="ontologyTerm.identifier"></fieldconfig>
 			<fieldconfig fieldExpr="ontologyTerm.name"></fieldconfig>
-			<fieldconfig showInSummary="false" fieldExpr="ontologyTerm.namespace"></fieldconfig>
-			<fieldconfig fieldExpr="qualifier"></fieldconfig>
+			<!--<fieldconfig fieldExpr="evidence.code.code"> </fieldconfig>
+			<fieldconfig fieldExpr="evidence.publications.pubmedId"> </fieldconfig>
+			<fieldconfig fieldExpr="qualifier"></fieldconfig>-->
 		</fields>
 	</class>
 	
@@ -332,8 +333,7 @@
 			<fieldconfig fieldExpr="publication.pubMedId"></fieldconfig>
 			<fieldconfig fieldExpr="gene.primaryIdentifier" label="Complementation > Entrez Gene ID"></fieldconfig>
 			<fieldconfig fieldExpr="gene.symbol" label="Complementation > Standard Name"></fieldconfig>
-			<fieldconfig fieldExpr="gene.organism.shortName"
-				label="Complementation > Organism.Short Name"></fieldconfig>
+			<fieldconfig fieldExpr="gene.organism.shortName" label="Complementation > Organism.Short Name"></fieldconfig>
 		</fields>
 	</class>
 	<class className="org.intermine.model.bio.DataSet">
