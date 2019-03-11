@@ -61,6 +61,14 @@
 		<tile-name>model/microarray.jsp</tile-name>
 		<aspect-source name="SPELL" url="http://spell.yeastgenome.org/" />
 	</aspect>
+	
+		<aspect name="Disease">
+		<subtitle>Curated Disease Data</subtitle>
+		<intro-text> &lt;p&gt; Curated Disease data for &lt;i&gt;S. cerevisiae
+			&lt;/i&gt;.</intro-text>
+		<tile-name>model/microarray.jsp</tile-name>
+		<aspect-source name="SPELL" url="http://www.yeastgenome.org/" />
+	</aspect>
 
 	<aspect name="Regulation">
 		<subtitle>Regulation</subtitle>

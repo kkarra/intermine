@@ -223,7 +223,9 @@ public class DiseaseConverter extends BioDBConverter {
 				if (!publicationEvidence.isEmpty()) {
 					goevidence.setCollection("publications", publicationEvidence);
 				}
-
+				if (!StringUtils.isEmpty(evidence.annotType)) {
+					goevidence.setAttribute("annotType", evidence.annotType);
+				}
 				// with objects
 				if (!StringUtils.isEmpty(evidence.withText)) {
 					goevidence.setAttribute("withText", evidence.withText);
@@ -646,62 +648,6 @@ public class DiseaseConverter extends BioDBConverter {
         }
 
     }
-
-
-	/**
-	 * Identify a DoTerm/geneProduct pair with qualifier
-	 * used to also use evidence code
-	 *
-	private class DoTermToGene
-	{
-		private String productId;
-		private String doId;
-		private String qualifier;
-		private String withText;
-		private String annotationExtension;
-		private String pub;
-
-		/**
-		 * Constructor
-		 *
-		 * @param productId gene/protein identifier
-		 * @param goId      GO term id
-		 * @param qualifier qualifier
-		 *
-		DoTermToGene(String productId, String doId, String qualifier, String withText, String annotationExtension, String pub) {
-			this.productId = productId;
-			this.doId = doId;
-			this.qualifier = qualifier;
-			this.withText = withText;
-			this.annotationExtension = annotationExtension;
-			this.pub = pub;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 *
-		@Override
-		public boolean equals(Object o) {
-			if (o instanceof DoTermToGene) {
-				DoTermToGene do = (DoTermToGene) o;
-				if(annotationExtension == null) {       			
-					return productId.equals(do.productId)
-							&& doId.equals(do.doId)
-							&& qualifier.equals(do.qualifier)
-							&& withText.equals(do.withText)
-							&& pub.equals(do.pub);
-				}else{
-					return productId.equals(do.productId)
-							&& doId.equals(do.doId)
-							&& qualifier.equals(do.qualifier)
-							&& withText.equals(do.withText)
-							&& pub.equals(do.pub)
-							&& annotationExtension.equals(do.annotationExtension);
-				}
-			}
-			return false;
-		}
-	}*/
 
 
 	/**
