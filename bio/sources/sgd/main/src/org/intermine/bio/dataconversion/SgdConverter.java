@@ -72,7 +72,7 @@ public class SgdConverter extends BioDBConverter {
 	private static final String TAXON_ID = "4932";
 	private Item organism;
 	private Map<String, String> featureMap = new HashMap();
-	private static final boolean TEST_LOCAL = true;
+	private static final boolean TEST_LOCAL = false;
 
 
 	private static final SgdProcessor PROCESSOR = new SgdProcessor();
@@ -2802,7 +2802,7 @@ public class SgdConverter extends BioDBConverter {
 				pub.setAttribute("pubMedId", pubMedId);
 			}
 			if (StringUtils.isNotEmpty(dbxrefid)) {
-				pub.setAttribute("sgdDbXrefId", dbxrefid);
+				pub.setAttribute("pubXrefId", dbxrefid);
 			}
 			if (StringUtils.isNotEmpty(title)) {
 				pub.setAttribute("title", title);
@@ -2889,7 +2889,7 @@ public class SgdConverter extends BioDBConverter {
 				item.setAttribute("pubMedId", pubMedId);
 			}
 			if (StringUtils.isNotEmpty(dbxrefid)) {
-				item.setAttribute("sgdDbXrefId", dbxrefid);
+				item.setAttribute("pubXrefId", dbxrefid);
 			}
 			if (StringUtils.isNotEmpty(title)) {
 				item.setAttribute("title", title);
@@ -2987,7 +2987,7 @@ public class SgdConverter extends BioDBConverter {
 				item.setAttribute("pubMedId", pubMedId);
 			}
 			if (StringUtils.isNotEmpty(dbxrefid)) {
-				item.setAttribute("sgdDbXrefId", dbxrefid);
+				item.setAttribute("pubXrefId", dbxrefid);
 			}
 			if (StringUtils.isNotEmpty(title)) {
 				item.setAttribute("title", title);

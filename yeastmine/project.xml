@@ -118,6 +118,12 @@
       <property name="ontologyfile" location="/share/intermine/go/gene_ontology_edit.obo"/>
       <property name="src.data.dir" location="/share/intermine/go"/>
       <property name="src.data.dir.includes" value="gene_association.sgd-yeastmine"/>
+    </source> 
+
+    <source name="go-annotation-db" type="go-annotation-db">
+      <property name="source.db.name" value="sgd"/>
+      <property name="dataSourceName" value="SGD"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.GoAnnotationDbConverter"/>
     </source>
    
     <source name="do" type="do">

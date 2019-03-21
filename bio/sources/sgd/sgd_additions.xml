@@ -426,7 +426,7 @@
   <attribute name="volume" type="java.lang.String"/>
   <attribute name="issue" type="java.lang.String"/>
   <attribute name="pubMedId" type="java.lang.String"/>
-   <attribute name="sgdDbXrefId" type="java.lang.String"/>
+  <attribute name="pubXrefId" type="java.lang.String"/>
   <attribute name="journal" type="java.lang.String"/>
   <attribute name="title" type="java.lang.String"/>
   <attribute name="firstAuthor" type="java.lang.String"/>
