@@ -145,12 +145,20 @@ public class GoAnnotationDbConverter extends BioDBConverter
 			String strEvidence = res.getString("evidence_code");
 			String withText = res.getString("withText");
 			String annotType = res.getString("annotation_type");
-			String namesapce = res.getString("go_namespace");
 			String taxonId = parseTaxonId(res.getString("taxid"));
-			String date_assigned = res.getString("date_assigned");
 			String dataSourceCode = res.getString("source");
-			String annotationExtension = res.getString("annotext");
-            
+			String annotExt = res.getString("annotext");
+			String annotExtPre = res.getString("annottextprepend");
+            			
+			//String namesapce = res.getString("go_namespace");
+			//String date_assigned = res.getString("date_assigned");
+			
+			String annotationExtension = "";
+			if(annotExtPre != null && annotExt !=null) {
+				annotationExtension = annotExtPre +"("+annotExt+")";
+			}
+			
+			
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence, annotType, withText);
             } else {
