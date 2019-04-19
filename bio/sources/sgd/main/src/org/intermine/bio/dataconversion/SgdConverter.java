@@ -565,7 +565,7 @@ public class SgdConverter extends BioDBConverter {
 				if (name == null) {
 					genesAliases.put(geneFeatureNo, alias_name);
 				} else {
-					String newname = name + " " + alias_name;
+					String newname = name + "|" + alias_name;
 					genesAliases.put(geneFeatureNo, newname);
 				}
 			}
