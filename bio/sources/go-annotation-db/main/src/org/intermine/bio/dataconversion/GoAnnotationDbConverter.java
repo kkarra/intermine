@@ -144,42 +144,30 @@ public class GoAnnotationDbConverter extends BioDBConverter
 			String pub = res.getString("pmid");
 			String pubxref = res.getString("sgdrefid");
 			String strEvidence = res.getString("evidence_code");
-			//Array withTextDb = res.getArray("withText");
-			String withTextDb= res.getString("withText");
+			Array withTextDb = res.getArray("withText");
 			String annotType = res.getString("annotation_type");
 			String taxonId = parseTaxonId(res.getString("taxid"));
 			String dataSourceCode = res.getString("source");
 			Array annotExt = res.getArray("annotext");
 			Array annotExtPre = res.getArray("annotextension");
-
-			System.out.println("withText...." + withTextDb);
-
 			String annotationExtension = "";
 			String[] pre = (String[])annotExtPre.getArray();
 			String[] val = (String[])annotExt.getArray();
-
 			for (int i=0; i< pre.length; i++) {
 				if (pre[i] != null &&  val[i] != null) {
 					annotationExtension += pre[i] +"("+val[i]+"); ";					
 				}
 			}
-			System.out.println("annotationExtension...." + annotationExtension);
 
-			/*String withText = "";			
 			String[] with = (String[])withTextDb.getArray();
+			String withText = "";			
 			for (int j=0; j< with.length; j++) {
+				System.out.println("with in for loop" + with[j]);
 				if (with[j] != null) {
 					withText += with[j] +" ";					
+				}
 			}
-
-			}*/
-			String withText = "";	
-			if(!withTextDb.matches("null")) {
-				String withText1 = withTextDb.replace("}"," ");
-				withText = withText1.replace("{"," ");
-				System.out.println("withTextDb not null...." + withText);
-			}
-
+					
 			if (StringUtils.isNotEmpty(strEvidence)) {
 				storeEvidenceCode(strEvidence, annotType, withText);
 			} else {
@@ -190,11 +178,9 @@ public class GoAnnotationDbConverter extends BioDBConverter
 			// create unique key for go annotation
 			GoTermToGene key = new GoTermToGene(productId, goId, qualifier, withText, annotationExtension, pub, pubxref);
 
-			//String dataSourceCode = array[14]; // e.g. GDB, where uniprot collect the data from
-			String dataSource = DATA_SOURCE_NAME; // e.g. UniProtKB, where the goa file comes from
+			String dataSource = DATA_SOURCE_NAME;
 			String type = "gene";
 
-			//Item organism = newOrganism(taxonId);
 			String productIdentifier = newProduct(productId, type, organism,
 					dataSource, dataSourceCode, true, "primaryIdentifier");
 
@@ -208,7 +194,7 @@ public class GoAnnotationDbConverter extends BioDBConverter
 
 				// new evidence
 				String newStrEvidence = "";
-				if(withText == null){
+				if(StringUtils.isEmpty(withText)){ 
 					newStrEvidence = strEvidence+":"+annotType;
 				}else{
 					newStrEvidence = strEvidence+":"+annotType+":"+withText;
