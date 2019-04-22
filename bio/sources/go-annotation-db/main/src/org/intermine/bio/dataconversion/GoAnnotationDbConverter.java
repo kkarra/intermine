@@ -150,21 +150,25 @@ public class GoAnnotationDbConverter extends BioDBConverter
 			String dataSourceCode = res.getString("source");
 			Array annotExt = res.getArray("annotext");
 			Array annotExtPre = res.getArray("annotextension");
+			
 			String annotationExtension = "";
 			String[] pre = (String[])annotExtPre.getArray();
 			String[] val = (String[])annotExt.getArray();
 			for (int i=0; i< pre.length; i++) {
-				if (pre[i] != null &&  val[i] != null) {
-					annotationExtension += pre[i] +"("+val[i]+"); ";					
+				if (pre[i] != null &&  val[i] != null && i<(pre.length -1)) {
+					annotationExtension += pre[i] +" ("+val[i]+"); ";					
+				}else if(i<pre.length) {
+					annotationExtension += pre[i] +" ("+val[i]+")";
 				}
 			}
 
 			String[] with = (String[])withTextDb.getArray();
 			String withText = "";			
 			for (int j=0; j< with.length; j++) {
-				System.out.println("with in for loop" + with[j]);
-				if (with[j] != null) {
-					withText += with[j] +" ";					
+				if (with[j] != null && j<(with.length -1)) {
+					withText += with[j] +",";					
+				}else if(j<with.length) {
+					withText += with[j];
 				}
 			}
 					
@@ -174,23 +178,20 @@ public class GoAnnotationDbConverter extends BioDBConverter
 				throw new IllegalArgumentException("Evidence is a required column but not "
 						+ "found for goterm " + goId + " and productId " + productId);
 			}
-
-			// create unique key for go annotation
-			GoTermToGene key = new GoTermToGene(productId, goId, qualifier, withText, annotationExtension, pub, pubxref);
+			
+			GoTermToGene key = new GoTermToGene(productId, goId, qualifier, withText, annotationExtension, pub, pubxref); // create unique key for go annotation
 
 			String dataSource = DATA_SOURCE_NAME;
 			String type = "gene";
 
-			String productIdentifier = newProduct(productId, type, organism,
-					dataSource, dataSourceCode, true, "primaryIdentifier");
+			String productIdentifier = newProduct(productId, type, organism, dataSource, dataSourceCode, true, "primaryIdentifier");
 
-			// null if resolver could not resolve an identifier
-			if (productIdentifier != null) {
-				// null if no pub found
-				String pubRefId = newPublication(pub, pubxref);
-
-				// get evidence codes for this goterm|gene pair
-				Set<Evidence> allEvidenceForAnnotation = goTermGeneToEvidence.get(key);
+			
+			if (productIdentifier != null) { // null if resolver could not resolve an identifier
+				
+				String pubRefId = newPublication(pub, pubxref); // null if no pub found
+				
+				Set<Evidence> allEvidenceForAnnotation = goTermGeneToEvidence.get(key); // get evidence codes for this goterm|gene pair
 
 				// new evidence
 				String newStrEvidence = "";
@@ -203,7 +204,7 @@ public class GoAnnotationDbConverter extends BioDBConverter
 				if (allEvidenceForAnnotation == null ) { //|| !StringUtils.isEmpty(withText)
 					String goTermIdentifier = newGoTerm(goId, dataSource, dataSourceCode);
 					Evidence evidence = new Evidence(newStrEvidence, pubRefId, withText, organism,
-							dataSource, dataSourceCode);  //was strEvidence
+							dataSource, dataSourceCode); 
 					allEvidenceForAnnotation = new LinkedHashSet<Evidence>();
 					allEvidenceForAnnotation.add(evidence);
 					goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
@@ -219,14 +220,14 @@ public class GoAnnotationDbConverter extends BioDBConverter
 						String evidenceCode = evidence.getEvidenceCode();
 						storedAnnotationId = evidence.storedAnnotationId;
 						// already have evidence code, just add pub
-						if (evidenceCode.equals(newStrEvidence)) {   //was strEvidence
+						if (evidenceCode.equals(newStrEvidence)) {
 							evidence.addPublicationRefId(pubRefId);
 							seenEvidenceCode = true;
 						}
 					}
 					if (!seenEvidenceCode) {
 						Evidence evidence = new Evidence(newStrEvidence, pubRefId, withText, organism,
-								dataSource, dataSourceCode);   //was strEvidence
+								dataSource, dataSourceCode);
 						evidence.storedAnnotationId = storedAnnotationId;
 						allEvidenceForAnnotation.add(evidence);
 					}
@@ -254,7 +255,6 @@ public class GoAnnotationDbConverter extends BioDBConverter
 			Integer goAnnotationRefId = null;
 			for (Evidence evidence : annotationEvidence) {
 				Item goevidence = createItem("GOEvidence");
-				System.out.println("evidence codes:   " + evidenceCodes.get(evidence.getEvidenceCode()));
 				goevidence.setReference("code", evidenceCodes.get(evidence.getEvidenceCode()));
 				List<String> publicationEvidence = evidence.getPublications();
 				if (!publicationEvidence.isEmpty()) {
@@ -406,8 +406,6 @@ public class GoAnnotationDbConverter extends BioDBConverter
 
 		String key = makeProductKey(accession, type, organism, includeOrganism);
 
-		//Have we already seen this product somewhere before?
-		// if so, return the product rather than creating a new one...
 		if (productMap.containsKey(key)) {
 			return productMap.get(key);
 		}

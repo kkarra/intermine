@@ -40,7 +40,7 @@ public class GoAnnotationDbProcessor {
 				+ "left join nex.ro r on ge.ro_id = r.ro_id "
 				+ "left join nex.gosupportingevidence gse on ga.annotation_id = gse.annotation_id "
 				+ " where length(ea.display_name) <= 3 "
-				+ "group by  sgdid, gene_name, ga.go_qualifier, goid, pmid, ra.display_name, ea.display_name, taxid, s.display_name, ga.annotation_type, gse.group_id " //,  gse.dbxref_id,, ge.dbxref_id, r.display_name
+				+ "group by  sgdid, gene_name, ga.go_qualifier, goid, pmid, ra.display_name, ea.display_name, taxid, s.display_name, ga.annotation_type, ge.group_id, gse.group_id "
 				+ " order by sgdid, goid, pmid, gse.group_id";
 				//db.dbentity_id in (1266463) and 
 		
