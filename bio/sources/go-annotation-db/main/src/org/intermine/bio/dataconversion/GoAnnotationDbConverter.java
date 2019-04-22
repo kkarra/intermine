@@ -157,7 +157,7 @@ public class GoAnnotationDbConverter extends BioDBConverter
 			for (int i=0; i< pre.length; i++) {
 				if (pre[i] != null &&  val[i] != null && i<(pre.length -1)) {
 					annotationExtension += pre[i] +" ("+val[i]+"); ";					
-				}else if(i<pre.length) {
+				}else if(pre[i] != null && i<pre.length) {
 					annotationExtension += pre[i] +" ("+val[i]+")";
 				}
 			}
@@ -167,7 +167,7 @@ public class GoAnnotationDbConverter extends BioDBConverter
 			for (int j=0; j< with.length; j++) {
 				if (with[j] != null && j<(with.length -1)) {
 					withText += with[j] +",";					
-				}else if(j<with.length) {
+				}else if(with[j] != null && j<with.length) {
 					withText += with[j];
 				}
 			}
