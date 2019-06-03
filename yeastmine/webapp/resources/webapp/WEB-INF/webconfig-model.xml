@@ -490,7 +490,7 @@
 		</inlinelist>
 		<fields>
 			<fieldconfig fieldExpr="pubMedId" />
-			<fieldconfig fieldExpr="sgdDbXrefId" />
+			<fieldconfig fieldExpr="pubXrefId" />
 			<fieldconfig fieldExpr="citation" />
 			<fieldconfig fieldExpr="title" />
 			<fieldconfig fieldExpr="journal" />

@@ -20,7 +20,7 @@ public class DiseaseProcessor {
      */
 	protected ResultSet getDiseaseAnnotations(Connection connection) throws SQLException {
 		
-		String query = "select t.taxid, sgdid, gene_name, r.display_name as relation_type, doid, " 
+		/*String query = "select t.taxid, sgdid, gene_name, r.display_name as relation_type, doid, " 
 				+ " dse.dbxref_id as hgnc_id, ea.display_name as evidence_code, da.annotation_type, dse.evidence_type, "  
 				+ " pmid, da.date_assigned, da.created_by, s.display_name as source "
 				+ " from nex.disease d, nex.diseaseannotation da, nex.taxonomy t, nex.dbentity db, nex.ro r, "
@@ -36,7 +36,25 @@ public class DiseaseProcessor {
 				+ "and db.dbentity_id = ldb.dbentity_id "
 				+ "and da.source_id = s.source_id " 
 				+ "group by taxid, sgdid, gene_name, gene_name, r.display_name, doid, dse.dbxref_id, ea.display_name,  da.annotation_type, dse.evidence_type, pmid, da.date_assigned, da.created_by, s.display_name " 
-				+ "order by sgdid, doid, dbxref_id, pmid";
+				+ "order by sgdid, doid, dbxref_id, pmid";*/
+		
+		String query = "select t.taxid, sgdid, gene_name, r.display_name as relation_type, doid, " 
+				+"dse.dbxref_id as hgnc_id, ea.display_name as evidence_code, da.annotation_type, dse.evidence_type, pmid, da.date_assigned, da.created_by, s.display_name as source "
+				+"from diseaseannotation da "
+				+"inner join disease d on d.disease_id = da.disease_id " 
+				+"left join diseasesupportingevidence dse on da.annotation_id = dse.annotation_id " 
+				+"inner join taxonomy t on t.taxonomy_id = da.taxonomy_id "  
+				+"inner join  dbentity db on db.dbentity_id = da.dbentity_id " 
+				+"inner join locusdbentity ldb on db.dbentity_id = ldb.dbentity_id " 
+				+"inner join ro r on da.association_type = r.ro_id " 
+				+"inner join eco_alias ea on da.eco_id = ea.eco_id "
+				+"inner join referencedbentity rdb on da.reference_id = rdb.dbentity_id "
+				+"inner join source s on da.source_id = s.source_id "  
+				//+"where ldb.dbentity_id = 1313238 "
+				+"and ea.display_name in ('ISS', 'IGI', 'IMP') " 
+				+"group by taxid, sgdid, gene_name, gene_name, r.display_name, doid, dse.dbxref_id, ea.display_name,  da.annotation_type, dse.evidence_type, pmid, da.date_assigned, da.created_by, s.display_name " + 
+				+"order by sgdid, doid, dbxref_id, pmid";
+				
 
 		LOG.info("executing: " + query);
 		Statement stmt = connection.createStatement();
