@@ -1012,7 +1012,7 @@ public class SgdConverter extends BioDBConverter {
 			name = "ncrna_gene";
 		} else if (type.equalsIgnoreCase("five_prime_UTR_intron")) {
 			name = "orf";
-		}else if (type.equalsIgnoreCase("intein_encoding_region")) {
+		}else if (type.equalsIgnoreCase("intein encoding region")) {
 			name = "orf";
 		}else if (type.equalsIgnoreCase("internal_transcribed_spacer_region")) {
 			name = "ncrna_gene";
@@ -1633,7 +1633,7 @@ public class SgdConverter extends BioDBConverter {
 			item = createItem("CentromereDNAElementII");
 		} else if (childType.equalsIgnoreCase("centromere_DNA_Element_III")) {
 			item = createItem("CentromereDNAElementIII");
-		} else if (childType.equalsIgnoreCase("intein_encoding_region")) {
+		} else if (childType.equalsIgnoreCase("intein encoding region")) {
 			item = createItem("InteinEncodingRegion");
 		} else if (childType.equalsIgnoreCase("ARS_consensus_sequence")) {
 			item = createItem("ARSConsensusSequence");
